@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ปลดหนี้ มีทางออก | คู่มือ & เครื่องมือวางแผนแก้ไขปัญหาหนี้สิน</title>
+  
+  <!-- Meta tags for social and SEO -->
+  <meta name="description" content="เว็บไซต์และเครื่องมือวางแผนแก้ไขปัญหาหนี้สินอย่างเป็นระบบและเข้าใจง่าย คำนวณ DTI, จำลองวิธีปลดหนี้ Snowball / Avalanche, บทพูดเจรจาเจ้าหนี้ และช่องทางช่วยเหลือทางการ">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-blue-200">
+
+  <!-- ================= NAVBAR ================= -->
+  <header class="sticky top-0 z-50 glass-nav transition-all">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-18 py-3">
+        
+        <!-- Logo -->
+        <a href="#" class="flex items-center gap-3 group">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
+            <i data-lucide="shield-check" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="font-bold text-lg md:text-xl text-slate-900 tracking-tight flex items-center gap-1.5">
+              <span>ปลดหนี้</span><span class="text-blue-600 font-extrabold">มีทางออก</span>
+            </div>
+            <p class="text-[11px] text-slate-500 hidden sm:block">คู่มือ & เครื่องมือจัดการหนี้เพื่อคนไทย</p>
+          </div>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden lg:flex items-center gap-1 text-sm font-medium text-slate-600">
+          <a href="#emergency-section" class="px-3 py-2 rounded-lg hover:text-blue-600 hover:bg-blue-50 transition-colors">ปฐมพยาบาลด่วน</a>
+          <a href="#health-check-section" class="px-3 py-2 rounded-lg hover:text-blue-600 hover:bg-blue-50 transition-colors">ตรวจสุขภาพหนี้</a>
+          <a href="#planner-section" class="px-3 py-2 rounded-lg hover:text-blue-600 hover:bg-blue-50 transition-colors">เครื่องมือวางแผนปลดหนี้</a>
+          <a href="#solutions-section" class="px-3 py-2 rounded-lg hover:text-blue-600 hover:bg-blue-50 transition-colors">เข็มทิศทางออก</a>
+          <a href="#scripts-section" class="px-3 py-2 rounded-lg hover:text-blue-600 hover:bg-blue-50 transition-colors">บทพูดเจรจา</a>
+          <a href="#hotlines-section" class="px-3 py-2 rounded-lg hover:text-blue-600 hover:bg-blue-50 transition-colors">สายด่วนช่วยเหลือ</a>
+        </nav>
+
+        <!-- CTA Buttons -->
+        <div class="flex items-center gap-2">
+          <a href="#emergency-section" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs md:text-sm font-semibold text-white bg-gradient-to-r from-red-500 to-rose-600 rounded-xl shadow-sm hover:shadow-md hover:from-red-600 hover:to-rose-700 transition-all animate-pulse-subtle">
+            <i data-lucide="life-buoy" class="w-4 h-4"></i>
+            <span>เริ่มจากตรงไหนดี?</span>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= HERO SECTION ================= -->
+  <section class="relative overflow-hidden pt-12 pb-16 md:pt-20 md:pb-24 bg-gradient-to-b from-blue-50/70 via-slate-50 to-slate-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="text-center max-w-3xl mx-auto">
+        
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-100/80 text-blue-800 text-xs md:text-sm font-medium mb-6 border border-blue-200">
+          <i data-lucide="heart-handshake" class="w-4 h-4 text-blue-600"></i>
+          <span>คุณไม่ได้อยู่คนเดียว ทุกปัญหามีทางออกเสมอ</span>
+        </div>
+
+        <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-tight mb-6">
+          เปลี่ยนความกังวลเรื่องหนี้ <br class="hidden sm:inline">
+          เป็น <span class="text-gradient">แผนการที่จับต้องได้</span>
+        </h1>
+
+        <p class="text-base sm:text-lg md:text-xl text-slate-600 mb-8 leading-relaxed">
+          เว็บไซต์รวมคู่มือและเครื่องมือดิจิทัลที่เข้าใจง่าย ไม่ซับซ้อน ช่วยคุณตรวจสุขภาพหนี้ วางแผนผ่อนชำระด้วยหลักการที่พิสูจน์แล้ว และรวบรวมสิทธิประโยชน์ตามกฎหมายไทย
+        </p>
+
+        <!-- Privacy & Free Guarantee Badges -->
+        <div class="flex flex-wrap items-center justify-center gap-4 text-xs md:text-sm text-slate-500 mb-10">
+          <div class="flex items-center gap-1.5">
+            <i data-lucide="lock" class="w-4 h-4 text-emerald-600"></i>
+            <span>ข้อมูลปลอดภัย 100% (คำนวณในเครื่องของคุณ ไม่บันทึกข้อมูล)</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <i data-lucide="check-circle" class="w-4 h-4 text-blue-600"></i>
+            <span>ใช้งานฟรี ไม่มีค่าใช้จ่าย</span>
+          </div>
+        </div>
+
+        <!-- 3 Quick Action Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left">
+          
+          <a href="#health-check-section" class="p-5 bg-white rounded-2xl border border-slate-200 hover:border-blue-400 hover:shadow-lg transition-all group flex flex-col justify-between">
+            <div>
+              <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                <i data-lucide="activity" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">1. ตรวจสุขภาพหนี้ (DTI)</h3>
+              <p class="text-xs text-slate-500 mt-1">ประเมินสัดส่วนภาระหนี้ต่อรายได้และระดับความเสี่ยงใน 1 นาที</p>
+            </div>
+            <div class="mt-4 flex items-center text-xs font-semibold text-blue-600">
+              เริ่มตรวจทันที <i data-lucide="chevron-right" class="w-3.5 h-3.5 ml-1"></i>
+            </div>
+          </a>
+
+          <a href="#planner-section" class="p-5 bg-white rounded-2xl border border-slate-200 hover:border-emerald-400 hover:shadow-lg transition-all group flex flex-col justify-between">
+            <div>
+              <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                <i data-lucide="calculator" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">2. วางแผนปลดหนี้อัจฉริยะ</h3>
+              <p class="text-xs text-slate-500 mt-1">เปรียบเทียบกลยุทธ์ Snowball vs Avalanche และดูวันหมดหนี้</p>
+            </div>
+            <div class="mt-4 flex items-center text-xs font-semibold text-emerald-600">
+              คำนวณแผน <i data-lucide="chevron-right" class="w-3.5 h-3.5 ml-1"></i>
+            </div>
+          </a>
+
+          <a href="#solutions-section" class="p-5 bg-white rounded-2xl border border-slate-200 hover:border-amber-400 hover:shadow-lg transition-all group flex flex-col justify-between">
+            <div>
+              <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                <i data-lucide="compass" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-slate-900 group-hover:text-amber-600 transition-colors">3. เข็มทิศทางออกแก้หนี้</h3>
+              <p class="text-xs text-slate-500 mt-1">ค้นหาทางออกตรงตามสถานะ: ปรับโครงสร้าง, คลินิกแก้หนี้, หรือศาล</p>
+            </div>
+            <div class="mt-4 flex items-center text-xs font-semibold text-amber-600">
+              ดูทางออก <i data-lucide="chevron-right" class="w-3.5 h-3.5 ml-1"></i>
+            </div>
+          </a>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SECTION 1: EMERGENCY FIRST-AID ================= -->
+  <section id="emergency-section" class="py-14 bg-white border-y border-slate-200/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+        <div>
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-semibold mb-2">
+            <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>
+            <span>ชุดปฐมพยาบาลหนี้ด่วน</span>
+          </div>
+          <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900">5 ขั้นตอนตั้งสติ เมื่อเริ่มจ่ายหนี้ไม่ไหว</h2>
+          <p class="text-sm md:text-base text-slate-600 mt-1">หากคุณกำลังรู้สึกมืดแปดด้าน ให้ทำตาม 5 สเต็ปนี้ทีละข้อ ไม่ต้องรีบร้อน ค่อยๆ จัดการ</p>
+        </div>
+
+        <!-- Progress Indicator -->
+        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 min-w-[240px]">
+          <div class="flex justify-between items-center text-xs font-medium text-slate-600 mb-1.5">
+            <span>ความคืบหน้าการปฐมพยาบาล:</span>
+            <span id="emergency-completed-count" class="font-bold text-blue-600">0/5 สเต็ป</span>
+          </div>
+          <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+            <div id="emergency-progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300 w-0"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5 Step Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+        
+        <!-- Step 1 -->
+        <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:shadow-md transition-all flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="w-7 h-7 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">1</span>
+              <input type="checkbox" class="emergency-step-checkbox w-5 h-5 rounded text-blue-600 focus:ring-blue-500 cursor-pointer">
+            </div>
+            <h4 class="font-bold text-slate-900 text-base mb-1">กางหนี้ทั้งหมดออกมา</h4>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              อย่าหลบเลี่ยงความจริง จดรายการหนี้ทุกก้อน เจ้าหนี้คือใคร ยอดคงเหลือ ดอกเบี้ย และยอดจ่ายขั้นต่ำ
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-200/60 text-[11px] text-blue-600 font-medium">
+            💡 ความกลัวลดลงเมื่อเห็นตัวเลขจริง
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:shadow-md transition-all flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="w-7 h-7 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">2</span>
+              <input type="checkbox" class="emergency-step-checkbox w-5 h-5 rounded text-blue-600 focus:ring-blue-500 cursor-pointer">
+            </div>
+            <h4 class="font-bold text-slate-900 text-base mb-1">หยุดก่อหนี้เพิ่มทันที</h4>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              หยุดกดบัตรเงินสดเพื่อมาจ่ายบัตรเครดิต เพราะจะยิ่งทวีคูณดอกเบี้ย และหยุดกู้นอกระบบมาโปะในระบบเด็ดขาด
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-200/60 text-[11px] text-rose-600 font-medium">
+            🛑 อุดรอยรั่วก่อนเติมน้ำ
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:shadow-md transition-all flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="w-7 h-7 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">3</span>
+              <input type="checkbox" class="emergency-step-checkbox w-5 h-5 rounded text-blue-600 focus:ring-blue-500 cursor-pointer">
+            </div>
+            <h4 class="font-bold text-slate-900 text-base mb-1">กันเงินดำรงชีพก่อน</h4>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              คำนวณค่ากิน ค่าที่อยู่ ค่าน้ำไฟที่จำเป็นต่อการมีชีวิตอยู่ <strong>อย่าจ่ายหนี้จนไม่มีเงินซื้อข้าวกิน</strong> ต้องมีแรงสู้ก่อน
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-200/60 text-[11px] text-emerald-600 font-medium">
+            🥗 ชีวิตคนในครอบครัวต้องมาก่อน
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:shadow-md transition-all flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="w-7 h-7 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">4</span>
+              <input type="checkbox" class="emergency-step-checkbox w-5 h-5 rounded text-blue-600 focus:ring-blue-500 cursor-pointer">
+            </div>
+            <h4 class="font-bold text-slate-900 text-base mb-1">ติดต่อเจ้าหนี้เชิงรุก</h4>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              อย่ารอจนโดนทวง โทรหาสถาบันการเงินแจ้งว่า "เริ่มตึงมือ ขอลดค่างวดหรือปรับโครงสร้างหนี้" ธนาคารมีมาตรการรองรับ
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-200/60 text-[11px] text-blue-600 font-medium">
+            📞 ดูบทพูดเจรจาในเว็บนี้ได้เลย
+          </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:shadow-md transition-all flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="w-7 h-7 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">5</span>
+              <input type="checkbox" class="emergency-step-checkbox w-5 h-5 rounded text-blue-600 focus:ring-blue-500 cursor-pointer">
+            </div>
+            <h4 class="font-bold text-slate-900 text-base mb-1">สร้างแผนชำระเป็นระบบ</h4>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              ใช้โปรแกรมคำนวณด้านล่าง เลือกว่าจะปิดหนี้ยอดเล็กก่อน (Snowball) หรือตัดดอกเบี้ยสูงก่อน (Avalanche)
+            </p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-200/60 text-[11px] text-indigo-600 font-medium">
+            🎯 เดินหน้าตามแผนทีละก้าว
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= SECTION 2: HEALTH CHECK & DTI CALCULATOR ================= -->
+  <section id="health-check-section" class="py-16 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-semibold mb-3">
+          <i data-lucide="stethoscope" class="w-3.5 h-3.5"></i>
+          <span>ประเมินความเสี่ยงทางการเงิน</span>
+        </div>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900">ตรวจสุขภาพหนี้ของคุณ (Debt Health Check)</h2>
+        <p class="text-slate-600 text-sm md:text-base mt-2">
+          DTI (Debt-to-Income) คือตัวชี้วัดสากลที่ธนาคารใช้ประเมินภาระหนี้ กรอกข้อมูลเพื่อดูระดับสุขภาพหนี้ของคุณพร้อมคำแนะนำเฉพาะบุคคล
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Calculator Input Form -->
+        <div class="lg:col-span-6 bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm">
+          <h3 class="font-bold text-lg text-slate-900 mb-6 flex items-center gap-2">
+            <i data-lucide="sliders" class="w-5 h-5 text-blue-600"></i>
+            <span>กรอกข้อมูลรายได้และหนี้สิน</span>
+          </h3>
+
+          <form id="dti-form" class="space-y-5">
+            <div>
+              <label for="income-input" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+                รายได้รวมต่อเดือน (บาท)
+              </label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">฿</span>
+                <input type="number" id="income-input" value="35000" min="0" step="500" placeholder="เช่น 30000" class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-semibold text-slate-800 text-sm md:text-base">
+              </div>
+              <p class="text-[11px] text-slate-500 mt-1">รวมเงินเดือน ค่าคอมมิชชัน และรายได้ประจำอื่นๆ</p>
+            </div>
+
+            <div>
+              <label for="debt-pay-input" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+                ภาระผ่อนชำระหนี้รวมทุกรายการต่อเดือน (บาท)
+              </label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">฿</span>
+                <input type="number" id="debt-pay-input" value="18000" min="0" step="500" placeholder="เช่น 15000" class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-semibold text-slate-800 text-sm md:text-base">
+              </div>
+              <p class="text-[11px] text-slate-500 mt-1">รวมขั้นต่ำบัตรเครดิต, ผ่อนบ้าน, ผ่อนรถ, สินเชื่อส่วนบุคคล</p>
+            </div>
+
+            <div>
+              <label for="delinquency-status" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+                สถานะการชำระปัจจุบัน
+              </label>
+              <select id="delinquency-status" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-medium text-slate-800 text-sm md:text-base bg-white">
+                <option value="normal">ปกติ (จ่ายครบตรงเวลาทุกงวด)</option>
+                <option value="min_only" selected>จ่ายขั้นต่ำตลอด (เริ่มสะสมดอกเบี้ย)</option>
+                <option value="late30">เริ่มค้างชำระ 1 - 30 วัน</option>
+                <option value="late60">ค้างชำระ 31 - 90 วัน (ตึงตัวมาก)</option>
+                <option value="over90">ค้างชำระเกิน 90 วัน (เป็นหนี้เสีย NPL)</option>
+                <option value="sued">ได้รับหมายศาล / อยู่ในขั้นตอนบังคับคดี</option>
+              </select>
+            </div>
+
+            <div class="pt-2">
+              <button type="submit" class="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-2">
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                <span>ประเมินผลสุขภาพหนี้</span>
+              </button>
+            </div>
+          </form>
+
+        </div>
+
+        <!-- Dynamic Results Card -->
+        <div id="dti-result-card" class="lg:col-span-6 bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">ผลการประเมินสุขภาพหนี้</span>
+              <span id="dti-badge" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border bg-orange-100 text-orange-800 border-orange-300">
+                ระดับเสี่ยงสูง
+              </span>
+            </div>
+
+            <!-- Big Stat -->
+            <div class="flex items-baseline gap-2 mb-2">
+              <span id="dti-score" class="text-4xl md:text-5xl font-extrabold text-slate-900">51.4%</span>
+              <span class="text-sm text-slate-500 font-medium">สัดส่วนภาระหนี้ต่อรายได้ (DTI)</span>
+            </div>
+
+            <!-- Progress bar -->
+            <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden mb-6">
+              <div id="dti-progress-bar" class="h-2.5 rounded-full bg-orange-500 transition-all duration-500" style="width: 51.4%;"></div>
+            </div>
+
+            <!-- Remaining Money Info -->
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 mb-6 flex items-center justify-between">
+              <div>
+                <span class="text-xs text-slate-500 block">เงินคงเหลือสำหรับดำรงชีพต่อเดือน</span>
+                <span id="dti-remaining" class="text-lg font-bold text-slate-900">17,000 บาท</span>
+              </div>
+              <div class="text-right text-xs text-slate-400">
+                หักค่างวดแล้ว
+              </div>
+            </div>
+
+            <!-- Action Advice Area -->
+            <div id="dti-advice" class="text-sm text-slate-700 leading-relaxed p-4 rounded-xl bg-blue-50/50 border border-blue-100">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+            <span class="text-xs text-slate-400">เกณฑ์มาตรฐานสากล: DTI ไม่ควรเกิน 30-40%</span>
+            <a href="#planner-section" class="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1">
+              ไปจำลองแผนปลดหนี้ <i data-lucide="arrow-down" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= SECTION 3: DEBT PLANNER SIMULATOR ================= -->
+  <section id="planner-section" class="py-16 bg-white border-t border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+        <div>
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-semibold mb-2">
+            <i data-lucide="trending-down" class="w-3.5 h-3.5"></i>
+            <span>เครื่องมือวางแผนชำระหนี้เชิงรุก</span>
+          </div>
+          <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900">จำลองการปลดหนี้: Snowball vs Avalanche</h2>
+          <p class="text-sm md:text-base text-slate-600 mt-1">
+            ใส่รายการหนี้ของคุณ หรือทดลองด้วยข้อมูลตัวอย่าง เพื่อดูว่าคุณจะหมดหนี้ได้เร็วขึ้นกี่ปีและประหยัดดอกเบี้ยไปเท่าไหร่
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="load-sample-debts-btn" class="px-3.5 py-2 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl transition-colors flex items-center gap-1.5">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+            <span>โหลดข้อมูลตัวอย่าง</span>
+          </button>
+          <button id="clear-debts-btn" class="px-3.5 py-2 text-xs font-semibold text-slate-600 hover:text-red-600 bg-slate-100 hover:bg-red-50 border border-slate-200 rounded-xl transition-colors">
+            ล้างทั้งหมด
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Left Column: Debts Input & Management -->
+        <div class="lg:col-span-5 space-y-6">
+          
+          <!-- Summary Header of current Debts -->
+          <div class="p-5 rounded-2xl bg-slate-900 text-white shadow-lg flex items-center justify-between">
+            <div>
+              <span class="text-xs text-slate-400 block">ยอดหนี้รวมทั้งหมด</span>
+              <span id="debt-total-balance" class="text-2xl font-bold tracking-tight text-white">233,000 บาท</span>
+            </div>
+            <div class="text-right">
+              <span class="text-xs text-slate-400 block">ขั้นต่ำรวมต่อเดือน</span>
+              <span id="debt-total-minpay" class="text-base font-semibold text-blue-400">10,800 บาท/เดือน</span>
+              <span id="debt-total-count" class="text-[11px] text-slate-400 block">3 รายการ</span>
+            </div>
+          </div>
+
+          <!-- Add Debt Accordion/Card -->
+          <details id="add-debt-details" class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden group">
+            <summary class="p-4 flex items-center justify-between cursor-pointer list-none hover:bg-slate-50 transition-colors">
+              <span class="font-bold text-sm text-slate-800 flex items-center gap-2">
+                <i data-lucide="plus-circle" class="w-4 h-4 text-blue-600"></i>
+                <span>เพิ่มรายการหนี้ใหม่</span>
+              </span>
+              <i data-lucide="chevron-down" class="accordion-chevron w-4 h-4 text-slate-400 transition-transform"></i>
+            </summary>
+            
+            <div class="p-4 pt-0 border-t border-slate-100">
+              <form id="add-debt-form" class="space-y-3 pt-3">
+                <div>
+                  <label class="block text-xs font-medium text-slate-600 mb-1">ชื่อรายการหนี้</label>
+                  <input type="text" id="new-debt-name" placeholder="เช่น บัตรเครดิต กสิกรไทย" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">ยอดหนี้คงเหลือ (บ.)</label>
+                    <input type="number" id="new-debt-balance" placeholder="เช่น 50000" min="1" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500">
+                  </div>
+                  <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">ดอกเบี้ย (% ต่อปี)</label>
+                    <input type="number" id="new-debt-rate" placeholder="เช่น 16" min="0" step="0.1" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500">
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-slate-600 mb-1">ยอดจ่ายขั้นต่ำต่อเดือน (บ.)</label>
+                  <input type="number" id="new-debt-minpay" placeholder="เช่น 2500" min="1" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500">
+                </div>
+                <button type="submit" class="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs rounded-lg transition-colors flex items-center justify-center gap-1.5">
+                  <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                  <span>บันทึกรายการหนี้</span>
+                </button>
+              </form>
+            </div>
+          </details>
+
+          <!-- List of entered debts -->
+          <div class="space-y-3">
+            <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider">รายการหนี้ของคุณ</h4>
+            <div id="debt-items-list" class="space-y-2">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Extra Payment Slider -->
+          <div class="p-5 bg-gradient-to-br from-blue-50/80 to-indigo-50/80 rounded-2xl border border-blue-200">
+            <div class="flex items-center justify-between mb-2">
+              <label class="font-bold text-sm text-slate-900 flex items-center gap-1.5">
+                <i data-lucide="coins" class="w-4 h-4 text-blue-600"></i>
+                <span>เงินพิเศษที่จะโปะเพิ่มต่อเดือน</span>
+              </label>
+              <div class="flex items-center gap-1">
+                <input type="number" id="extra-payment-input" value="2000" min="0" step="500" class="w-24 text-right px-2 py-1 font-bold text-sm text-blue-700 bg-white rounded-lg border border-blue-300">
+                <span class="text-xs font-medium text-slate-600">บ.</span>
+              </div>
+            </div>
+            <input type="range" id="extra-payment-slider" min="0" max="20000" step="500" value="2000" class="w-full accent-blue-600 cursor-pointer">
+            <div class="flex justify-between text-[11px] text-slate-500 mt-1">
+              <span>+0 บาท</span>
+              <span>+10,000 บาท</span>
+              <span>+20,000 บาท</span>
+            </div>
+            <p class="text-xs text-slate-600 mt-3 leading-relaxed">
+              💡 เงินโปะนี้จะถูกนำไปโปะหนี้เป้าหมายแรกจนหมด แล้วนำยอดผ่อนเดิมไปทบต่อกับหนี้ก้อนถัดไปอย่างต่อเนื่อง
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Results, Strategies & Chart -->
+        <div class="lg:col-span-7 space-y-6">
+          
+          <!-- Strategy Switcher Tabs -->
+          <div class="bg-slate-100 p-1.5 rounded-2xl flex items-center gap-1 text-sm font-semibold">
+            <button id="strat-snowball-btn" class="tab-btn active flex-1 py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2">
+              <i data-lucide="snowflake" class="w-4 h-4"></i>
+              <span>Snowball (บอลหิมะ)</span>
+            </button>
+            <button id="strat-avalanche-btn" class="tab-btn flex-1 py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2">
+              <i data-lucide="zap" class="w-4 h-4"></i>
+              <span>Avalanche (หิมะถล่ม)</span>
+            </button>
+          </div>
+
+          <!-- Strategy Explanation Card -->
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 leading-relaxed">
+            <strong class="text-slate-800">หลักการทำงาน:</strong>
+            <span id="strat-explanation">
+              <strong>Snowball (บอลหิมะ)</strong>: จ่ายขั้นต่ำทุกก้อน แล้วทุ่มเงินโปะปิดก้อนหนี้ยอดเงินคงเหลือน้อยที่สุดก่อน เมื่อปิดได้ 1 ก้อนจะมีกำลังใจสูงมาก และเอายอดผ่อนเดิมไปทบก้อนต่อไป
+            </span>
+          </div>
+
+          <!-- Simulation Highlights (Cards) -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div class="p-4 rounded-xl bg-blue-50/70 border border-blue-200">
+              <span class="text-[11px] text-blue-700 font-semibold uppercase block">เวลาปลดหนี้</span>
+              <span id="plan-total-time" class="text-lg md:text-xl font-extrabold text-blue-900 block mt-1">2 ปี 4 เดือน</span>
+              <span id="plan-saved-time" class="text-[10px] text-emerald-700 font-bold block mt-0.5">เร็วขึ้น 1 ปี 8 เดือน</span>
+            </div>
+
+            <div class="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200">
+              <span class="text-[11px] text-emerald-700 font-semibold uppercase block">ดอกเบี้ยรวม</span>
+              <span id="plan-total-interest" class="text-lg md:text-xl font-extrabold text-emerald-900 block mt-1">42,500 บาท</span>
+              <span id="plan-saved-interest" class="text-[10px] text-emerald-700 font-bold block mt-0.5">ประหยัดได้ 38,000 บาท</span>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <span class="text-[11px] text-slate-500 font-semibold uppercase block">กลยุทธ์ที่ใช้</span>
+              <span class="text-sm md:text-base font-bold text-slate-800 block mt-1">จิตวิทยา & กำลังใจ</span>
+              <span class="text-[10px] text-slate-400 block mt-0.5">Quick Wins</span>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between">
+              <span class="text-[11px] text-slate-500 font-semibold uppercase block">การฉลองเป้าหมาย</span>
+              <button id="celebrate-btn" class="w-full py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow transition-all flex items-center justify-center gap-1 mt-1">
+                <i data-lucide="party-popper" class="w-3.5 h-3.5"></i>
+                <span>ทดลองฉลอง</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Chart Visualization -->
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+              <h4 class="font-bold text-sm text-slate-900 flex items-center gap-2">
+                <i data-lucide="line-chart" class="w-4 h-4 text-blue-600"></i>
+                <span>กราฟเปรียบเทียบยอดหนี้ที่ลดลงตามกาลเวลา</span>
+              </h4>
+              <span class="text-[11px] text-slate-400">เปรียบเทียบกับจ่ายขั้นต่ำ</span>
+            </div>
+            <div class="relative h-64 sm:h-72 w-full">
+              <canvas id="debt-chart"></canvas>
+            </div>
+          </div>
+
+          <!-- Priority Order Queue Cards -->
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+              <h4 class="font-bold text-sm text-slate-900 flex items-center gap-2">
+                <i data-lucide="list-ordered" class="w-4 h-4 text-blue-600"></i>
+                <span>ลำดับก่อน-หลังในการปิดหนี้ตามแผน</span>
+              </h4>
+              <button onclick="printDebtPlan()" class="text-xs text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1">
+                <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                <span>พิมพ์ / บันทึกเป็น PDF</span>
+              </button>
+            </div>
+            
+            <div id="plan-priority-order" class="space-y-2">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= SECTION 4: DEBT SOLUTIONS DIRECTORY ================= -->
+  <section id="solutions-section" class="py-16 bg-slate-50 border-t border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-10">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-semibold mb-3">
+          <i data-lucide="compass" class="w-3.5 h-3.5"></i>
+          <span>เข็มทิศทางออกตามสถานการณ์</span>
+        </div>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900">ทางออกแก้หนี้ตามกฎหมายและมาตรการรัฐ</h2>
+        <p class="text-slate-600 text-sm md:text-base mt-2">
+          เลือกสถานะที่ตรงกับคุณ เพื่อดูเครื่องมือช่วยเหลือที่มีประสิทธิภาพสูงสุด
+        </p>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="flex flex-wrap items-center justify-center gap-2 mb-10">
+        <button class="solution-filter-btn px-4 py-2 rounded-xl text-xs md:text-sm font-semibold transition-all bg-blue-600 text-white shadow-sm" data-filter="all">
+          ทั้งหมด
+        </button>
+        <button class="solution-filter-btn px-4 py-2 rounded-xl text-xs md:text-sm font-semibold transition-all bg-white text-slate-700 hover:bg-slate-100 border border-slate-200" data-filter="pre-delinquent">
+          ยังไม่ค้างชำระ (เริ่มตึง)
+        </button>
+        <button class="solution-filter-btn px-4 py-2 rounded-xl text-xs md:text-sm font-semibold transition-all bg-white text-slate-700 hover:bg-slate-100 border border-slate-200" data-filter="npl">
+          ค้างชำระเกิน 90 วัน (NPL)
+        </button>
+        <button class="solution-filter-btn px-4 py-2 rounded-xl text-xs md:text-sm font-semibold transition-all bg-white text-slate-700 hover:bg-slate-100 border border-slate-200" data-filter="court">
+          ถูกฟ้องศาล / บังคับคดี
+        </button>
+        <button class="solution-filter-btn px-4 py-2 rounded-xl text-xs md:text-sm font-semibold transition-all bg-white text-slate-700 hover:bg-slate-100 border border-slate-200" data-filter="informal">
+          หนี้นอกระบบ
+        </button>
+      </div>
+
+      <!-- Solutions Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        <!-- Solution 1: รวมหนี้ (Debt Consolidation) -->
+        <div class="solution-card bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between" data-category="pre-delinquent">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                <i data-lucide="merge" class="w-5 h-5"></i>
+              </span>
+              <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">ยังไม่ค้างชำระ</span>
+            </div>
+            <h3 class="font-bold text-lg text-slate-900 mb-2">1. การรวมหนี้ (Debt Consolidation)</h3>
+            <p class="text-xs text-slate-600 leading-relaxed mb-4">
+              นำหนี้บัตรเครดิตและสินเชื่อส่วนบุคคลที่มีดอกเบี้ยสูง (16-25%) มารวมไว้เป็นก้อนเดียวกับสินเชื่อบ้าน หรือสินเชื่อรวมหนี้ของสถาบันการเงินแห่งเดียว
+            </p>
+            <div class="space-y-1.5 text-xs text-slate-700 border-t border-slate-100 pt-3">
+              <div class="flex items-center gap-1.5 text-emerald-700 font-medium">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>
+                <span>ดอกเบี้ยลดลงเหลือราว 6-8% ต่อปี</span>
+              </div>
+              <div class="flex items-center gap-1.5 text-emerald-700 font-medium">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>
+                <span>จ่ายทางเดียว ค่างวดต่อเดือนลดลงชัดเจน</span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-6 pt-3 border-t border-slate-100 text-xs text-slate-500">
+            เหมาะสำหรับ: ผู้มีประวัติชำระปกติแต่เริ่มหมุนเงินไม่ทัน
+          </div>
+        </div>
+
+        <!-- Solution 2: ปรับโครงสร้างหนี้เชิงรุก (TDR) -->
+        <div class="solution-card bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between" data-category="pre-delinquent">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+                <i data-lucide="sliders-horizontal" class="w-5 h-5"></i>
+              </span>
+              <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">เริ่มตึง / ค้างไม่เกิน 90 วัน</span>
+            </div>
+            <h3 class="font-bold text-lg text-slate-900 mb-2">2. ปรับโครงสร้างหนี้เชิงรุก (TDR)</h3>
+            <p class="text-xs text-slate-600 leading-relaxed mb-4">
+              เจรจากับธนาคารเพื่อทำสัญญาปรับโครงสร้างหนี้ใหม่ โดยเปลี่ยนหนี้หมุนเวียนให้เป็นสินเชื่อระยะยาว (Term Loan) หรือขอยืดงวดผ่อน
+            </p>
+            <div class="space-y-1.5 text-xs text-slate-700 border-t border-slate-100 pt-3">
+              <div class="flex items-center gap-1.5 text-emerald-700 font-medium">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>
+                <span>ขยายเวลาผ่อนได้สูงสุดถึง 5-10 ปี</span>
+              </div>
+              <div class="flex items-center gap-1.5 text-emerald-700 font-medium">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>
+                <span>ขอลดดอกเบี้ยหรือพักชำระเงินต้นชั่วคราว</span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-6 pt-3 border-t border-slate-100 text-xs text-slate-500">
+            ช่องทาง: ติดต่อคอลเซ็นเตอร์ธนาคารเจ้าหนี้โดยตรง
+          </div>
+        </div>
+
+        <!-- Solution 3: คลินิกแก้หนี้ by SAM -->
+        <div class="solution-card bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between" data-category="npl">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                <i data-lucide="building-2" class="w-5 h-5"></i>
+              </span>
+              <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">ค้างเกิน 90 วัน (NPL)</span>
+            </div>
+            <h3 class="font-bold text-lg text-slate-900 mb-2">3. คลินิกแก้หนี้ (Debt Clinic by SAM)</h3>
+            <p class="text-xs text-slate-600 leading-relaxed mb-4">
+              โครงการของแบงก์ชาติร่วมกับ SAM รวมหนี้เสียบัตรเครดิต บัตรกดเงินสด สินเชื่อส่วนบุคคลที่ไม่มีหลักประกันจากหลายธนาคารมาผ่อนที่เดียว
+            </p>
+            <div class="space-y-1.5 text-xs text-slate-700 border-t border-slate-100 pt-3">
+              <div class="flex items-center gap-1.5 text-emerald-700 font-medium">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>
+                <span>อัตราดอกเบี้ยผ่อนปรนเพียง 3 - 5% ต่อปี!</span>
+              </div>
+              <div class="flex items-center gap-1.5 text-emerald-700 font-medium">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>
+                <span>ระยะเวลาผ่อนนานสูงสุด 10 ปี</span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-6 pt-3 border-t border-slate-100 text-xs text-slate-500">
+            ติดต่อ: โทร 1443 หรือเว็บไซต์ debtclinicbysam.com
+          </div>
+        </div>
+
+        <!-- Solution 4: ทางด่วนแก้หนี้ (BOT) -->
+        <div class="solution-card bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between" data-category="npl">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="w-10 h-10 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center font-bold">
+                <i data-lucide="fast-forward" class="w-5 h-5"></i>
+              </span>
+              <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-cyan-50 text-cyan-700 border border-cyan-200">เจรจาไม่สำเร็จ</span>
+            </div>
+            <h3 class="font-bold text-lg text-slate-900 mb-2">4. ทางด่วนแก้หนี้ (ธนาคารแห่งประเทศไทย)</h3>
+            <p class="text-xs text-slate-600 leading-relaxed mb-4">
+              ช่องทางเสริมของ ธปท. สำหรับลูกหนี้ที่ติดต่อเจ้าหนี้แล้วไม่ได้รับการตอบรับ หรือเงื่อนไขที่ได้รับยังผ่อนไม่ไหว แบงก์ชาติจะช่วยประสานส่งเรื่องตรงถึงผู้บริหาร
+            </p>
+            <div class="space-y-1.5 text-xs text-slate-700 border-t border-slate-100 pt-3">
+              <div class="flex items-center gap-1.5 text-emerald-700 font-medium">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>
+                <span>ยื่นเรื่องออนไลน์ได้ 24 ชม.</span>
+              </div>
+              <div class="flex items-center gap-1.5 text-emerald-700 font-medium">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>
+                <span>มีเจ้าหน้าที่ติดตามผลจากสถาบันการเงิน</span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-6 pt-3 border-t border-slate-100 text-xs text-slate-500">
+            ติดต่อ: ศคง. 1213 หรือ bot.or.th/debtfair
+          </div>
+        </div>
+
+        <!-- Solution 5: การไกล่เกลี่ยข้อพิพาทชั้นศาล -->
+        <div class="solution-card bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between" data-category="court">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
+                <i data-lucide="scale" class="w-5 h-5"></i>
+              </span>
+              <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200">มีหมายศาล</span>
+            </div>
+            <h3 class="font-bold text-lg text-slate-900 mb-2">5. ไกล่เกลี่ยข้อพิพาทในชั้นศาล</h3>
+            <p class="text-xs text-slate-600 leading-relaxed mb-4">
+              <strong>"อย่าหนีศาลเด็ดขาด"</strong> เมื่อมีหมายศาล การไปศาลคือโอกาสทองในการคุยต่อหน้าผู้ประนีประนอม ศาลจะตัดเบี้ยปรับและดอกเบี้ยที่ไม่เป็นธรรมออกไปมาก
+            </p>
+            <div class="space-y-1.5 text-xs text-slate-700 border-t border-slate-100 pt-3">
+              <div class="flex items-center gap-1.5 text-emerald-700 font-medium">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>
+                <span>ตกลงแผนผ่อนใหม่ตามกำลังที่จ่ายได้จริง</span>
+              </div>
+              <div class="flex items-center gap-1.5 text-emerald-700 font-medium">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>
+                <span>เงินเดือนไม่ถึง 20,000 บ. กฎหมายห้ามอายัด</span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-6 pt-3 border-t border-slate-100 text-xs text-slate-500">
+            ติดต่อ: ศูนย์ไกล่เกลี่ยข้อพิพาทศาลยุติธรรม หรือ กรมบังคับคดี 1111 ต่อ 79
+          </div>
+        </div>
+
+        <!-- Solution 6: ทางออกหนี้นอกระบบ -->
+        <div class="solution-card bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between" data-category="informal">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+                <i data-lucide="shield-alert" class="w-5 h-5"></i>
+              </span>
+              <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200">หนี้นอกระบบ</span>
+            </div>
+            <h3 class="font-bold text-lg text-slate-900 mb-2">6. แก้ไขปัญหาหนี้นอกระบบ</h3>
+            <p class="text-xs text-slate-600 leading-relaxed mb-4">
+              ตามกฎหมาย ดอกเบี้ยเงินกู้เกิน 15% ต่อปีถือเป็นโมฆะทั้งหมด และการทวงหนี้แบบข่มขู่หรือประจานมีความผิดอาญาจำคุก
+            </p>
+            <div class="space-y-1.5 text-xs text-slate-700 border-t border-slate-100 pt-3">
+              <div class="flex items-center gap-1.5 text-emerald-700 font-medium">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>
+                <span>ร้องเรียนศูนย์ดำรงธรรม 1567 ช่วยเจรจาปรับยอดเงินต้นจริง</span>
+              </div>
+              <div class="flex items-center gap-1.5 text-emerald-700 font-medium">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>
+                <span>ขอสินเชื่อพิโกไฟแนนซ์ (Pico Finance) ดึงกลับเข้าสู่ระบบ</span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-6 pt-3 border-t border-slate-100 text-xs text-slate-500">
+            ร้องเรียน: ศูนย์ดำรงธรรม โทร 1567 หรือ ตำรวจปราบปรามหนี้นอกระบบ 1599
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= SECTION 5: NEGOTIATION SCRIPTS & DO's/DON'Ts ================= -->
+  <section id="scripts-section" class="py-16 bg-white border-t border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-12">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-semibold mb-3">
+          <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+          <span>เทคนิคการเจรจากับเจ้าหนี้</span>
+        </div>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900">คัมภีร์บทพูดคุยกับธนาคาร & ข้อควรระวัง</h2>
+        <p class="text-slate-600 text-sm md:text-base mt-2">
+          ก๊อปปี้บทพูดตัวอย่างด้านล่างไปใช้พูดคุยกับเจ้าหน้าที่สถาบันการเงิน เพื่อให้การเจรจาราบรื่นและได้เงื่อนไขที่ดีที่สุด
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start mb-12">
+        
+        <!-- Script 1 -->
+        <div class="bg-slate-50 p-6 md:p-7 rounded-2xl border border-slate-200 relative group">
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-xs font-bold text-blue-700 bg-blue-100 px-3 py-1 rounded-lg">
+              สคริปต์ที่ 1: โทรขอลดค่างวด / ปรับโครงสร้างหนี้ล่วงหน้า
+            </span>
+            <button onclick="copyScript('script-1-text', this)" class="text-xs font-semibold text-slate-600 hover:text-blue-600 flex items-center gap-1 bg-white px-3 py-1.5 rounded-lg border border-slate-200 transition-colors">
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+              <span>คัดลอกข้อความ</span>
+            </button>
+          </div>
+
+          <div id="script-1-text" class="text-sm text-slate-700 leading-relaxed space-y-3 font-normal bg-white p-5 rounded-xl border border-slate-200/80">
+            <p>"สวัสดีครับ/ค่ะ ติดต่อขอปรึกษาเรื่องการปรับโครงสร้างหนี้หรือขอมาตรการช่วยเหลือครับ/ค่ะ พอดีช่วงนี้ผม/ดิฉันมีภาระค่าใช้จ่ายครอบครัวเพิ่มขึ้น ทำให้ค่างวดเดิมเริ่มตึงมือ เกรงว่าจะส่งผลกระทบต่อประวัติการชำระ"</p>
+            <p>"ตอนนี้ยังไม่เคยค้างชำระ แต่ประเมินแล้วว่างวดต่อไปอาจจะผ่อนยอดเดิมไม่ไหว จึงอยากติดต่อเข้ามาล่วงหน้าเพื่อแสดงความตั้งใจว่าต้องการชำระหนี้ต่อเนื่อง ทางธนาคารมีโครงการปรับลดค่างวด, ขยายระยะเวลาผ่อน, หรือเปลี่ยนเป็นสินเชื่อผ่อนระยะยาวดอกเบี้ยต่ำบ้างไหมครับ/ค่ะ? ยอดที่ผม/ดิฉันผ่อนไหวต่อเดือนอยู่ที่ประมาณ [ระบุจำนวนเงิน] บาทครับ/ค่ะ"</p>
+          </div>
+
+          <p class="text-xs text-slate-500 mt-3">
+            💡 <strong>คำแนะนำ:</strong> โทรติดต่อก่อนถึงวันครบกำหนดชำระ การติดต่อเชิงรุกแสดงถึงความรับผิดชอบ ธนาคารยินดีช่วยมากกว่า
+          </p>
+        </div>
+
+        <!-- Script 2 -->
+        <div class="bg-slate-50 p-6 md:p-7 rounded-2xl border border-slate-200 relative group">
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-3 py-1 rounded-lg">
+              สคริปต์ที่ 2: ขอปิดจบหนี้ก้อนเดียว (Hair-cut) สำหรับหนี้เสีย
+            </span>
+            <button onclick="copyScript('script-2-text', this)" class="text-xs font-semibold text-slate-600 hover:text-emerald-600 flex items-center gap-1 bg-white px-3 py-1.5 rounded-lg border border-slate-200 transition-colors">
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+              <span>คัดลอกข้อความ</span>
+            </button>
+          </div>
+
+          <div id="script-2-text" class="text-sm text-slate-700 leading-relaxed space-y-3 font-normal bg-white p-5 rounded-xl border border-slate-200/80">
+            <p>"สวัสดีครับ/ค่ะ โทรมาประสานงานเรื่องบัญชีสินเชื่อ [ชื่อบัญชี/เลขบัตร] ครับ/ค่ะ ตอนนี้ผม/ดิฉันได้พยายามหยิบยืมเงินจากญาติหรือมีเงินก้อนจำกัดอยู่ส่วนหนึ่งจำนวน [ระบุยอด เช่น 30,000 บาท จากยอดหนี้ 60,000 บาท]"</p>
+            <p>"มีความตั้งใจอยากจะปิดบัญชีหนี้ก้อนนี้ให้จบในงวดเดียว ทางสถาบันการเงินสามารถทำเรื่องส่วนลดปิดยอด (Hair-cut) และออกหนังสือยืนยันการปลดภาระหนี้ให้ได้หรือไม่ครับ/ค่ะ? หากอนุมัติยอดนี้ ผม/ดิฉันพร้อมโอนชำระปิดบัญชีทันทีภายในสัปดาห์นี้ครับ/ค่ะ"</p>
+          </div>
+
+          <p class="text-xs text-slate-500 mt-3">
+            ⚠️ <strong>ข้อควรระวัง:</strong> อย่าโอนเงินเด็ดขาดจนกว่าจะได้ "หนังสือยืนยันยอดปิดบัญชี (Hair-cut Notice)" อย่างเป็นทางการ
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Do's and Don'ts / Debt Collection Laws -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Do's & Don'ts -->
+        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200">
+          <h4 class="font-bold text-slate-900 text-base mb-4 flex items-center gap-2">
+            <i data-lucide="check-square" class="w-5 h-5 text-emerald-600"></i>
+            <span>สิ่งที่ควรทำ vs ห้ามพูดเด็ดขาด</span>
+          </h4>
+          <div class="space-y-3 text-xs leading-relaxed">
+            <div class="flex items-start gap-2">
+              <span class="text-emerald-600 font-bold">✅ ควร:</span>
+              <span class="text-slate-700">พูดด้วยความสุภาพ จริงใจ บอกตัวเลขยอดที่ผ่อนไหวจริง ไม่สัญญายอดที่ทำไม่ได้</span>
+            </div>
+            <div class="flex items-start gap-2">
+              <span class="text-emerald-600 font-bold">✅ ควร:</span>
+              <span class="text-slate-700">จดชื่อ-นามสกุล และตำแหน่งของเจ้าหน้าที่ที่สนทนาด้วยทุกครั้ง</span>
+            </div>
+            <div class="flex items-start gap-2">
+              <span class="text-rose-600 font-bold">❌ ห้าม:</span>
+              <span class="text-slate-700">ห้ามพูดว่า "ไม่มี ไม่หนี ไม่จ่าย" เพราะจะทำให้สถาบันการเงินส่งเรื่องฟ้องศาลเร็วขึ้น</span>
+            </div>
+            <div class="flex items-start gap-2">
+              <span class="text-rose-600 font-bold">❌ ห้าม:</span>
+              <span class="text-slate-700">ห้ามรับปากส่งเดชเพื่อตัดความรำคาญ เพราะการผิดสัญญาซ้ำซากจะเสียเครดิตการเจรจา</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Debt Collection Rights (พ.ร.บ. ทวงถามหนี้) -->
+        <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200">
+          <h4 class="font-bold text-slate-900 text-base mb-4 flex items-center gap-2">
+            <i data-lucide="shield" class="w-5 h-5 text-blue-600"></i>
+            <span>สิทธิลูกหนี้ตาม พ.ร.บ. การทวงถามหนี้</span>
+          </h4>
+          <div class="space-y-3 text-xs leading-relaxed text-slate-700">
+            <div class="flex items-start gap-2">
+              <i data-lucide="clock" class="w-4 h-4 text-blue-600 shrink-0 mt-0.5"></i>
+              <span><strong>เวลาที่ทวงหนี้ได้:</strong> จันทร์-ศุกร์ 08.00 - 20.00 น. / วันหยุดราชการ 08.00 - 18.00 น.</span>
+            </div>
+            <div class="flex items-start gap-2">
+              <i data-lucide="phone-off" class="w-4 h-4 text-blue-600 shrink-0 mt-0.5"></i>
+              <span><strong>ความถี่ในการทวง:</strong> ทวงถามได้ <u>ไม่เกินวันละ 1 ครั้ง</u> ต่อลูกหนี้ 1 ราย</span>
+            </div>
+            <div class="flex items-start gap-2">
+              <i data-lucide="user-x" class="w-4 h-4 text-blue-600 shrink-0 mt-0.5"></i>
+              <span><strong>ห้ามประจาน:</strong> ห้ามทวงกับบุคคลอื่น (พ่อแม่ ญาติ เพื่อน ที่ทำงาน) ที่ไม่ได้ค้ำประกัน และห้ามเปิดเผยเรื่องหนี้ให้คนอื่นรู้</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= SECTION 6: OFFICIAL HOTLINES ================= -->
+  <section id="hotlines-section" class="py-16 bg-slate-900 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-12">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-semibold mb-3 border border-blue-500/30">
+          <i data-lucide="phone-call" class="w-3.5 h-3.5"></i>
+          <span>ศูนย์ช่วยเหลือประชาชน</span>
+        </div>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-white">สายด่วนทางการ โทรฟรี & มีคนรับฟัง</h2>
+        <p class="text-slate-400 text-sm md:text-base mt-2">
+          หากรู้สึกตันหรือถูกคุกคาม หน่วยงานภาครัฐเหล่านี้พร้อมให้คำปรึกษาและช่วยเหลือคุณตามกฎหมาย
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        <!-- Hotline 1 -->
+        <div class="p-6 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-blue-500 transition-all flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-semibold text-blue-400">ธนาคารแห่งประเทศไทย (ธปท.)</span>
+              <span class="text-xs bg-blue-900/60 text-blue-300 px-2 py-0.5 rounded">ศคง.</span>
+            </div>
+            <div class="text-3xl font-extrabold text-white mb-2">1213</div>
+            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+              ศูนย์คุ้มครองผู้ใช้บริการทางการเงิน รับเรื่องร้องเรียนปัญหาหนี้ในระบบ และประสานงาน "ทางด่วนแก้หนี้"
+            </p>
+          </div>
+          <a href="tel:1213" class="inline-flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-colors">
+            <i data-lucide="phone" class="w-3.5 h-3.5"></i>
+            <span>กดโทร 1213</span>
+          </a>
+        </div>
+
+        <!-- Hotline 2 -->
+        <div class="p-6 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-emerald-500 transition-all flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-semibold text-emerald-400">คลินิกแก้หนี้ (SAM)</span>
+              <span class="text-xs bg-emerald-900/60 text-emerald-300 px-2 py-0.5 rounded">หนี้เสีย NPL</span>
+            </div>
+            <div class="text-3xl font-extrabold text-white mb-2">1443</div>
+            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+              แก้ไขหนี้เสียบัตรเครดิต บัตรกดเงินสด สินเชื่อส่วนบุคคล ปรับดอกเบี้ยเหลือ 3-5% ผ่อนนานสุด 10 ปี
+            </p>
+          </div>
+          <a href="tel:1443" class="inline-flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-colors">
+            <i data-lucide="phone" class="w-3.5 h-3.5"></i>
+            <span>กดโทร 1443</span>
+          </a>
+        </div>
+
+        <!-- Hotline 3 -->
+        <div class="p-6 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-amber-500 transition-all flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-semibold text-amber-400">ศูนย์ดำรงธรรม กระทรวงมหาดไทย</span>
+              <span class="text-xs bg-amber-900/60 text-amber-300 px-2 py-0.5 rounded">หนี้นอกระบบ</span>
+            </div>
+            <div class="text-3xl font-extrabold text-white mb-2">1567</div>
+            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+              ร้องเรียนหนี้นอกระบบ ถูกข่มขู่คุกคาม ทวงหนี้โหด เจ้าหน้าที่ฝ่ายปกครองช่วยไกล่เกลี่ยเงินต้นจริง
+            </p>
+          </div>
+          <a href="tel:1567" class="inline-flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold transition-colors">
+            <i data-lucide="phone" class="w-3.5 h-3.5"></i>
+            <span>กดโทร 1567</span>
+          </a>
+        </div>
+
+        <!-- Hotline 4 -->
+        <div class="p-6 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-purple-500 transition-all flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-semibold text-purple-400">กรมบังคับคดี กระทรวงยุติธรรม</span>
+              <span class="text-xs bg-purple-900/60 text-purple-300 px-2 py-0.5 rounded">อายัดทรัพย์/เงินเดือน</span>
+            </div>
+            <div class="text-3xl font-extrabold text-white mb-2">1111 <span class="text-lg font-normal text-slate-400">ต่อ 79</span></div>
+            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+              ปรึกษาเรื่องการไกล่เกลี่ยข้อพิพาทชั้นบังคับคดี ตรวจสอบสิทธิการอายัดเงินเดือนและทรัพย์สิน
+            </p>
+          </div>
+          <a href="tel:1111" class="inline-flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold transition-colors">
+            <i data-lucide="phone" class="w-3.5 h-3.5"></i>
+            <span>กดโทร 1111</span>
+          </a>
+        </div>
+
+        <!-- Hotline 5 -->
+        <div class="p-6 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-rose-500 transition-all flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-semibold text-rose-400">สำนักงานตำรวจแห่งชาติ</span>
+              <span class="text-xs bg-rose-900/60 text-rose-300 px-2 py-0.5 rounded">ทวงหนี้ผิดกฎหมาย</span>
+            </div>
+            <div class="text-3xl font-extrabold text-white mb-2">1599</div>
+            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+              ศูนย์ปราบปรามหนี้นอกระบบ แจ้งเหตุถูกทำร้ายร่างกาย ทำลายทรัพย์สิน หรือแอปพลิเคชันเงินกู้เถื่อน
+            </p>
+          </div>
+          <a href="tel:1599" class="inline-flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold transition-colors">
+            <i data-lucide="phone" class="w-3.5 h-3.5"></i>
+            <span>กดโทร 1599</span>
+          </a>
+        </div>
+
+        <!-- Hotline 6 -->
+        <div class="p-6 rounded-2xl bg-slate-800/80 border border-slate-700/80 hover:border-cyan-500 transition-all flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-semibold text-cyan-400">สายด่วนสุขภาพจิต</span>
+              <span class="text-xs bg-cyan-900/60 text-cyan-300 px-2 py-0.5 rounded">เยียวยาจิตใจ</span>
+            </div>
+            <div class="text-3xl font-extrabold text-white mb-2">1323</div>
+            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+              หากเครียด คิดไม่ตก นอนไม่หลับ มีนักจิตวิทยาผู้เชี่ยวชาญรับฟังและให้คำปรึกษาตลอด 24 ชั่วโมง
+            </p>
+          </div>
+          <a href="tel:1323" class="inline-flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-semibold transition-colors">
+            <i data-lucide="phone" class="w-3.5 h-3.5"></i>
+            <span>กดโทร 1323</span>
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= SECTION 7: FAQ ================= -->
+  <section class="py-16 bg-slate-50 border-t border-slate-200">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center mb-10">
+        <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900">คำถามที่พบบ่อย (FAQ)</h2>
+        <p class="text-slate-600 text-sm mt-1">คลายข้อสงสัยทางกฎหมายและการเงินที่คุณควรรู้</p>
+      </div>
+
+      <div class="space-y-4">
+        
+        <details class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm group">
+          <summary class="font-bold text-slate-900 cursor-pointer list-none flex justify-between items-center text-sm md:text-base">
+            <span>1. เป็นหนี้บัตรเครดิตแล้วไม่มีเงินจ่าย จะติดคุกไหม?</span>
+            <i data-lucide="chevron-down" class="accordion-chevron w-5 h-5 text-slate-400 transition-transform"></i>
+          </summary>
+          <div class="mt-3 text-xs md:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
+            <strong>ไม่ติดคุกครับ!</strong> หนี้บัตรเครดิต สินเชื่อส่วนบุคคล และหนี้กู้ยืมทั่วไปเป็น "คดีแพ่ง" รัฐธรรมนูญและกฎหมายไทยห้ามลงโทษจำคุกในคดีแพ่งเด็ดขาด โทษสูงสุดคือการฟ้องร้องบังคับคดีเพื่อยึดทรัพย์สินหรืออายัดเงินเดือนตามที่กฎหมายกำหนดเท่านั้น (ยกเว้นกรณีสั่งจ่ายเช็คเด้งโดยมีเจตนาฉ้อโกง ซึ่งเป็นคดีอาญา)
+          </div>
+        </details>
+
+        <details class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm group">
+          <summary class="font-bold text-slate-900 cursor-pointer list-none flex justify-between items-center text-sm md:text-base">
+            <span>2. กฎหมายอายัดเงินเดือน มีเกณฑ์อย่างไรบ้าง? เงินเดือนเท่าไหร่ถึงรอด?</span>
+            <i data-lucide="chevron-down" class="accordion-chevron w-5 h-5 text-slate-400 transition-transform"></i>
+          </summary>
+          <div class="mt-3 text-xs md:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
+            กฎหมายคุ้มครองให้ลูกหนี้มีเงินเพียงพอต่อการดำรงชีพ โดยมีเกณฑ์สำคัญดังนี้:
+            <ul class="list-disc pl-5 mt-2 space-y-1">
+              <li><strong>หากเงินเดือนไม่เกิน 20,000 บาท:</strong> เจ้าหนี้ "ไม่สามารถอายัดเงินเดือนได้เลยแม้แต่บาทเดียว"</li>
+              <li><strong>หากเงินเดือนเกิน 20,000 บาท:</strong> เจ้าหนี้อายัดได้ไม่เกิน 30% ของส่วนที่เกิน และต้องเหลือเงินเดือนให้ลูกหนี้ใช้อย่างน้อย 20,000 บาท</li>
+              <li>เงินบำเหน็จ/บำนาญข้าราชการ กฎหมายห้ามอายัดเด็ดขาด</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm group">
+          <summary class="font-bold text-slate-900 cursor-pointer list-none flex justify-between items-center text-sm md:text-base">
+            <span>3. ปิดหนี้เสียครบแล้ว อีกกี่ปีประวัติในเครดิตบูโร (NCB) ถึงจะหาย?</span>
+            <i data-lucide="chevron-down" class="accordion-chevron w-5 h-5 text-slate-400 transition-transform"></i>
+          </summary>
+          <div class="mt-3 text-xs md:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
+            ตาม พ.ร.บ. การประกอบธุรกิจข้อมูลเครดิต เครดิตบูโรจะเก็บข้อมูลย้อนหลังไม่เกิน <strong>36 เดือน (3 ปี)</strong> เมื่อคุณชำระหนี้เสร็จสิ้น สถานะจะถูกเปลี่ยนเป็น "สถานะ 11: ปิดบัญชี" และหลังจากครบ 3 ปี ข้อมูลหนี้รายการนั้นจะถูกลบออกจากระบบอย่างสมบูรณ์
+          </div>
+        </details>
+
+        <details class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm group">
+          <summary class="font-bold text-slate-900 cursor-pointer list-none flex justify-between items-center text-sm md:text-base">
+            <span>4. ได้รับหมายศาล ทำไมถึงห้ามหนีศาล?</span>
+            <i data-lucide="chevron-down" class="accordion-chevron w-5 h-5 text-slate-400 transition-transform"></i>
+          </summary>
+          <div class="mt-3 text-xs md:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
+            เพราะหากคุณไม่ไปศาล ศาลจะพิพากษาคดีฝ่ายเดียวตามคำขอท้ายฟ้องของเจ้าหนี้ ซึ่งเจ้าหนี้มักคิดดอกเบี้ยและค่าปรับมาเต็มเพดาน แต่ถ้าคุณไปศาล:
+            <ul class="list-disc pl-5 mt-2 space-y-1">
+              <li>ศาลจะมีศูนย์ไกล่เกลี่ยข้อพิพาทช่วยเจรจาตัดดอกเบี้ยแพงๆ ออก</li>
+              <li>สามารถตกลงผ่อนชำระแบบขั้นบันไดหรือยอดที่จ่ายไหวจริง</li>
+              <li>คดียังไม่ถึงขั้นบังคับคดีอายัดทรัพย์สิน</li>
+            </ul>
+          </div>
+        </details>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="bg-white border-t border-slate-200 py-12 text-slate-500 text-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6 pb-8 border-b border-slate-100">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">
+            <i data-lucide="shield-check" class="w-5 h-5"></i>
+          </div>
+          <span class="font-bold text-base text-slate-900">ปลดหนี้ มีทางออก</span>
+        </div>
+        <p class="text-center md:text-right text-slate-400 max-w-md">
+          เครื่องมือเพื่อสาธารณประโยชน์ ช่วยให้ทุกคนเข้าถึงความรู้และเครื่องมือวางแผนการเงินได้อย่างเท่าเทียม
+        </p>
+      </div>
+
+      <div class="pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left text-slate-400">
+        <div>
+          © 2026 ปลดหนี้ มีทางออก (Debt Resolution Thailand). All rights reserved.
+        </div>
+        <div class="flex items-center gap-4 text-slate-500">
+          <span>🔒 คำนวณภายในอุปกรณ์ของคุณ ข้อมูลไม่ถูกจัดเก็บในเซิร์ฟเวอร์</span>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- App Script -->
+  <script src="js/app.js"></script>
+
+</body>
+</html>

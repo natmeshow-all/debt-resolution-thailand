@@ -1,0 +1,19 @@
+{
+  "name": "debt-resolution-thailand",
+  "version": "1.0.0",
+  "description": "เว็บไซต์คู่มือและเครื่องมือดิจิทัลสำหรับการวางแผนแก้ไขปัญหาหนี้สินอย่างเป็นระบบและเข้าใจง่าย",
+  "scripts": {
+    "start": "npx serve -l 3000 .",
+    "dev": "npx serve -l 3000 ."
+  },
+  "keywords": [
+    "debt",
+    "finance",
+    "debt-resolution",
+    "thai-finance",
+    "แก้หนี้",
+    "ปลดหนี้"
+  ],
+  "author": "Antigravity Pair Programmer",
+  "license": "MIT"
+}
