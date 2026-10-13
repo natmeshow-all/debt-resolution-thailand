@@ -2,6 +2,11 @@
 
 เว็บไซต์และเครื่องมือดิจิทัลสำหรับการวางแผนแก้ไขปัญหาหนี้สินอย่างเป็นระบบ เข้าใจง่าย ทันสมัย และเป็นส่วนตัว 100%
 
+### 🌐 ลิงก์เข้าใช้งานออนไลน์ (Live Demos)
+- **Vercel:** [https://temporary-turbo-mandolin-h7cqm3g.vercel.app](https://temporary-turbo-mandolin-h7cqm3g.vercel.app)
+- **GitHub Pages:** [https://natmeshow-all.github.io/debt-resolution-thailand/](https://natmeshow-all.github.io/debt-resolution-thailand/)
+- **GitHub Repository:** [https://github.com/natmeshow-all/debt-resolution-thailand](https://github.com/natmeshow-all/debt-resolution-thailand)
+
 ---
 
 ## 🌟 ฟีเจอร์หลัก (Key Features)
