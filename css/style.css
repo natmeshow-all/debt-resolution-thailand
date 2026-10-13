@@ -161,48 +161,70 @@ details[open] summary .accordion-chevron {
 }
 
 /* ==========================================
-   UNIVERSAL DARK MODE OVERRIDES & POLISH
+   EYE-SOOTHING DARK THEME ENGINE
+   (Calibrated for long sessions, zero eye strain)
    ========================================== */
-html.dark input, 
-html.dark select, 
-html.dark textarea {
-  background-color: #1e293b !important;
-  color: #f8fafc !important;
-  border-color: #475569 !important;
+html.dark {
+  color-scheme: dark;
 }
 
-html.dark input::placeholder,
-html.dark textarea::placeholder {
-  color: #94a3b8 !important;
+html.dark body {
+  color: #cbd5e1;
+  background-color: #0b0f19;
 }
 
+/* Glass & Navigation */
+html.dark .glass-nav {
+  background: rgba(11, 15, 25, 0.88) !important;
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+html.dark .glass-card {
+  background: rgba(19, 27, 46, 0.9) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Backgrounds & Surfaces */
 html.dark .bg-white {
-  background-color: #1e293b !important;
-  color: #f8fafc !important;
+  background-color: #131b2e !important;
+  color: #cbd5e1 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.35) !important;
 }
 
 html.dark .bg-slate-50,
 html.dark .bg-slate-50\/50,
-html.dark .bg-slate-50\/70 {
-  background-color: #0f172a !important;
+html.dark .bg-slate-50\/70,
+html.dark .bg-slate-100 {
+  background-color: #162035 !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
 }
 
-html.dark .border-slate-200,
-html.dark .border-slate-300,
-html.dark .border-slate-200\/80 {
-  border-color: #334155 !important;
+html.dark .bg-slate-900 {
+  background-color: #0f1626 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
 }
 
-html.dark .border-slate-100 {
-  border-color: #1e293b !important;
+/* Gradient Sections */
+html.dark .from-blue-50\/70,
+html.dark .via-slate-50,
+html.dark .from-white,
+html.dark .via-blue-50\/30,
+html.dark .to-white,
+html.dark .bg-gradient-to-b {
+  --tw-gradient-from: #0b0f19 !important;
+  --tw-gradient-via: #0e1628 !important;
+  --tw-gradient-to: #0b0f19 !important;
 }
 
+/* Typography Colors (Anti-Glare / Comfortable Reading) */
 html.dark .text-slate-900 {
-  color: #ffffff !important;
+  color: #f8fafc !important;
 }
 
 html.dark .text-slate-800 {
-  color: #f1f5f9 !important;
+  color: #e2e8f0 !important;
 }
 
 html.dark .text-slate-700 {
@@ -214,26 +236,190 @@ html.dark .text-slate-600 {
 }
 
 html.dark .text-slate-500 {
-  color: #94a3b8 !important;
+  color: #64748b !important;
 }
 
+html.dark .text-slate-400 {
+  color: #64748b !important;
+}
+
+/* Borders */
+html.dark .border-slate-200,
+html.dark .border-slate-300,
+html.dark .border-slate-200\/80,
+html.dark .border-slate-200\/60 {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+html.dark .border-slate-100 {
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Input & Form Controls */
+html.dark input, 
+html.dark select, 
+html.dark textarea {
+  background-color: #162035 !important;
+  color: #f1f5f9 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+html.dark input:focus, 
+html.dark select:focus, 
+html.dark textarea:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25) !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #64748b !important;
+}
+
+/* Eye-Friendly Translucent Badges & Highlights */
+html.dark .bg-blue-50,
+html.dark .bg-blue-100,
+html.dark .bg-blue-50\/50,
+html.dark .bg-blue-50\/70,
+html.dark .bg-blue-100\/80 {
+  background-color: rgba(59, 130, 246, 0.14) !important;
+  color: #93c5fd !important;
+  border-color: rgba(59, 130, 246, 0.28) !important;
+}
+html.dark .text-blue-800,
+html.dark .text-blue-700,
+html.dark .text-blue-900,
+html.dark .text-blue-600 {
+  color: #93c5fd !important;
+}
+
+html.dark .bg-emerald-50,
+html.dark .bg-emerald-100,
+html.dark .bg-emerald-50\/50,
+html.dark .bg-emerald-50\/70 {
+  background-color: rgba(16, 185, 129, 0.14) !important;
+  color: #6ee7b7 !important;
+  border-color: rgba(16, 185, 129, 0.28) !important;
+}
+html.dark .text-emerald-800,
+html.dark .text-emerald-700,
+html.dark .text-emerald-900,
+html.dark .text-emerald-600 {
+  color: #6ee7b7 !important;
+}
+
+html.dark .bg-amber-50,
+html.dark .bg-amber-100,
+html.dark .bg-amber-50\/50 {
+  background-color: rgba(245, 158, 11, 0.14) !important;
+  color: #fde68a !important;
+  border-color: rgba(245, 158, 11, 0.28) !important;
+}
+html.dark .text-amber-800,
+html.dark .text-amber-700,
+html.dark .text-amber-900,
+html.dark .text-amber-600 {
+  color: #fde68a !important;
+}
+
+html.dark .bg-orange-50,
+html.dark .bg-orange-100,
+html.dark .bg-orange-50\/50 {
+  background-color: rgba(249, 115, 22, 0.14) !important;
+  color: #fdba74 !important;
+  border-color: rgba(249, 115, 22, 0.28) !important;
+}
+html.dark .text-orange-800,
+html.dark .text-orange-700,
+html.dark .text-orange-900,
+html.dark .text-orange-600 {
+  color: #fdba74 !important;
+}
+
+html.dark .bg-red-50,
+html.dark .bg-red-100,
+html.dark .bg-red-50\/50 {
+  background-color: rgba(239, 68, 68, 0.14) !important;
+  color: #fca5a5 !important;
+  border-color: rgba(239, 68, 68, 0.28) !important;
+}
+html.dark .text-red-800,
+html.dark .text-red-700,
+html.dark .text-red-900,
+html.dark .text-red-600 {
+  color: #fca5a5 !important;
+}
+
+html.dark .bg-purple-50,
+html.dark .bg-purple-100,
+html.dark .bg-purple-50\/50 {
+  background-color: rgba(168, 85, 247, 0.14) !important;
+  color: #d8b4fe !important;
+  border-color: rgba(168, 85, 247, 0.28) !important;
+}
+html.dark .text-purple-800,
+html.dark .text-purple-700,
+html.dark .text-purple-900,
+html.dark .text-purple-600 {
+  color: #d8b4fe !important;
+}
+
+html.dark .bg-cyan-50,
+html.dark .bg-cyan-100 {
+  background-color: rgba(6, 182, 212, 0.14) !important;
+  color: #67e8f9 !important;
+  border-color: rgba(6, 182, 212, 0.28) !important;
+}
+html.dark .text-cyan-800,
+html.dark .text-cyan-700,
+html.dark .text-cyan-900,
+html.dark .text-cyan-600 {
+  color: #67e8f9 !important;
+}
+
+html.dark .bg-rose-50,
+html.dark .bg-rose-100 {
+  background-color: rgba(244, 63, 94, 0.14) !important;
+  color: #fda4af !important;
+  border-color: rgba(244, 63, 94, 0.28) !important;
+}
+html.dark .text-rose-800,
+html.dark .text-rose-700,
+html.dark .text-rose-900,
+html.dark .text-rose-600 {
+  color: #fda4af !important;
+}
+
+/* Tabs & Details */
 html.dark .tab-btn:not(.active) {
-  background-color: #1e293b !important;
+  background-color: #162035 !important;
   color: #94a3b8 !important;
 }
 
 html.dark details[open] {
-  background-color: #1e293b !important;
+  background-color: #131b2e !important;
 }
 
 html.dark #auth-modal > div {
-  background-color: #1e293b !important;
-  border-color: #334155 !important;
+  background-color: #131b2e !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 html.dark footer {
-  background-color: #0b1120 !important;
-  border-color: #1e293b !important;
+  background-color: #080c14 !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* Scrollbars in Dark Mode */
+html.dark ::-webkit-scrollbar-track {
+  background: #0b0f19;
+}
+html.dark ::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #334155;
 }
 
 /* Print Styles */
