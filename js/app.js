@@ -868,13 +868,65 @@ function initAuthSystem() {
       lucide.createIcons();
     });
   }
+
+  // Custom Google Account Form Handler
+  const customGoogleForm = document.getElementById('custom-google-form');
+  if (customGoogleForm) {
+    customGoogleForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('custom-google-email').value.trim();
+      if (!email) return;
+      const name = email.split('@')[0];
+      selectGoogleAccount(name, email, name.charAt(0).toUpperCase());
+    });
+  }
 }
+
+// ==========================================
+// 7.1 GOOGLE SIGN-IN HANDLERS
+// ==========================================
+window.handleGoogleSignIn = function() {
+  closeAuthModal();
+  const googleModal = document.getElementById('google-picker-modal');
+  if (googleModal) {
+    googleModal.classList.remove('hidden');
+    lucide.createIcons();
+  }
+};
+
+window.closeGoogleModal = function() {
+  const googleModal = document.getElementById('google-picker-modal');
+  if (googleModal) {
+    googleModal.classList.add('hidden');
+  }
+};
+
+window.selectGoogleAccount = function(name, email, initial) {
+  const activeTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+  
+  currentUser = {
+    name: name,
+    email: email,
+    avatar: initial || name.charAt(0).toUpperCase(),
+    provider: 'google',
+    tier: 'free',
+    theme: activeTheme,
+    joinedAt: new Date().toLocaleDateString('th-TH')
+  };
+
+  localStorage.setItem('debt_user_session', JSON.stringify(currentUser));
+  updateAuthUI();
+  closeGoogleModal();
+  triggerCelebration();
+  alert(`✨ เข้าสู่ระบบด้วย Google สำเร็จใน 1 คลิก!\nยินดีต้อนรับคุณ ${name} (${email})`);
+};
 
 function updateAuthUI() {
   const authBtnGroup = document.getElementById('auth-btn-group');
   const userProfileBadge = document.getElementById('user-profile-badge');
   const userNameEl = document.getElementById('user-display-name');
   const userTierEl = document.getElementById('user-tier-badge');
+  const userAvatarEl = document.getElementById('user-avatar-circle');
 
   if (!authBtnGroup || !userProfileBadge) return;
 
@@ -883,15 +935,28 @@ function updateAuthUI() {
     userProfileBadge.classList.remove('hidden');
     userProfileBadge.classList.add('flex');
     if (userNameEl) userNameEl.textContent = currentUser.name;
+    
+    // Avatar display
+    if (userAvatarEl) {
+      if (currentUser.provider === 'google') {
+        userAvatarEl.innerHTML = `<span class="text-[11px] font-extrabold">${escapeHtml(currentUser.avatar || 'G')}</span>`;
+        userAvatarEl.className = 'w-6 h-6 rounded-full bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 text-white text-xs font-bold flex items-center justify-center shadow-sm';
+      } else {
+        userAvatarEl.innerHTML = `<i data-lucide="user" class="w-3.5 h-3.5"></i>`;
+        userAvatarEl.className = 'w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center';
+      }
+    }
+
     if (userTierEl) {
       if (currentUser.tier === 'pro') {
         userTierEl.textContent = 'PRO MEMBER';
         userTierEl.className = 'text-[10px] font-bold px-1.5 py-0.5 rounded badge-pro';
       } else {
-        userTierEl.textContent = 'FREE TIER';
-        userTierEl.className = 'text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600';
+        userTierEl.textContent = currentUser.provider === 'google' ? 'GOOGLE FREE' : 'FREE TIER';
+        userTierEl.className = 'text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300';
       }
     }
+    lucide.createIcons();
   } else {
     authBtnGroup.classList.remove('hidden');
     userProfileBadge.classList.add('hidden');
