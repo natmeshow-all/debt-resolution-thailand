@@ -64,21 +64,50 @@
         </a>
 
         <!-- Desktop Navigation -->
-        <nav class="hidden lg:flex items-center gap-1 text-sm font-medium text-slate-600">
-          <a href="#emergency-section" class="px-3 py-2 rounded-lg hover:text-blue-600 hover:bg-blue-50 transition-colors">ปฐมพยาบาลด่วน</a>
-          <a href="#health-check-section" class="px-3 py-2 rounded-lg hover:text-blue-600 hover:bg-blue-50 transition-colors">ตรวจสุขภาพหนี้</a>
-          <a href="#planner-section" class="px-3 py-2 rounded-lg hover:text-blue-600 hover:bg-blue-50 transition-colors">เครื่องมือวางแผนปลดหนี้</a>
-          <a href="#solutions-section" class="px-3 py-2 rounded-lg hover:text-blue-600 hover:bg-blue-50 transition-colors">เข็มทิศทางออก</a>
-          <a href="#scripts-section" class="px-3 py-2 rounded-lg hover:text-blue-600 hover:bg-blue-50 transition-colors">บทพูดเจรจา</a>
-          <a href="#hotlines-section" class="px-3 py-2 rounded-lg hover:text-blue-600 hover:bg-blue-50 transition-colors">สายด่วนช่วยเหลือ</a>
+        <nav class="hidden xl:flex items-center gap-1 text-sm font-medium text-slate-600">
+          <a href="#stage-diagnostic-section" class="px-2.5 py-1.5 rounded-lg hover:text-blue-600 hover:bg-blue-50 transition-colors font-semibold text-blue-700">🧭 วินิจฉัยขั้นของหนี้</a>
+          <a href="#emergency-section" class="px-2.5 py-1.5 rounded-lg hover:text-blue-600 hover:bg-blue-50 transition-colors">ปฐมพยาบาลด่วน</a>
+          <a href="#health-check-section" class="px-2.5 py-1.5 rounded-lg hover:text-blue-600 hover:bg-blue-50 transition-colors">ตรวจ DTI</a>
+          <a href="#planner-section" class="px-2.5 py-1.5 rounded-lg hover:text-blue-600 hover:bg-blue-50 transition-colors">จำลองปลดหนี้</a>
+          <a href="#solutions-section" class="px-2.5 py-1.5 rounded-lg hover:text-blue-600 hover:bg-blue-50 transition-colors">เข็มทิศทางออก</a>
+          <a href="#scripts-section" class="px-2.5 py-1.5 rounded-lg hover:text-blue-600 hover:bg-blue-50 transition-colors">บทพูดเจรจา</a>
+          <a href="#membership-section" class="px-2.5 py-1.5 rounded-lg hover:text-amber-600 hover:bg-amber-50 transition-colors flex items-center gap-1 text-amber-700 font-semibold">
+            <i data-lucide="crown" class="w-3.5 h-3.5"></i> สมาชิก Pro
+          </a>
         </nav>
 
-        <!-- CTA Buttons -->
+        <!-- Auth and CTA Buttons -->
         <div class="flex items-center gap-2">
-          <a href="#emergency-section" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs md:text-sm font-semibold text-white bg-gradient-to-r from-red-500 to-rose-600 rounded-xl shadow-sm hover:shadow-md hover:from-red-600 hover:to-rose-700 transition-all animate-pulse-subtle">
-            <i data-lucide="life-buoy" class="w-4 h-4"></i>
-            <span>เริ่มจากตรงไหนดี?</span>
+          
+          <!-- Not Logged In State -->
+          <div id="auth-btn-group" class="flex items-center gap-1.5">
+            <button onclick="openAuthModal('signin')" class="px-3 py-1.5 text-xs font-semibold text-slate-700 hover:text-blue-600 bg-slate-100 hover:bg-blue-50 rounded-xl transition-colors">
+              เข้าสู่ระบบ
+            </button>
+            <button onclick="openAuthModal('signup')" class="px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm transition-all">
+              สมัครสมาชิกฟรี
+            </button>
+          </div>
+
+          <!-- Logged In State (Hidden by default) -->
+          <div id="user-profile-badge" class="hidden items-center gap-2 bg-slate-100/90 pl-2 pr-3 py-1 rounded-xl border border-slate-200">
+            <div class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">
+              <i data-lucide="user" class="w-3.5 h-3.5"></i>
+            </div>
+            <div class="text-left">
+              <span id="user-display-name" class="text-xs font-bold text-slate-800 block leading-tight">คุณสมาชิก</span>
+              <span id="user-tier-badge" class="text-[10px] font-bold px-1 py-0.2 rounded bg-slate-200 text-slate-600">FREE TIER</span>
+            </div>
+            <button onclick="logoutUser()" title="ออกจากระบบ" class="text-slate-400 hover:text-red-500 ml-1">
+              <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+          <a href="#emergency-section" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-r from-red-500 to-rose-600 rounded-xl shadow-sm hover:from-red-600 hover:to-rose-700 transition-all">
+            <i data-lucide="life-buoy" class="w-3.5 h-3.5"></i>
+            <span>เริ่มจากตรงไหน?</span>
           </a>
+
         </div>
 
       </div>
@@ -116,15 +145,29 @@
           </div>
         </div>
 
-        <!-- 3 Quick Action Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left">
+        <!-- 4 Quick Action Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-left">
           
+          <a href="#stage-diagnostic-section" class="p-5 bg-white rounded-2xl border-2 border-blue-500 shadow-md hover:shadow-lg transition-all group flex flex-col justify-between">
+            <div>
+              <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                <i data-lucide="gauge" class="w-5 h-5"></i>
+              </div>
+              <div class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 mb-1">แนะนำเริ่มต้น</div>
+              <h3 class="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">1. วินิจฉัยขั้นของหนี้</h3>
+              <p class="text-xs text-slate-500 mt-1">เช็กว่าหนี้อยู่ขั้นไหน เสียเครดิตหรือยัง และมีกี่ทางเลือก</p>
+            </div>
+            <div class="mt-4 flex items-center text-xs font-semibold text-blue-600">
+              วินิจฉัยหนี้ทันที <i data-lucide="chevron-right" class="w-3.5 h-3.5 ml-1"></i>
+            </div>
+          </a>
+
           <a href="#health-check-section" class="p-5 bg-white rounded-2xl border border-slate-200 hover:border-blue-400 hover:shadow-lg transition-all group flex flex-col justify-between">
             <div>
               <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                 <i data-lucide="activity" class="w-5 h-5"></i>
               </div>
-              <h3 class="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">1. ตรวจสุขภาพหนี้ (DTI)</h3>
+              <h3 class="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">2. ตรวจสุขภาพหนี้ (DTI)</h3>
               <p class="text-xs text-slate-500 mt-1">ประเมินสัดส่วนภาระหนี้ต่อรายได้และระดับความเสี่ยงใน 1 นาที</p>
             </div>
             <div class="mt-4 flex items-center text-xs font-semibold text-blue-600">
@@ -137,7 +180,7 @@
               <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                 <i data-lucide="calculator" class="w-5 h-5"></i>
               </div>
-              <h3 class="font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">2. วางแผนปลดหนี้อัจฉริยะ</h3>
+              <h3 class="font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">3. จำลองปลดหนี้อัจฉริยะ</h3>
               <p class="text-xs text-slate-500 mt-1">เปรียบเทียบกลยุทธ์ Snowball vs Avalanche และดูวันหมดหนี้</p>
             </div>
             <div class="mt-4 flex items-center text-xs font-semibold text-emerald-600">
@@ -150,7 +193,7 @@
               <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                 <i data-lucide="compass" class="w-5 h-5"></i>
               </div>
-              <h3 class="font-bold text-slate-900 group-hover:text-amber-600 transition-colors">3. เข็มทิศทางออกแก้หนี้</h3>
+              <h3 class="font-bold text-slate-900 group-hover:text-amber-600 transition-colors">4. เข็มทิศทางออกแก้หนี้</h3>
               <p class="text-xs text-slate-500 mt-1">ค้นหาทางออกตรงตามสถานะ: ปรับโครงสร้าง, คลินิกแก้หนี้, หรือศาล</p>
             </div>
             <div class="mt-4 flex items-center text-xs font-semibold text-amber-600">
@@ -163,6 +206,192 @@
       </div>
     </div>
   </section>
+
+  <!-- ================= SECTION: DEBT STAGE DIAGNOSTICS & MATRIX ================= -->
+  <section id="stage-diagnostic-section" class="py-16 bg-gradient-to-b from-white via-blue-50/30 to-white border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-12">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-semibold mb-3">
+          <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>
+          <span>เครื่องมือวินิจฉัยเชิงลึก</span>
+        </div>
+        <h2 class="text-2xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+          หนี้ของคุณอยู่ขั้นไหน? และมีกี่ทางเลือกที่จะแก้ไข?
+        </h2>
+        <p class="text-slate-600 text-sm md:text-base mt-3 leading-relaxed">
+          ความลับสำคัญคือ: <strong class="text-slate-800">ทางเลือกแก้หนี้ของคนที่ "ยังไม่เสียเครดิต" กับคนที่ "เป็นหนี้เสียไปแล้ว" ไม่เหมือนกัน!</strong><br class="hidden sm:inline">
+          ระบบนี้จะบอกให้คุณรู้ชัดเจนว่า คุณอยู่ในขั้นไหน และควรใช้ทางเลือกใดเพื่อให้หมดหนี้เร็วที่สุดโดยไม่หลงทาง
+        </p>
+      </div>
+
+      <!-- 5 Stages Visual Timeline -->
+      <div class="mb-12">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 text-center">แผนผัง 5 ขั้นตอนของหนี้ & ผลกระทบต่อเครดิตบูโร</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          
+          <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/50">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-emerald-800">ขั้นที่ 1</span>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">ไม่เสียเครดิต</span>
+            </div>
+            <h4 class="font-bold text-slate-900 text-sm mb-1">หนี้ปกติ (Normal)</h4>
+            <p class="text-xs text-slate-600">จ่ายตรงเวลา บูโร 100%</p>
+            <div class="mt-3 text-[11px] text-emerald-700 font-semibold border-t border-emerald-200/60 pt-2">
+              ทางออก: รวมหนี้ / รีไฟแนนซ์
+            </div>
+          </div>
+
+          <div class="p-4 rounded-xl border border-amber-200 bg-amber-50/50">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-amber-800">ขั้นที่ 2</span>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">ยังไม่เสียเครดิต</span>
+            </div>
+            <h4 class="font-bold text-slate-900 text-sm mb-1">ค้าง 1 - 30 วัน (SM)</h4>
+            <p class="text-xs text-slate-600">เริ่มตึงตัว มีบันทึกเตือน</p>
+            <div class="mt-3 text-[11px] text-amber-700 font-semibold border-t border-amber-200/60 pt-2">
+              ทางออก: ขอยืดหนี้ / พักเงินต้น
+            </div>
+          </div>
+
+          <div class="p-4 rounded-xl border border-orange-200 bg-orange-50/50">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-orange-800">ขั้นที่ 3</span>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-orange-100 text-orange-800">ประวัติสะดุด</span>
+            </div>
+            <h4 class="font-bold text-slate-900 text-sm mb-1">ค้าง 31 - 90 วัน</h4>
+            <p class="text-xs text-slate-600">สุ่มเสี่ยงหลุดเป็น NPL</p>
+            <div class="mt-3 text-[11px] text-orange-700 font-semibold border-t border-orange-200/60 pt-2">
+              ทางออก: ทางด่วนแก้หนี้ ธปท.
+            </div>
+          </div>
+
+          <div class="p-4 rounded-xl border border-red-200 bg-red-50/50">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-red-800">ขั้นที่ 4</span>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-800">เครดิตเสียแล้ว</span>
+            </div>
+            <h4 class="font-bold text-slate-900 text-sm mb-1">หนี้เสีย (NPL >90 วัน)</h4>
+            <p class="text-xs text-slate-600">บูโรเสียแล้ว แต่ได้สิทธิ์ทอง</p>
+            <div class="mt-3 text-[11px] text-red-700 font-semibold border-t border-red-200/60 pt-2">
+              ทางออก: คลินิกแก้หนี้ / Hair-cut
+            </div>
+          </div>
+
+          <div class="p-4 rounded-xl border border-purple-200 bg-purple-50/50">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-purple-800">ขั้นที่ 5</span>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-800">ชั้นศาล</span>
+            </div>
+            <h4 class="font-bold text-slate-900 text-sm mb-1">มีหมายศาล / บังคับคดี</h4>
+            <p class="text-xs text-slate-600">อยู่ในกระบวนการยุติธรรม</p>
+            <div class="mt-3 text-[11px] text-purple-700 font-semibold border-t border-purple-200/60 pt-2">
+              ทางออก: ไกล่เกลี่ย / คุ้มครอง 20k
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Diagnostic Form & Results Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Input Form -->
+        <div class="lg:col-span-5 bg-white p-6 md:p-7 rounded-2xl border border-slate-200 shadow-sm">
+          <h4 class="font-bold text-slate-900 text-base mb-4 flex items-center gap-2">
+            <i data-lucide="clipboard-list" class="w-5 h-5 text-blue-600"></i>
+            <span>ตอบคำถาม 3 ข้อเพื่อประเมินขั้นของหนี้</span>
+          </h4>
+
+          <form id="stage-diagnostic-form" class="space-y-4">
+            
+            <div>
+              <label for="diag-overdue" class="block text-xs font-semibold text-slate-700 mb-1.5">
+                1. ประวัติการค้างชำระนานที่สุดในปัจจุบัน
+              </label>
+              <select id="diag-overdue" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 font-medium text-xs md:text-sm bg-white">
+                <option value="normal">ยังไม่เคยค้างชำระเลย (จ่ายตรงเวลาทุกงวด)</option>
+                <option value="late_1_30" selected>ค้างชำระ 1 - 30 วัน (เพิ่งเริ่มค้างหรือจ่ายช้า)</option>
+                <option value="late_31_90">ค้างชำระ 31 - 90 วัน (ตึงตัวมาก ทวงถามบ่อย)</option>
+                <option value="npl">ค้างชำระเกิน 90 วัน (เป็นหนี้เสีย NPL)</option>
+                <option value="court">ได้รับหมายศาล / มีคำพิพากษาบังคับคดี</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="diag-cashflow" class="block text-xs font-semibold text-slate-700 mb-1.5">
+                2. สภาพคล่องและการหมุนเงินในแต่ละเดือน
+              </label>
+              <select id="diag-cashflow" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 font-medium text-xs md:text-sm bg-white">
+                <option value="smooth">จ่ายขั้นต่ำได้สบาย ไม่ได้หมุนเงิน</option>
+                <option value="tight" selected>ต้องกดบัตรโน้นมาจ่ายบัตรนี้ (หมุนเงิน)</option>
+                <option value="stopped">หมุนเงินไม่ทันแล้ว / หยุดจ่ายบางก้อนหรือทุกก้อน</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="diag-asset" class="block text-xs font-semibold text-slate-700 mb-1.5">
+                3. ทรัพย์สินและหลักประกันที่มี
+              </label>
+              <select id="diag-asset" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 font-medium text-xs md:text-sm bg-white">
+                <option value="has_asset">มีบ้านหรือคอนโด (ผ่อนอยู่หรือปลอดภาระ)</option>
+                <option value="no_asset" selected>ไม่มีอสังหาริมทรัพย์ แต่มีเงินเดือนประจำ</option>
+                <option value="informal_income">ไม่มีทรัพย์สิน และรายได้ไม่แน่นอน (ค้าขาย/อิสระ)</option>
+              </select>
+            </div>
+
+            <div class="pt-2">
+              <button type="submit" class="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-2 text-sm">
+                <i data-lucide="search" class="w-4 h-4"></i>
+                <span>วินิจฉัยขั้นของหนี้และดูทางเลือกทันที</span>
+              </button>
+            </div>
+
+          </form>
+        </div>
+
+        <!-- Dynamic Output Result -->
+        <div id="stage-result-card" class="lg:col-span-7 bg-white p-6 md:p-7 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+          
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+            <div>
+              <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">ผลการวินิจฉัยหนี้ของคุณ</span>
+              <h4 id="stage-result-title" class="text-xl md:text-2xl font-extrabold text-slate-900 mt-0.5">
+                ขั้นที่ 2: เริ่มค้างชำระ 1 - 30 วัน (Special Mention: SM)
+              </h4>
+            </div>
+            <span id="stage-result-badge" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border bg-amber-100 text-amber-800 border-amber-300 w-fit">
+              เครดิตบูโร ยังไม่เป็น NPL
+            </span>
+          </div>
+
+          <!-- Credit Status Clarification -->
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs md:text-sm">
+            <div id="stage-result-credit" class="font-bold text-slate-800">
+              🟡 เครดิตเริ่มมีรอยสะดุดเล็กน้อย แต่ยังไม่ถูกตัดเป็นหนี้เสีย ควรรีบติดต่อธนาคารทันที
+            </div>
+            <p id="stage-result-summary" class="text-slate-600 leading-relaxed text-xs">
+              เริ่มมีสัญญาณเตือนภัยชัดเจน หากปล่อยให้เกิน 90 วัน จะกลายเป็นหนี้เสีย NPL ทันที ต้องรีบเจรจาเชิงรุก
+            </p>
+          </div>
+
+          <!-- Options List for this stage -->
+          <div>
+            <h5 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
+              ทางเลือกและวิธีแก้ไขที่คุณสามารถทำได้ในขั้นนี้:
+            </h5>
+            <div id="stage-options-container" class="space-y-3">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
 
   <!-- ================= SECTION 1: EMERGENCY FIRST-AID ================= -->
   <section id="emergency-section" class="py-14 bg-white border-y border-slate-200/80">
@@ -1143,6 +1372,121 @@
     </div>
   </section>
 
+  <!-- ================= SECTION: MEMBERSHIP & FUTURE MONETIZATION ================= -->
+  <section id="membership-section" class="py-16 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-12">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-semibold mb-3 border border-amber-500/30">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i>
+          <span>แผนสมาชิก & บริการพรีเมียม</span>
+        </div>
+        <h2 class="text-2xl md:text-4xl font-extrabold text-white tracking-tight">
+          ยกระดับการปลดหนี้ ด้วยระบบสมาชิกและที่ปรึกษาเฉพาะบุคคล
+        </h2>
+        <p class="text-slate-400 text-sm md:text-base mt-3 leading-relaxed">
+          เริ่มต้นใช้งานเครื่องมือพื้นฐานฟรี 100% หรือสมัครสมาชิก Pro เพื่อรับแผนปฏิบัติการเชิงลึก การติดตามผลอัตโนมัติ และสิทธิ์ปรึกษาผู้เชี่ยวชาญการเงิน
+        </p>
+      </div>
+
+      <!-- Pricing / Tier Comparison Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch">
+        
+        <!-- Tier 1: Free -->
+        <div class="p-8 rounded-3xl bg-slate-800/80 border border-slate-700 flex flex-col justify-between hover:border-slate-600 transition-all">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-400">สมาชิกทั่วไป</span>
+              <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-700 text-slate-300">ฟรีตลอดชีพ</span>
+            </div>
+            <div class="flex items-baseline gap-1 mb-6">
+              <span class="text-4xl font-extrabold text-white">฿0</span>
+              <span class="text-xs text-slate-400">/ ตลอดชีพ</span>
+            </div>
+            
+            <ul class="space-y-3.5 text-xs text-slate-300 mb-8">
+              <li class="flex items-center gap-2.5">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>วินิจฉัยขั้นของหนี้ 5 สเต็ปไม่จำกัดครั้ง</span>
+              </li>
+              <li class="flex items-center gap-2.5">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>คำนวณ DTI & วางแผน Snowball / Avalanche</span>
+              </li>
+              <li class="flex items-center gap-2.5">
+                <i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>คลังบทพูดเจรจาธนาคาร & สายด่วนทางการ</span>
+              </li>
+              <li class="flex items-center gap-2.5 text-slate-500">
+                <i data-lucide="x" class="w-4 h-4 text-slate-600 shrink-0"></i>
+                <span>รายงานวิเคราะห์แผนปลดหนี้ PDF เชิงลึก</span>
+              </li>
+              <li class="flex items-center gap-2.5 text-slate-500">
+                <i data-lucide="x" class="w-4 h-4 text-slate-600 shrink-0"></i>
+                <span>ระบบนัดหมายปรึกษาผู้เชี่ยวชาญ 1-on-1</span>
+              </li>
+            </ul>
+          </div>
+
+          <button onclick="openAuthModal('signup')" class="w-full py-3 px-4 rounded-xl font-semibold text-xs bg-slate-700 hover:bg-slate-600 text-white transition-colors flex items-center justify-center gap-2">
+            <span>สมัครสมาชิกฟรี</span>
+          </button>
+        </div>
+
+        <!-- Tier 2: Pro (Monetization Engine) -->
+        <div class="p-8 rounded-3xl bg-gradient-to-b from-slate-800 to-slate-900 border-2 border-amber-500/80 shadow-xl shadow-amber-500/10 flex flex-col justify-between relative">
+          
+          <div class="absolute -top-3.5 right-6 px-3 py-1 rounded-full badge-pro text-[11px] font-extrabold uppercase tracking-wider">
+            แนะนำสำหรับคนอยากหมดหนี้ไว 🔥
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-bold uppercase tracking-wider text-amber-400">สมาชิก PRO MEMBER</span>
+              <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30">พรีเมียม</span>
+            </div>
+            
+            <div class="flex items-baseline gap-1 mb-2">
+              <span class="text-4xl font-extrabold text-white">฿299</span>
+              <span class="text-xs text-slate-400">/ เดือน (หรือทดลองฟรี)</span>
+            </div>
+            <p class="text-[11px] text-amber-300/80 mb-6 font-medium">✨ ช่วงเปิดตัว: กดรับสิทธิ์ทดลอง Pro ได้ทันที</p>
+            
+            <ul class="space-y-3.5 text-xs text-slate-200 mb-8">
+              <li class="flex items-center gap-2.5 font-medium">
+                <i data-lucide="check" class="w-4 h-4 text-amber-400 shrink-0"></i>
+                <span>ทุกความสามารถในแผนสมาชิกทั่วไป</span>
+              </li>
+              <li class="flex items-center gap-2.5 font-medium text-amber-200">
+                <i data-lucide="check" class="w-4 h-4 text-amber-400 shrink-0"></i>
+                <span><strong>รายงานวิเคราะห์แผนปลดหนี้ PDF</strong> จัดทำเพื่อคุณโดยเฉพาะ</span>
+              </li>
+              <li class="flex items-center gap-2.5 font-medium text-amber-200">
+                <i data-lucide="check" class="w-4 h-4 text-amber-400 shrink-0"></i>
+                <span><strong>ระบบติดตามค่างวดรายเดือน</strong> บันทึกความคืบหน้าตัดหนี้</span>
+              </li>
+              <li class="flex items-center gap-2.5 font-medium text-amber-200">
+                <i data-lucide="check" class="w-4 h-4 text-amber-400 shrink-0"></i>
+                <span><strong>สิทธิ์นัดหมายปรึกษา 1-on-1</strong> กับโค้ชการเงิน/ทีมงานไกล่เกลี่ย</span>
+              </li>
+              <li class="flex items-center gap-2.5">
+                <i data-lucide="check" class="w-4 h-4 text-amber-400 shrink-0"></i>
+                <span>คลังแบบฟอร์มคำร้องขอพักหนี้และหนังสือเจรจาทางการ</span>
+              </li>
+            </ul>
+          </div>
+
+          <button onclick="upgradeToPro()" class="w-full py-3 px-4 rounded-xl font-bold text-xs bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 shadow-md shadow-amber-500/20 transition-all flex items-center justify-center gap-2">
+            <i data-lucide="crown" class="w-4 h-4"></i>
+            <span>ทดลองอัปเกรดเป็น PRO (ฟรีช่วงนี้)</span>
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
   <!-- ================= FOOTER ================= -->
   <footer class="bg-white border-t border-slate-200 py-12 text-slate-500 text-xs">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1171,8 +1515,81 @@
     </div>
   </footer>
 
+  <!-- ================= AUTH MODAL (SIGN IN / SIGN UP) ================= -->
+  <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden p-4">
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-md overflow-hidden relative animate-float">
+      
+      <!-- Close Button -->
+      <button onclick="closeAuthModal()" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <!-- Modal Header -->
+      <div class="p-6 pb-0">
+        <div class="flex items-center gap-2 mb-2">
+          <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">
+            <i data-lucide="shield-check" class="w-4 h-4"></i>
+          </div>
+          <span class="font-bold text-slate-900 text-sm">ปลดหนี้ มีทางออก</span>
+        </div>
+        <h3 class="text-xl font-extrabold text-slate-900">เข้าสู่ระบบ / สมัครสมาชิก</h3>
+        <p class="text-xs text-slate-500 mt-1">บันทึกแผนชำระหนี้ส่วนบุคคล และเข้าถึงคำแนะนำเฉพาะคุณ</p>
+
+        <!-- Tabs -->
+        <div class="flex border-b border-slate-200 mt-6">
+          <button id="tab-btn-signin" onclick="switchAuthTab('signin')" class="flex-1 pb-3 text-xs font-bold text-blue-600 border-b-2 border-blue-600 transition-colors">
+            เข้าสู่ระบบ
+          </button>
+          <button id="tab-btn-signup" onclick="switchAuthTab('signup')" class="flex-1 pb-3 text-xs font-bold text-slate-500 border-b-2 border-transparent transition-colors">
+            สมัครสมาชิกใหม่
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab View: Sign In -->
+      <div id="view-signin" class="p-6">
+        <form id="signin-form" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">อีเมล</label>
+            <input type="email" id="signin-email" placeholder="example@email.com" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs md:text-sm focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">รหัสผ่าน</label>
+            <input type="password" id="signin-password" placeholder="••••••••" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs md:text-sm focus:ring-2 focus:ring-blue-500">
+          </div>
+          <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow transition-colors flex items-center justify-center gap-2">
+            <span>เข้าสู่ระบบ</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Tab View: Sign Up -->
+      <div id="view-signup" class="p-6 hidden">
+        <form id="signup-form" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">ชื่อ - นามสกุล หรือชื่อเรียก</label>
+            <input type="text" id="signup-name" placeholder="เช่น คุณสมชาย" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs md:text-sm focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">อีเมล</label>
+            <input type="email" id="signup-email" placeholder="example@email.com" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs md:text-sm focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">เบอร์โทรศัพท์ (ไม่บังคับ - สำหรับรับคำปรึกษา)</label>
+            <input type="tel" id="signup-phone" placeholder="08x-xxx-xxxx" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs md:text-sm focus:ring-2 focus:ring-blue-500">
+          </div>
+          <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow transition-colors flex items-center justify-center gap-2">
+            <span>สร้างบัญชีสมาชิกฟรี</span>
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
   <!-- App Script -->
   <script src="js/app.js"></script>
 
 </body>
 </html>
+

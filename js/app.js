@@ -731,9 +731,381 @@ window.printDebtPlan = function() {
   window.print();
 };
 
-// Helper: Escape HTML
-function escapeHtml(string) {
-  const div = document.createElement('div');
-  div.textContent = string;
-  return div.innerHTML;
+// ==========================================
+// 7. USER AUTHENTICATION & MEMBERSHIP SYSTEM
+// ==========================================
+let currentUser = null;
+
+function initAuthSystem() {
+  // Load session
+  const storedUser = localStorage.getItem('debt_user_session');
+  if (storedUser) {
+    try {
+      currentUser = JSON.parse(storedUser);
+    } catch (e) {
+      currentUser = null;
+    }
+  }
+
+  updateAuthUI();
+
+  // Auth Form Handlers
+  const signinForm = document.getElementById('signin-form');
+  const signupForm = document.getElementById('signup-form');
+
+  if (signinForm) {
+    signinForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('signin-email').value.trim();
+      const password = document.getElementById('signin-password').value;
+
+      if (!email || !password) {
+        alert('กรุณากรอกอีเมลและรหัสผ่าน');
+        return;
+      }
+
+      // Check registered users or create login session
+      currentUser = {
+        name: email.split('@')[0] || 'สมาชิก',
+        email: email,
+        tier: 'free',
+        joinedAt: new Date().toLocaleDateString('th-TH')
+      };
+
+      localStorage.setItem('debt_user_session', JSON.stringify(currentUser));
+      updateAuthUI();
+      closeAuthModal();
+      alert(`ยินดีต้อนรับคุณ ${currentUser.name} เข้าสู่ระบบเรียบร้อยแล้วครับ!`);
+      lucide.createIcons();
+    });
+  }
+
+  if (signupForm) {
+    signupForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('signup-name').value.trim();
+      const email = document.getElementById('signup-email').value.trim();
+      const phone = document.getElementById('signup-phone').value.trim();
+
+      if (!name || !email) {
+        alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+        return;
+      }
+
+      currentUser = {
+        name,
+        email,
+        phone,
+        tier: 'free',
+        joinedAt: new Date().toLocaleDateString('th-TH')
+      };
+
+      localStorage.setItem('debt_user_session', JSON.stringify(currentUser));
+      updateAuthUI();
+      closeAuthModal();
+      alert(`สมัครสมาชิกสำเร็จ! ยินดีต้อนรับคุณ ${currentUser.name}`);
+      triggerCelebration();
+      lucide.createIcons();
+    });
+  }
 }
+
+function updateAuthUI() {
+  const authBtnGroup = document.getElementById('auth-btn-group');
+  const userProfileBadge = document.getElementById('user-profile-badge');
+  const userNameEl = document.getElementById('user-display-name');
+  const userTierEl = document.getElementById('user-tier-badge');
+
+  if (!authBtnGroup || !userProfileBadge) return;
+
+  if (currentUser) {
+    authBtnGroup.classList.add('hidden');
+    userProfileBadge.classList.remove('hidden');
+    userProfileBadge.classList.add('flex');
+    if (userNameEl) userNameEl.textContent = currentUser.name;
+    if (userTierEl) {
+      if (currentUser.tier === 'pro') {
+        userTierEl.textContent = 'PRO MEMBER';
+        userTierEl.className = 'text-[10px] font-bold px-1.5 py-0.5 rounded badge-pro';
+      } else {
+        userTierEl.textContent = 'FREE TIER';
+        userTierEl.className = 'text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600';
+      }
+    }
+  } else {
+    authBtnGroup.classList.remove('hidden');
+    userProfileBadge.classList.add('hidden');
+    userProfileBadge.classList.remove('flex');
+  }
+}
+
+window.openAuthModal = function(tab = 'signin') {
+  const modal = document.getElementById('auth-modal');
+  if (!modal) return;
+  modal.classList.remove('hidden');
+  switchAuthTab(tab);
+};
+
+window.closeAuthModal = function() {
+  const modal = document.getElementById('auth-modal');
+  if (modal) modal.classList.add('hidden');
+};
+
+window.switchAuthTab = function(tab) {
+  const signinTab = document.getElementById('tab-btn-signin');
+  const signupTab = document.getElementById('tab-btn-signup');
+  const signinView = document.getElementById('view-signin');
+  const signupView = document.getElementById('view-signup');
+
+  if (tab === 'signin') {
+    signinTab.classList.add('border-blue-600', 'text-blue-600');
+    signinTab.classList.remove('border-transparent', 'text-slate-500');
+    signupTab.classList.remove('border-blue-600', 'text-blue-600');
+    signupTab.classList.add('border-transparent', 'text-slate-500');
+    signinView.classList.remove('hidden');
+    signupView.classList.add('hidden');
+  } else {
+    signupTab.classList.add('border-blue-600', 'text-blue-600');
+    signupTab.classList.remove('border-transparent', 'text-slate-500');
+    signinTab.classList.remove('border-blue-600', 'text-blue-600');
+    signinTab.classList.add('border-transparent', 'text-slate-500');
+    signupView.classList.remove('hidden');
+    signinView.classList.add('hidden');
+  }
+};
+
+window.logoutUser = function() {
+  if (confirm('คุณต้องการออกจากระบบใช่หรือไม่?')) {
+    localStorage.removeItem('debt_user_session');
+    currentUser = null;
+    updateAuthUI();
+    alert('ออกจากระบบเรียบร้อยแล้ว');
+  }
+};
+
+window.upgradeToPro = function() {
+  if (!currentUser) {
+    alert('กรุณาสมัครสมาชิกหรือเข้าสู่ระบบก่อนอัปเกรดเป็นสมาชิก Pro');
+    openAuthModal('signup');
+    return;
+  }
+  
+  if (confirm('🎉 ยืนยันการสมัครสมาชิก Pro (ทดลองฟรีสำหรับช่วงเปิดตัว) เพื่อปลดล็อกรายงานวิเคราะห์เชิงลึกและเครื่องมือติดตามหนี้อัตโนมัติ?')) {
+    currentUser.tier = 'pro';
+    localStorage.setItem('debt_user_session', JSON.stringify(currentUser));
+    updateAuthUI();
+    triggerCelebration();
+    alert('ยินดีด้วยครับ! บัญชีของคุณได้รับการอัปเกรดเป็น PRO เรียบร้อยแล้ว');
+  }
+};
+
+// ==========================================
+// 8. DEBT STAGE DIAGNOSTICS & PATHWAYS MATRIX
+// ==========================================
+const STAGE_DATA = {
+  stage1: {
+    title: 'ขั้นที่ 1: หนี้ปกติ / เริ่มตึงตัวเล็กน้อย (Normal)',
+    code: 'เครดิตบูโร สถานะ 10 (ปกติ 100%)',
+    badge: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+    icon: 'shield-check',
+    creditDesc: '🟢 เครดิตยังสะอาด 100% กู้หรือรีไฟแนนซ์กับธนาคารอื่นได้เต็มที่',
+    summary: 'คุณยังมีประวัติการชำระที่ดีเยี่ยม นี่คือช่วงเวลาทองในการแก้ปัญหาโดย "ไม่เสียเครดิต" รีบลงมือก่อนที่จะเริ่มค้างชำระ',
+    options: [
+      {
+        title: 'การรวมหนี้ (Debt Consolidation)',
+        creditImpact: '🟢 ไม่เสียเครดิตบูโร (ยังเป็นสถานะปกติ)',
+        detail: 'รวบรวมหนี้บัตรเครดิตและสินเชื่อดอกเบี้ยสูง 16-25% ไปรวมกับสินเชื่อบ้านหรือขอกู้สินเชื่อรวมหนี้ก้อนเดียว ดอกเบี้ยจะลดลงเหลือ 6-8% ต่อปี ช่วยลดค่างวดต่อเดือนได้ทันที 40-60%',
+        howTo: 'ติดต่อธนาคารที่มีสินเชื่อบ้านเดิมอยู่ หรือธนาคารที่เปิดโครงการรวมหนี้ แจ้งขอทำ "สินเชื่อรวมหนี้"'
+      },
+      {
+        title: 'รีไฟแนนซ์ (Refinance) สินเชื่อหรือบัตร',
+        creditImpact: '🟢 ไม่เสียเครดิตบูโร',
+        detail: 'ย้ายหนี้ไปธนาคารใหม่ที่ให้โปรโมชั่นดอกเบี้ยต่ำ เช่น สินเชื่อโอนหนี้ดอกเบี้ยพิเศษ 9.99% หรือ 12% ต่อปีใน 1-2 ปีแรก',
+        howTo: 'เปรียบเทียบข้อเสนอสินเชื่อบุคคลที่มีโปรโมชั่นย้ายหนี้'
+      },
+      {
+        title: 'ใช้สูตร Snowball หรือ Avalanche โปะเงินต้น',
+        creditImpact: '🟢 ไม่เสียเครดิตบูโร',
+        detail: 'ปรับพฤติกรรมทางการเงิน ตัดค่าใช้จ่ายที่ไม่จำเป็น 10-20% แล้วนำเงินก้อนนี้มาทุ่มโปะหนี้ก้อนเล็กสุด (Snowball) เพื่อลดจำนวนสัญญาให้เหลือน้อยลง',
+        howTo: 'ใช้เครื่องมือคำนวณด้านล่างเพื่อวางแผนลำดับการโปะ'
+      }
+    ]
+  },
+  stage2: {
+    title: 'ขั้นที่ 2: เริ่มค้างชำระ 1 - 30 วัน (Special Mention: SM)',
+    code: 'เครดิตบูโร ยังไม่เป็น NPL (มีบันทึกเตือนล่าช้า)',
+    badge: 'bg-amber-100 text-amber-800 border-amber-300',
+    icon: 'alert-triangle',
+    creditDesc: '🟡 เครดิตเริ่มมีรอยสะดุดเล็กน้อย แต่ยังไม่ถูกตัดเป็นหนี้เสีย ควรรีบติดต่อธนาคารทันที',
+    summary: 'เริ่มมีสัญญาณเตือนภัยชัดเจน หากปล่อยให้เกิน 90 วัน จะกลายเป็นหนี้เสีย NPL ทันที ต้องรีบเจรจาเชิงรุก',
+    options: [
+      {
+        title: 'ขอปรับโครงสร้างหนี้เชิงป้องกัน (Pre-emptive TDR)',
+        creditImpact: '🟡 มีบันทึกประวัติปรับโครงสร้าง แต่ไม่ถูกจัดเป็น NPL',
+        detail: 'ติดต่อธนาคารเจ้าหนี้ขอยืดระยะเวลาผ่อน (เช่น จาก 2 ปี เป็น 5 ปี) หรือขอเปลี่ยนยอดบัตรหมุนเวียนให้เป็นเงินกู้ผ่อนชำระแบบงวด (Term Loan) อัตราดอกเบี้ยจะลดลงและค่างวดลดลงเกินครึ่ง',
+        howTo: 'โทรหา Call Center ธนาคาร แจ้งว่า "ต้องการเข้าร่วมมาตรการช่วยเหลือลูกหนี้ขอยืดระยะเวลาผ่อนชำระ"'
+      },
+      {
+        title: 'ขอพักชำระเงินต้นชั่วคราว (Grace Period)',
+        creditImpact: '🟡 อยู่ในมาตรการช่วยเหลือของธนาคาร',
+        detail: 'ขอจ่ายเฉพาะดอกเบี้ยเป็นเวลา 3 - 6 เดือน เพื่อให้คุณมีเวลาตั้งหลัก หางานเสริม หรือรวบรวมเงินก้อน',
+        howTo: 'เตรียมหลักฐานความจำเป็น เช่น สลิปเงินเดือนที่ลดลง หรือค่าใช้จ่ายฉุกเฉินไปแสดงกับธนาคาร'
+      }
+    ]
+  },
+  stage3: {
+    title: 'ขั้นที่ 3: ค้างชำระ 31 - 90 วัน (Substandard)',
+    code: 'เครดิตบูโร ค้างชำระเกิน 1-2 เดือน (ใกล้หลุด NPL)',
+    badge: 'bg-orange-100 text-orange-800 border-orange-300',
+    icon: 'alert-octagon',
+    creditDesc: '🟠 ประวัติการชำระเริ่มติดขัด ธนาคารจะเริ่มโทรทวงถามอย่างจริงจัง',
+    summary: 'อยู่ในจุดเปลี่ยนสำคัญ คุณยังมีโอกาสสุดท้ายในการเจรจาปรับปรุงโครงสร้างหนี้กับธนาคารก่อนจะถูกส่งเป็น NPL และถูกคิดเบี้ยปรับอัตราสูงสุด',
+    options: [
+      {
+        title: 'ยื่นคำขอที่ "ทางด่วนแก้หนี้" ธนาคารแห่งประเทศไทย (โทร 1213)',
+        creditImpact: '🟡 เจรจาหาข้อยุติก่อนถูกฟ้อง',
+        detail: 'หากติดต่อธนาคารสาขาแล้วไม่ได้เงื่อนไขที่ผ่อนไหว ทางด่วนแก้หนี้ของแบงก์ชาติจะช่วยประสานส่งเรื่องตรงถึงฝ่ายนโยบายของธนาคาร เพื่ออนุมัติเงื่อนไขผ่อนปรนพิเศษ',
+        howTo: 'กรอกคำขอออนไลน์ที่ bot.or.th หรือโทร 1213 แจ้งเลขที่บัญชีและยอดหนี้'
+      },
+      {
+        title: 'คัดแยกทรัพย์สินและตัดใจปิดหนี้ดอกเบี้ยสูงสุด',
+        creditImpact: '🟢 ช่วยหยุดความเสียหายของเครดิตในอนาคต',
+        detail: 'สำรวจทรัพย์สินที่พอจะเปลี่ยนเป็นเงินสดได้ (ทองคำ, รถ, ของสะสม) นำมาตัดปิดยอดหนี้บัตรกดเงินสดที่คิดดอกเบี้ย 25% ทิ้งทันที',
+        howTo: 'เลือกปิดหนี้ที่มีดอกเบี้ยและเบี้ยปรับแพงที่สุดก่อน'
+      }
+    ]
+  },
+  stage4: {
+    title: 'ขั้นที่ 4: เป็นหนี้เสียแล้ว (NPL - ค้างชำระเกิน 90 วัน)',
+    code: 'เครดิตบูโร สถานะ 20 หรือ 21 (หนี้เสียค้างชำระ)',
+    badge: 'bg-red-100 text-red-800 border-red-300',
+    icon: 'flame',
+    creditDesc: '🔴 เครดิตเสียไปแล้ว 100% แต่เป็น "สิทธิ์ทอง" ในการเข้าโครงการแก้หนี้พิเศษที่ดอกเบี้ยถูกที่สุด!',
+    summary: 'จำไว้ให้ขึ้นใจ: "เมื่อเครดิตเสียไปแล้ว คุณไม่ต้องกลัวเสียเครดิตซ้ำ!" สิทธิประโยชน์ของคนที่เป็น NPL คือการได้รับส่วนลดหนี้และอัตราดอกเบี้ยที่ถูกที่สุดอย่างไม่น่าเชื่อ',
+    options: [
+      {
+        title: 'เข้าร่วมโครงการ "คลินิกแก้หนี้ by SAM" (โทร 1443)',
+        creditImpact: '🔴 สถานะบูโรเป็น NPL อยู่แล้ว แต่เมื่อผ่อนจบจะเปลี่ยนเป็นปิดบัญชี',
+        detail: 'โครงการของแบงก์ชาติสำหรับหนี้เสียบัตรเครดิต บัตรกดเงินสด สินเชื่อส่วนบุคคลที่ไม่มีหลักประกัน จะรวมหนี้ทุกธนาคารมาไว้ที่เดียว และลดดอกเบี้ยเหลือเพียง 3 - 5% ต่อปีเท่านั้น! ผ่อนยาวได้ถึง 10 ปี ค่างวดจะเหลือเพียงหลักร้อยถึงพันบาทต้นๆ',
+        howTo: 'สมัครผ่านเว็บไซต์ debtclinicbysam.com หรือโทร 1443 (ต้องเป็นหนี้เสียเกิน 90 วัน)'
+      },
+      {
+        title: 'เจรจาขอปิดยอดงวดเดียว (Hair-cut Discount 30-70%)',
+        creditImpact: '🔴 บูโรเปลี่ยนเป็นสถานะ 11 (ปิดบัญชีแล้ว)',
+        detail: 'เมื่อหนี้ค้างนาน ธนาคารหรือบริษัทบริหารสินทรัพย์มักต้องการปิดบัญชี หากคุณสามารถรวบรวมเงินก้อนได้ส่วนหนึ่ง สามารถเจรจาขอลดเงินต้นและตัดดอกเบี้ยทิ้งได้ถึง 30-70%',
+        howTo: 'ใช้บทพูดสคริปต์ Hair-cut ในเว็บนี้ และ "ต้องได้รับหนังสือยืนยันยอดปิดบัญชีก่อนโอนเงินทุกครั้ง"'
+      }
+    ]
+  },
+  stage5: {
+    title: 'ขั้นที่ 5: มีหมายศาล / มีคำพิพากษาบังคับคดี',
+    code: 'กระบวนการยุติธรรม / บังคับคดี',
+    badge: 'bg-purple-100 text-purple-800 border-purple-300',
+    icon: 'scale',
+    creditDesc: '⚖️ อยู่ในชั้นศาล กฎหมายคุ้มครองการดำรงชีพอย่างเต็มที่',
+    summary: 'อย่าหนีศาลเด็ดขาด! การไปศาลไม่ใช่เรื่องน่ากลัว ศาลยุติธรรมมีศูนย์ไกล่เกลี่ยที่ทำหน้าที่ช่วยลูกหนี้ตัดดอกเบี้ยและเบี้ยปรับที่ไม่เป็นธรรมออกไป',
+    options: [
+      {
+        title: 'ไปศาลเพื่อเข้าสู่ "ศูนย์ไกล่เกลี่ยข้อพิพาท"',
+        creditImpact: '⚖️ ทำสัญญาประนีประนอมยอมความตามคำพิพากษา',
+        detail: 'ในวันนัดศาล แจ้งเจ้าหน้าที่ว่าขอเข้าห้องไกล่เกลี่ย ผู้ประนีประนอมจะช่วยคุยให้ธนาคารลดดอกเบี้ยและกำหนดค่างวดใหม่ตามกำลังที่คุณจ่ายไหวจริง (มักผ่อนได้ 3-5 ปีแบบไม่มีดอกเบี้ยเพิ่ม)',
+        howTo: 'ไปตามวันและเวลาในหมายศาล พร้อมหลักฐานรายรับรายจ่าย ไม่ต้องจ้างทนายความก็ไกล่เกลี่ยได้ฟรี'
+      },
+      {
+        title: 'ใช้สิทธิความคุ้มครอง "กฎหมายห้ามอายัดเงินเดือนเกินเกณฑ์"',
+        creditImpact: '🛡️ กฎหมายคุ้มครองการดำรงชีพ',
+        detail: 'ตามประมวลกฎหมายวิธีพิจารณาความแพ่ง มาตรา 302 หากเงินเดือนของคุณไม่เกิน 20,000 บาท เจ้าหนี้ไม่สามารถอายัดเงินเดือนได้เลยแม้แต่บาทเดียว! หากเงินเดือนเกิน 20,000 บาท จะอายัดได้เฉพาะส่วนที่เกิน และต้องมีเงินเหลือให้คุณกินใช้อย่างน้อย 20,000 บาทเสมอ',
+        howTo: 'หากถูกสั่งอายัดผิดพลาด ให้ยื่นคำร้องต่อเจ้าพนักงานบังคับคดีเพื่อขอลดหย่อน'
+      }
+    ]
+  }
+};
+
+function initStageDiagnostic() {
+  const form = document.getElementById('stage-diagnostic-form');
+  if (!form) return;
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    evaluateDebtStage();
+  });
+}
+
+function evaluateDebtStage() {
+  const overdueVal = document.getElementById('diag-overdue').value;
+  const cashFlowVal = document.getElementById('diag-cashflow').value;
+  const assetVal = document.getElementById('diag-asset').value;
+
+  let calculatedStage = 'stage1';
+
+  if (overdueVal === 'court') {
+    calculatedStage = 'stage5';
+  } else if (overdueVal === 'npl') {
+    calculatedStage = 'stage4';
+  } else if (overdueVal === 'late_31_90' || (overdueVal === 'late_1_30' && cashFlowVal === 'stopped')) {
+    calculatedStage = 'stage3';
+  } else if (overdueVal === 'late_1_30' || cashFlowVal === 'tight') {
+    calculatedStage = 'stage2';
+  } else {
+    calculatedStage = 'stage1';
+  }
+
+  renderStageResult(STAGE_DATA[calculatedStage]);
+}
+
+function renderStageResult(data) {
+  const resultCard = document.getElementById('stage-result-card');
+  if (!resultCard) return;
+
+  resultCard.classList.remove('hidden');
+
+  const titleEl = document.getElementById('stage-result-title');
+  const badgeEl = document.getElementById('stage-result-badge');
+  const creditEl = document.getElementById('stage-result-credit');
+  const summaryEl = document.getElementById('stage-result-summary');
+  const optionsContainer = document.getElementById('stage-options-container');
+
+  if (titleEl) titleEl.textContent = data.title;
+  if (badgeEl) {
+    badgeEl.className = `inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border ${data.badge}`;
+    badgeEl.textContent = data.code;
+  }
+  if (creditEl) creditEl.innerHTML = data.creditDesc;
+  if (summaryEl) summaryEl.textContent = data.summary;
+
+  if (optionsContainer) {
+    let html = '';
+    data.options.forEach((opt, idx) => {
+      html += `
+        <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm hover:border-blue-300 transition-all">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+            <h5 class="font-bold text-slate-900 text-base flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center shrink-0">${idx + 1}</span>
+              <span>${escapeHtml(opt.title)}</span>
+            </h5>
+            <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 w-fit">
+              ${escapeHtml(opt.creditImpact)}
+            </span>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed mb-3">
+            ${escapeHtml(opt.detail)}
+          </p>
+          <div class="p-3 bg-blue-50/70 rounded-xl text-xs text-blue-900 font-medium">
+            <strong>วิธีดำเนินการ:</strong> ${escapeHtml(opt.howTo)}
+          </div>
+        </div>
+      `;
+    });
+    optionsContainer.innerHTML = html;
+  }
+
+  // Smooth scroll to result
+  resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  lucide.createIcons();
+}
+
+// Update DOMContentLoaded to register new subsystems
+document.addEventListener('DOMContentLoaded', () => {
+  initAuthSystem();
+  initStageDiagnostic();
+});
