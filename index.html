@@ -25,6 +25,7 @@
 
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           colors: {
@@ -42,8 +43,26 @@
       }
     }
   </script>
+
+  <!-- Early Theme Init to avoid FOUC (Flash of Unstyled Content) -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('app_theme');
+      let userTheme = null;
+      try {
+        const sess = JSON.parse(localStorage.getItem('debt_user_session'));
+        if (sess && sess.theme) userTheme = sess.theme;
+      } catch (e) {}
+      const preferred = userTheme || savedTheme;
+      if (preferred === 'dark' || (!preferred && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    })();
+  </script>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased selection:bg-blue-200">
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 antialiased selection:bg-blue-200 transition-colors duration-200">
 
   <!-- ================= NAVBAR ================= -->
   <header class="sticky top-0 z-50 glass-nav transition-all">
@@ -79,9 +98,14 @@
         <!-- Auth and CTA Buttons -->
         <div class="flex items-center gap-2">
           
+          <!-- Theme Toggle Button -->
+          <button onclick="toggleTheme()" id="theme-toggle-btn" class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-slate-200 dark:border-slate-700 bg-white/60 dark:bg-slate-800/80 shadow-sm" title="สลับธีมมืด/สว่าง">
+            <i id="theme-icon" data-lucide="moon" class="w-4 h-4"></i>
+          </button>
+
           <!-- Not Logged In State -->
           <div id="auth-btn-group" class="flex items-center gap-1.5">
-            <button onclick="openAuthModal('signin')" class="px-3 py-1.5 text-xs font-semibold text-slate-700 hover:text-blue-600 bg-slate-100 hover:bg-blue-50 rounded-xl transition-colors">
+            <button onclick="openAuthModal('signin')" class="px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 rounded-xl transition-colors">
               เข้าสู่ระบบ
             </button>
             <button onclick="openAuthModal('signup')" class="px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm transition-all">
@@ -90,13 +114,13 @@
           </div>
 
           <!-- Logged In State (Hidden by default) -->
-          <div id="user-profile-badge" class="hidden items-center gap-2 bg-slate-100/90 pl-2 pr-3 py-1 rounded-xl border border-slate-200">
+          <div id="user-profile-badge" class="hidden items-center gap-2 bg-slate-100/90 dark:bg-slate-800/90 pl-2 pr-3 py-1 rounded-xl border border-slate-200 dark:border-slate-700">
             <div class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">
               <i data-lucide="user" class="w-3.5 h-3.5"></i>
             </div>
             <div class="text-left">
-              <span id="user-display-name" class="text-xs font-bold text-slate-800 block leading-tight">คุณสมาชิก</span>
-              <span id="user-tier-badge" class="text-[10px] font-bold px-1 py-0.2 rounded bg-slate-200 text-slate-600">FREE TIER</span>
+              <span id="user-display-name" class="text-xs font-bold text-slate-800 dark:text-slate-100 block leading-tight">คุณสมาชิก</span>
+              <span id="user-tier-badge" class="text-[10px] font-bold px-1 py-0.2 rounded bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300">FREE TIER</span>
             </div>
             <button onclick="logoutUser()" title="ออกจากระบบ" class="text-slate-400 hover:text-red-500 ml-1">
               <i data-lucide="log-out" class="w-3.5 h-3.5"></i>

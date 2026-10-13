@@ -17,6 +17,7 @@ let debtChart = null;
 
 // Initialize on Load
 document.addEventListener('DOMContentLoaded', () => {
+  initTheme();
   loadDebtsFromStorage();
   initDtiCalculator();
   initDebtPlanner();
@@ -567,6 +568,10 @@ function renderChart(baseTimeline, stratTimeline) {
     stratData.push(stratTimeline[i] ? stratTimeline[i].balance : 0);
   }
 
+  const isDark = document.documentElement.classList.contains('dark');
+  const labelColor = isDark ? '#cbd5e1' : '#475569';
+  const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)';
+
   debtChart = new Chart(ctx, {
     type: 'line',
     data: {
@@ -576,7 +581,7 @@ function renderChart(baseTimeline, stratTimeline) {
           label: 'จ่ายขั้นต่ำอย่างเดียว (ยอดหนี้ลดยาก ดอกเบี้ยสะสม)',
           data: baseData,
           borderColor: '#ef4444',
-          backgroundColor: 'rgba(239, 68, 68, 0.05)',
+          backgroundColor: isDark ? 'rgba(239, 68, 68, 0.15)' : 'rgba(239, 68, 68, 0.05)',
           borderDash: [5, 5],
           pointRadius: 0,
           borderWidth: 2,
@@ -585,8 +590,8 @@ function renderChart(baseTimeline, stratTimeline) {
         {
           label: `ใช้กลยุทธ์ ${currentStrategy === 'snowball' ? 'Snowball (บอลหิมะ)' : 'Avalanche (หิมะถล่ม)'} + เงินโปะพิเศษ`,
           data: stratData,
-          borderColor: '#2563eb',
-          backgroundColor: 'rgba(37, 99, 235, 0.1)',
+          borderColor: '#3b82f6',
+          backgroundColor: isDark ? 'rgba(59, 130, 246, 0.2)' : 'rgba(37, 99, 235, 0.1)',
           fill: true,
           pointRadius: 0,
           borderWidth: 3,
@@ -602,6 +607,7 @@ function renderChart(baseTimeline, stratTimeline) {
           position: 'top',
           labels: {
             font: { family: "'Noto Sans Thai', sans-serif", size: 12 },
+            color: labelColor,
             boxWidth: 14,
             usePointStyle: true
           }
@@ -617,14 +623,16 @@ function renderChart(baseTimeline, stratTimeline) {
       scales: {
         x: {
           grid: { display: false },
-          ticks: { maxTicksLimit: 8, font: { family: "'Noto Sans Thai', sans-serif" } }
+          ticks: { maxTicksLimit: 8, font: { family: "'Noto Sans Thai', sans-serif" }, color: labelColor }
         },
         y: {
+          grid: { color: gridColor },
           ticks: {
             callback: function(value) {
               return value >= 1000 ? (value / 1000).toLocaleString() + 'k บ.' : value + ' บ.';
             },
-            font: { family: "'Noto Sans Thai', sans-serif" }
+            font: { family: "'Noto Sans Thai', sans-serif" },
+            color: labelColor
           }
         }
       }
@@ -732,6 +740,47 @@ window.printDebtPlan = function() {
 };
 
 // ==========================================
+// 6.1 THEME MANAGEMENT (DARK & LIGHT MODE)
+// ==========================================
+function initTheme() {
+  const savedTheme = localStorage.getItem('app_theme');
+  const userTheme = (currentUser && currentUser.theme) ? currentUser.theme : null;
+  const preferred = userTheme || savedTheme;
+
+  if (preferred === 'dark' || (!preferred && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+  updateThemeIcon();
+}
+
+window.toggleTheme = function() {
+  const isDark = document.documentElement.classList.toggle('dark');
+  const theme = isDark ? 'dark' : 'light';
+  localStorage.setItem('app_theme', theme);
+  
+  if (currentUser) {
+    currentUser.theme = theme;
+    localStorage.setItem('debt_user_session', JSON.stringify(currentUser));
+  }
+  
+  updateThemeIcon();
+  if (debtChart) {
+    calculateRepaymentPlan(); // Redraw chart with matching dark/light colors
+  }
+};
+
+function updateThemeIcon() {
+  const isDark = document.documentElement.classList.contains('dark');
+  const themeIcon = document.getElementById('theme-icon');
+  if (themeIcon) {
+    themeIcon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+    lucide.createIcons();
+  }
+}
+
+// ==========================================
 // 7. USER AUTHENTICATION & MEMBERSHIP SYSTEM
 // ==========================================
 let currentUser = null;
@@ -742,6 +791,11 @@ function initAuthSystem() {
   if (storedUser) {
     try {
       currentUser = JSON.parse(storedUser);
+      // Sync user's saved theme preference
+      if (currentUser.theme) {
+        localStorage.setItem('app_theme', currentUser.theme);
+        initTheme();
+      }
     } catch (e) {
       currentUser = null;
     }
@@ -764,11 +818,14 @@ function initAuthSystem() {
         return;
       }
 
+      const activeTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+
       // Check registered users or create login session
       currentUser = {
         name: email.split('@')[0] || 'สมาชิก',
         email: email,
         tier: 'free',
+        theme: activeTheme,
         joinedAt: new Date().toLocaleDateString('th-TH')
       };
 
@@ -792,11 +849,14 @@ function initAuthSystem() {
         return;
       }
 
+      const activeTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+
       currentUser = {
         name,
         email,
         phone,
         tier: 'free',
+        theme: activeTheme,
         joinedAt: new Date().toLocaleDateString('th-TH')
       };
 

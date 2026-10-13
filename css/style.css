@@ -18,6 +18,12 @@ body {
   background-color: #f8fafc;
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+html.dark body {
+  color: #f1f5f9;
+  background-color: #0f172a;
 }
 
 h1, h2, h3, h4, h5, h6, .font-heading {
@@ -40,6 +46,16 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   background: #94a3b8;
 }
 
+html.dark ::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+html.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
 /* Glassmorphism effects */
 .glass-card {
   background: rgba(255, 255, 255, 0.95);
@@ -51,6 +67,16 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+html.dark .glass-nav {
+  background: rgba(15, 23, 42, 0.85);
+  border-bottom: 1px solid rgba(51, 65, 85, 0.8);
+}
+
+html.dark .glass-card {
+  background: rgba(30, 41, 59, 0.95);
+  border: 1px solid rgba(51, 65, 85, 0.8);
 }
 
 /* Gradient accents */
@@ -132,6 +158,82 @@ details summary::-webkit-details-marker {
 
 details[open] summary .accordion-chevron {
   transform: rotate(180deg);
+}
+
+/* ==========================================
+   UNIVERSAL DARK MODE OVERRIDES & POLISH
+   ========================================== */
+html.dark input, 
+html.dark select, 
+html.dark textarea {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: #475569 !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+html.dark .bg-white {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+html.dark .bg-slate-50,
+html.dark .bg-slate-50\/50,
+html.dark .bg-slate-50\/70 {
+  background-color: #0f172a !important;
+}
+
+html.dark .border-slate-200,
+html.dark .border-slate-300,
+html.dark .border-slate-200\/80 {
+  border-color: #334155 !important;
+}
+
+html.dark .border-slate-100 {
+  border-color: #1e293b !important;
+}
+
+html.dark .text-slate-900 {
+  color: #ffffff !important;
+}
+
+html.dark .text-slate-800 {
+  color: #f1f5f9 !important;
+}
+
+html.dark .text-slate-700 {
+  color: #cbd5e1 !important;
+}
+
+html.dark .text-slate-600 {
+  color: #94a3b8 !important;
+}
+
+html.dark .text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+html.dark .tab-btn:not(.active) {
+  background-color: #1e293b !important;
+  color: #94a3b8 !important;
+}
+
+html.dark details[open] {
+  background-color: #1e293b !important;
+}
+
+html.dark #auth-modal > div {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+html.dark footer {
+  background-color: #0b1120 !important;
+  border-color: #1e293b !important;
 }
 
 /* Print Styles */
