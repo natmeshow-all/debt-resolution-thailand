@@ -23,6 +23,9 @@
   <!-- Custom CSS -->
   <link rel="stylesheet" href="css/style.css">
 
+  <!-- Google Identity Services (GIS) Official SDK -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -1814,45 +1817,80 @@
         <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">เพื่อเข้าสู่ระบบ "ปลดหนี้ มีทางออก"</p>
       </div>
 
-      <!-- Account List -->
-      <div class="p-5 space-y-2.5">
-        <div class="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">เลือกบัญชี Google เพื่อดำเนินการต่อ</div>
+      <div class="p-5 space-y-4 max-h-[75vh] overflow-y-auto">
         
-        <!-- Detected Google Account -->
-        <button onclick="selectGoogleAccount('Nat Show', 'natmeshow@gmail.com', 'N')" class="w-full p-3 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50/50 dark:hover:bg-slate-700/60 transition-all flex items-center justify-between group text-left">
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-bold text-sm flex items-center justify-center shadow-sm">
-              N
+        <!-- Official Google GIS Button Container (Appears when Client ID is configured) -->
+        <div id="google-official-btn-section" class="hidden text-center">
+          <div class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mb-2 flex items-center justify-center gap-1">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+            <span>Google Identity Services เชื่อมต่อแล้ว</span>
+          </div>
+          <div id="google-official-btn-wrapper" class="flex justify-center"></div>
+          <div class="my-3 flex items-center gap-2">
+            <hr class="flex-1 border-slate-200 dark:border-slate-700">
+            <span class="text-[10px] text-slate-400">หรือ</span>
+            <hr class="flex-1 border-slate-200 dark:border-slate-700">
+          </div>
+        </div>
+
+        <!-- Direct Personal Account Input Form (Real User Data) -->
+        <div class="space-y-3">
+          <div class="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+            <i data-lucide="user-check" class="w-4 h-4 text-blue-600"></i>
+            <span>ระบุข้อมูลบัญชี Google ของคุณ</span>
+          </div>
+          <form id="google-direct-form" class="space-y-2.5">
+            <div>
+              <label class="block text-[11px] text-slate-500 dark:text-slate-400 mb-1">ชื่อหรือชื่อเรียกของคุณ</label>
+              <input type="text" id="google-direct-name" placeholder="เช่น คุณสมชาย หรือชื่อเล่น" required class="w-full px-3.5 py-2 text-xs rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-750 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500">
             </div>
             <div>
-              <div class="text-xs md:text-sm font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400">Nat Show</div>
-              <div class="text-[11px] text-slate-500 dark:text-slate-400">natmeshow@gmail.com</div>
+              <label class="block text-[11px] text-slate-500 dark:text-slate-400 mb-1">อีเมล Google (@gmail.com)</label>
+              <input type="email" id="google-direct-email" placeholder="example@gmail.com" required class="w-full px-3.5 py-2 text-xs rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-750 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500">
             </div>
-          </div>
-          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 dark:text-slate-500 group-hover:text-blue-600 transition-colors"></i>
-        </button>
+            <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-2">
+              <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+                <path fill="#fff" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#fff" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#fff" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                <path fill="#fff" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+              </svg>
+              <span>เข้าสู่ระบบด้วย Google ทันที</span>
+            </button>
+          </form>
+        </div>
 
-        <!-- Custom Account Input Accordion -->
-        <details id="custom-google-details" class="rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden text-left">
-          <summary class="p-3 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 cursor-pointer list-none flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-300">
-              <i data-lucide="user-plus" class="w-4 h-4"></i>
-            </div>
-            <span>ใช้บัญชี Google อื่น...</span>
+        <!-- Google OAuth Client ID Configuration (Accordion) -->
+        <details id="google-config-details" class="rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden text-left bg-slate-50/70 dark:bg-slate-750">
+          <summary class="p-3 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100/70 dark:hover:bg-slate-700/50 cursor-pointer list-none flex items-center justify-between">
+            <span class="flex items-center gap-1.5">
+              <i data-lucide="key-round" class="w-3.5 h-3.5 text-amber-500"></i>
+              <span>เชื่อมต่อ Google OAuth จริง (สำหรับเจ้าของเว็บ)</span>
+            </span>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
           </summary>
-          <div class="p-3 pt-0 border-t border-slate-100 dark:border-slate-700/60 bg-slate-50/50 dark:bg-slate-750">
-            <form id="custom-google-form" class="space-y-2.5 pt-2.5">
-              <input type="email" id="custom-google-email" placeholder="ชื่อบัญชี@gmail.com" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-800 text-slate-800 dark:text-white">
-              <button type="submit" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-xl transition-colors">
-                ดำเนินการต่อใน 1 คลิก
-              </button>
-            </form>
+          <div class="p-3.5 pt-1 space-y-2.5 text-[11px] text-slate-600 dark:text-slate-300 border-t border-slate-200/60 dark:border-slate-700/60">
+            <p>
+              Google กำหนดให้เว็บต้องมี <strong>Client ID</strong> จาก Google Cloud เพื่อยืนยันโดเมนและเปิดหน้าต่างเลือกบัญชี Google จริงจาก accounts.google.com
+            </p>
+            <div>
+              <label class="block font-semibold text-slate-700 dark:text-slate-200 mb-1">Google Client ID</label>
+              <input type="text" id="google-client-id-input" placeholder="xxxx.apps.googleusercontent.com" class="w-full px-2.5 py-1.5 text-[11px] rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 text-slate-800 dark:text-white">
+            </div>
+            <button onclick="saveGoogleClientId()" class="w-full py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg transition-colors text-xs flex items-center justify-center gap-1.5">
+              <i data-lucide="save" class="w-3 h-3"></i>
+              <span>บันทึก Client ID & เปิดใช้งาน Google จริง</span>
+            </button>
+            <div class="text-[10px] text-slate-400 pt-1">
+              สร้างฟรีได้ที่: <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener" class="text-blue-500 underline">Google Cloud Console</a> &gt; Create Credentials &gt; OAuth client ID
+            </div>
           </div>
         </details>
+
       </div>
 
-      <div class="p-3.5 bg-slate-50 dark:bg-slate-850 border-t border-slate-100 dark:border-slate-700/50 text-center text-[10px] text-slate-400">
-        🔒 ปลอดภัย ไม่ต้องจำรหัสผ่าน เชื่อมต่อโดยตรง
+      <div class="p-3 bg-slate-50 dark:bg-slate-850 border-t border-slate-100 dark:border-slate-700/50 text-center text-[10px] text-slate-400">
+        🔒 ปลอดภัย ข้อมูลเข้ารหัสและจัดเก็บบนอุปกรณ์ของคุณ
       </div>
 
     </div>

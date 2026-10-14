@@ -869,27 +869,116 @@ function initAuthSystem() {
     });
   }
 
-  // Custom Google Account Form Handler
-  const customGoogleForm = document.getElementById('custom-google-form');
-  if (customGoogleForm) {
-    customGoogleForm.addEventListener('submit', (e) => {
+  // Direct Google Sign-In Form Handler (Real User Data)
+  const googleDirectForm = document.getElementById('google-direct-form');
+  if (googleDirectForm) {
+    googleDirectForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      const email = document.getElementById('custom-google-email').value.trim();
-      if (!email) return;
-      const name = email.split('@')[0];
-      selectGoogleAccount(name, email, name.charAt(0).toUpperCase());
+      const name = document.getElementById('google-direct-name').value.trim();
+      const email = document.getElementById('google-direct-email').value.trim();
+      if (!name || !email) return;
+      saveGoogleUserSession(name, email, name.charAt(0).toUpperCase());
+      alert(`✨ เข้าสู่ระบบด้วย Google สำเร็จ!\nยินดีต้อนรับคุณ ${name} (${email})`);
     });
   }
+
+  // Auto-init Google GIS if library is ready
+  window.addEventListener('load', () => {
+    initGoogleGIS();
+  });
 }
 
 // ==========================================
-// 7.1 GOOGLE SIGN-IN HANDLERS
+// 7.1 GOOGLE SIGN-IN HANDLERS & REAL GIS OAUTH
 // ==========================================
+function decodeJwtResponse(token) {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    return JSON.parse(jsonPayload);
+  } catch (err) {
+    console.error('Failed to decode Google JWT:', err);
+    return null;
+  }
+}
+
+window.handleGoogleCredentialResponse = function(response) {
+  if (!response || !response.credential) return;
+  const data = decodeJwtResponse(response.credential);
+  if (!data) return;
+
+  const name = data.name || data.given_name || data.email.split('@')[0];
+  const email = data.email;
+  const avatar = data.picture || name.charAt(0).toUpperCase();
+
+  saveGoogleUserSession(name, email, avatar);
+  alert(`🎉 ล็อกอินด้วยบัญชี Google จริงสำเร็จ!\nยินดีต้อนรับคุณ ${name} (${email})`);
+};
+
+function initGoogleGIS() {
+  const clientId = localStorage.getItem('google_oauth_client_id');
+  const section = document.getElementById('google-official-btn-section');
+  const wrapper = document.getElementById('google-official-btn-wrapper');
+  const inputEl = document.getElementById('google-client-id-input');
+
+  if (inputEl && clientId) {
+    inputEl.value = clientId;
+  }
+
+  if (!clientId || typeof google === 'undefined' || !google.accounts || !google.accounts.id) {
+    if (section) section.classList.add('hidden');
+    return;
+  }
+
+  try {
+    google.accounts.id.initialize({
+      client_id: clientId,
+      callback: window.handleGoogleCredentialResponse,
+      auto_select: false,
+      cancel_on_tap_outside: true
+    });
+
+    if (wrapper) {
+      wrapper.innerHTML = '';
+      google.accounts.id.renderButton(wrapper, {
+        theme: document.documentElement.classList.contains('dark') ? 'filled_black' : 'outline',
+        size: 'large',
+        text: 'continue_with',
+        shape: 'pill',
+        width: 260
+      });
+      if (section) section.classList.remove('hidden');
+    }
+  } catch (err) {
+    console.warn('Google Identity Services initialization notice:', err);
+  }
+}
+
+window.saveGoogleClientId = function() {
+  const input = document.getElementById('google-client-id-input');
+  if (!input) return;
+  const val = input.value.trim();
+  if (!val) {
+    localStorage.removeItem('google_oauth_client_id');
+    alert('ล้างการตั้งค่า Client ID เรียบร้อย');
+    initGoogleGIS();
+    return;
+  }
+
+  localStorage.setItem('google_oauth_client_id', val);
+  alert('✅ บันทึก Google OAuth Client ID สำเร็จ! กำลังเชื่อมต่อระบบ Google Identity Services...');
+  initGoogleGIS();
+};
+
 window.handleGoogleSignIn = function() {
   closeAuthModal();
   const googleModal = document.getElementById('google-picker-modal');
   if (googleModal) {
     googleModal.classList.remove('hidden');
+    initGoogleGIS();
     lucide.createIcons();
   }
 };
@@ -901,13 +990,13 @@ window.closeGoogleModal = function() {
   }
 };
 
-window.selectGoogleAccount = function(name, email, initial) {
+function saveGoogleUserSession(name, email, avatar) {
   const activeTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
   
   currentUser = {
     name: name,
     email: email,
-    avatar: initial || name.charAt(0).toUpperCase(),
+    avatar: avatar || name.charAt(0).toUpperCase(),
     provider: 'google',
     tier: 'free',
     theme: activeTheme,
@@ -918,7 +1007,11 @@ window.selectGoogleAccount = function(name, email, initial) {
   updateAuthUI();
   closeGoogleModal();
   triggerCelebration();
-  alert(`✨ เข้าสู่ระบบด้วย Google สำเร็จใน 1 คลิก!\nยินดีต้อนรับคุณ ${name} (${email})`);
+}
+
+window.selectGoogleAccount = function(name, email, initial) {
+  saveGoogleUserSession(name, email, initial);
+  alert(`✨ เข้าสู่ระบบด้วย Google สำเร็จ!\nยินดีต้อนรับคุณ ${name} (${email})`);
 };
 
 function updateAuthUI() {
@@ -939,9 +1032,12 @@ function updateAuthUI() {
     userProfileBadge.classList.add('flex');
     if (userNameEl) userNameEl.textContent = currentUser.name;
     
-    // Avatar display
+    // Avatar display (supports real Google profile picture URL)
     if (userAvatarEl) {
-      if (currentUser.provider === 'google') {
+      if (currentUser.provider === 'google' && currentUser.avatar && currentUser.avatar.startsWith('http')) {
+        userAvatarEl.innerHTML = `<img src="${escapeHtml(currentUser.avatar)}" alt="${escapeHtml(currentUser.name)}" class="w-full h-full rounded-full object-cover">`;
+        userAvatarEl.className = 'w-6 h-6 rounded-full overflow-hidden shrink-0 shadow-sm border border-slate-200 dark:border-slate-700';
+      } else if (currentUser.provider === 'google') {
         userAvatarEl.innerHTML = `<span class="text-[11px] font-extrabold">${escapeHtml(currentUser.avatar || 'G')}</span>`;
         userAvatarEl.className = 'w-6 h-6 rounded-full bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 text-white text-xs font-bold flex items-center justify-center shadow-sm';
       } else {
@@ -962,11 +1058,15 @@ function updateAuthUI() {
 
     // Drawer Auth Box - Logged In View
     if (drawerAuthBox) {
+      const avatarHtml = (currentUser.avatar && currentUser.avatar.startsWith('http'))
+        ? `<img src="${escapeHtml(currentUser.avatar)}" alt="${escapeHtml(currentUser.name)}" class="w-10 h-10 rounded-full object-cover shrink-0 shadow-sm border border-slate-200 dark:border-slate-700">`
+        : `<div class="w-10 h-10 rounded-full ${currentUser.provider === 'google' ? 'bg-gradient-to-tr from-blue-600 to-indigo-600' : 'bg-blue-600'} text-white font-bold text-base flex items-center justify-center shrink-0 shadow-sm">
+            ${escapeHtml(currentUser.avatar || currentUser.name.charAt(0).toUpperCase())}
+          </div>`;
+
       drawerAuthBox.innerHTML = `
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full ${currentUser.provider === 'google' ? 'bg-gradient-to-tr from-blue-600 to-indigo-600' : 'bg-blue-600'} text-white font-bold text-base flex items-center justify-center shrink-0 shadow-sm">
-            ${escapeHtml(currentUser.avatar || currentUser.name.charAt(0).toUpperCase())}
-          </div>
+          ${avatarHtml}
           <div class="min-w-0 flex-1">
             <div class="font-bold text-slate-900 dark:text-white text-sm truncate">${escapeHtml(currentUser.name)}</div>
             <div class="text-[11px] text-slate-500 dark:text-slate-400 truncate">${escapeHtml(currentUser.email || 'สมาชิกในระบบ')}</div>
