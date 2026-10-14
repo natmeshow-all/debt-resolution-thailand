@@ -14,6 +14,109 @@ function escapeHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
+// ==========================================
+// AESTHETIC TOAST & CONFIRM DIALOG SYSTEM
+// (Zero native browser alerts - 100% luxury custom UI)
+// ==========================================
+window.showToast = function(message, type = 'success', title = '') {
+  let container = document.getElementById('toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container';
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement('div');
+  toast.className = 'toast-item';
+
+  let iconName = 'check-circle';
+  let iconColor = 'text-emerald-500';
+  if (type === 'error') {
+    iconName = 'alert-circle';
+    iconColor = 'text-rose-500';
+  } else if (type === 'warning') {
+    iconName = 'alert-triangle';
+    iconColor = 'text-amber-500';
+  } else if (type === 'info') {
+    iconName = 'info';
+    iconColor = 'text-blue-500';
+  }
+
+  toast.innerHTML = `
+    <div class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0 ${iconColor}">
+      <i data-lucide="${iconName}" class="w-4 h-4"></i>
+    </div>
+    <div class="flex-1 min-w-0 pr-1">
+      ${title ? `<div class="font-bold text-xs leading-tight mb-0.5">${escapeHtml(title)}</div>` : ''}
+      <div class="text-xs opacity-90 leading-relaxed">${escapeHtml(message).replace(/\n/g, '<br>')}</div>
+    </div>
+    <button onclick="this.parentElement.remove()" class="p-1 opacity-50 hover:opacity-100 rounded-lg transition-opacity text-slate-400">
+      <i data-lucide="x" class="w-3.5 h-3.5"></i>
+    </button>
+  `;
+
+  container.appendChild(toast);
+  lucide.createIcons();
+
+  // Auto remove after 3.8s
+  setTimeout(() => {
+    toast.classList.add('removing');
+    setTimeout(() => {
+      if (toast.parentElement) toast.remove();
+    }, 250);
+  }, 3800);
+};
+
+let pendingConfirmCallback = null;
+
+window.showConfirmModal = function({ title, message, confirmText = 'ยืนยัน', cancelText = 'ยกเลิก', icon = 'help-circle', isDanger = false, onConfirm }) {
+  const modal = document.getElementById('confirm-modal');
+  if (!modal) {
+    if (confirm(message)) onConfirm();
+    return;
+  }
+
+  const titleEl = document.getElementById('confirm-title');
+  const msgEl = document.getElementById('confirm-message');
+  const iconEl = document.getElementById('confirm-icon');
+  const iconBg = document.getElementById('confirm-icon-bg');
+  const okBtn = document.getElementById('confirm-ok-btn');
+  const cancelBtn = document.getElementById('confirm-cancel-btn');
+
+  if (titleEl) titleEl.textContent = title || 'ยืนยันการดำเนินการ';
+  if (msgEl) msgEl.textContent = message || '';
+  if (okBtn) okBtn.textContent = confirmText;
+  if (cancelBtn) cancelBtn.textContent = cancelText;
+
+  if (isDanger) {
+    if (iconBg) iconBg.className = 'w-14 h-14 mx-auto mb-4 rounded-2xl bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center shadow-sm';
+    if (iconEl) iconEl.setAttribute('data-lucide', 'alert-triangle');
+    if (okBtn) okBtn.className = 'w-full py-2.5 px-4 text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 rounded-xl transition-colors shadow-md shadow-rose-500/20';
+  } else {
+    if (iconBg) iconBg.className = 'w-14 h-14 mx-auto mb-4 rounded-2xl bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shadow-sm';
+    if (iconEl) iconEl.setAttribute('data-lucide', icon);
+    if (okBtn) okBtn.className = 'w-full py-2.5 px-4 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors shadow-md shadow-blue-500/20';
+  }
+
+  pendingConfirmCallback = onConfirm;
+  modal.classList.remove('hidden');
+  lucide.createIcons();
+
+  okBtn.onclick = () => {
+    modal.classList.add('hidden');
+    if (pendingConfirmCallback) {
+      pendingConfirmCallback();
+      pendingConfirmCallback = null;
+    }
+  };
+};
+
+window.closeConfirmModal = function() {
+  const modal = document.getElementById('confirm-modal');
+  if (modal) modal.classList.add('hidden');
+  pendingConfirmCallback = null;
+};
+
 // --- Default Sample Debts ---
 const SAMPLE_DEBTS = [
   { id: '1', name: 'บัตรเครดิต A (ช้อปปิ้ง)', balance: 45000, rate: 16, minPay: 2500 },
@@ -210,7 +313,7 @@ function initDebtPlanner() {
       const minPay = parseFloat(document.getElementById('new-debt-minpay').value) || 0;
 
       if (!name || balance <= 0 || minPay <= 0) {
-        alert('กรุณากรอกข้อมูลหนี้ให้ครบถ้วนและถูกต้อง');
+        showToast('กรุณากรอกข้อมูลหนี้ให้ครบถ้วนและถูกต้อง', 'warning');
         return;
       }
 
@@ -225,6 +328,7 @@ function initDebtPlanner() {
       saveDebtsToStorage();
       renderDebtList();
       calculateRepaymentPlan();
+      showToast(`เพิ่มหนี้ "${name}" ในแผนการผ่อนแล้ว`, 'success');
 
       // Reset fields
       document.getElementById('new-debt-name').value = '';
@@ -246,6 +350,7 @@ function initDebtPlanner() {
       saveDebtsToStorage();
       renderDebtList();
       calculateRepaymentPlan();
+      showToast('โหลดรายการหนี้ตัวอย่าง 3 รายการเรียบร้อยแล้ว', 'info');
     });
   }
 
@@ -253,12 +358,20 @@ function initDebtPlanner() {
   const clearDebtsBtn = document.getElementById('clear-debts-btn');
   if (clearDebtsBtn) {
     clearDebtsBtn.addEventListener('click', () => {
-      if (confirm('คุณต้องการล้างรายการหนี้ทั้งหมดใช่หรือไม่?')) {
-        debts = [];
-        saveDebtsToStorage();
-        renderDebtList();
-        calculateRepaymentPlan();
-      }
+      showConfirmModal({
+        title: 'ล้างรายการหนี้ทั้งหมด',
+        message: 'คุณแน่ใจหรือไม่ว่าต้องการลบรายการหนี้ทั้งหมดออกจากอุปกรณ์?',
+        confirmText: 'ล้างข้อมูลหนี้',
+        cancelText: 'ยกเลิก',
+        isDanger: true,
+        onConfirm: () => {
+          debts = [];
+          saveDebtsToStorage();
+          renderDebtList();
+          calculateRepaymentPlan();
+          showToast('ล้างรายการหนี้ทั้งหมดเรียบร้อยแล้ว', 'info');
+        }
+      });
     });
   }
 
@@ -731,15 +844,16 @@ window.copyScript = function(elementId, btnElement) {
     const originalText = btnElement.innerHTML;
     btnElement.innerHTML = `
       <i data-lucide="check" class="w-4 h-4 inline mr-1 text-emerald-600"></i>
-      <span class="text-emerald-700 font-semibold">คัดลอกเรียบร้อย!</span>
+      <span class="text-emerald-700 dark:text-emerald-400 font-semibold">คัดลอกแล้ว!</span>
     `;
     lucide.createIcons();
+    showToast('คัดลอกบทพูดลงในคลิปบอร์ดแล้ว นำไปใช้อ่านเจรจาได้ทันที', 'success', '📋 คัดลอกสำเร็จ');
     setTimeout(() => {
       btnElement.innerHTML = originalText;
       lucide.createIcons();
     }, 2500);
   }).catch(err => {
-    alert('ไม่สามารถคัดลอกข้อความได้อัตโนมัติ กรุณากดเลือกและคัดลอกเอง');
+    showToast('ไม่สามารถคัดลอกข้อความได้อัตโนมัติ กรุณากดเลือกและคัดลอกเอง', 'warning');
   });
 };
 
@@ -825,7 +939,7 @@ function initAuthSystem() {
       const password = document.getElementById('signin-password').value;
 
       if (!email || !password) {
-        alert('กรุณากรอกอีเมลและรหัสผ่าน');
+        showToast('กรุณากรอกอีเมลและรหัสผ่าน', 'warning');
         return;
       }
 
@@ -843,7 +957,7 @@ function initAuthSystem() {
       localStorage.setItem('debt_user_session', JSON.stringify(currentUser));
       updateAuthUI();
       closeAuthModal();
-      alert(`ยินดีต้อนรับคุณ ${currentUser.name} เข้าสู่ระบบเรียบร้อยแล้วครับ!`);
+      showToast(`ยินดีต้อนรับคุณ ${currentUser.name} เข้าสู่ระบบเรียบร้อย`, 'success', '✨ เข้าสู่ระบบสำเร็จ');
       lucide.createIcons();
     });
   }
@@ -856,7 +970,7 @@ function initAuthSystem() {
       const phone = document.getElementById('signup-phone').value.trim();
 
       if (!name || !email) {
-        alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+        showToast('กรุณากรอกข้อมูลให้ครบถ้วน', 'warning');
         return;
       }
 
@@ -874,7 +988,7 @@ function initAuthSystem() {
       localStorage.setItem('debt_user_session', JSON.stringify(currentUser));
       updateAuthUI();
       closeAuthModal();
-      alert(`สมัครสมาชิกสำเร็จ! ยินดีต้อนรับคุณ ${currentUser.name}`);
+      showToast(`สมัครสมาชิกสำเร็จ! ยินดีต้อนรับคุณ ${currentUser.name}`, 'success', '🎉 สมาชิกใหม่');
       triggerCelebration();
       lucide.createIcons();
     });
@@ -889,7 +1003,7 @@ function initAuthSystem() {
       const email = document.getElementById('google-direct-email').value.trim();
       if (!name || !email) return;
       saveGoogleUserSession(name, email, name.charAt(0).toUpperCase());
-      alert(`✨ เข้าสู่ระบบด้วย Google สำเร็จ!\nยินดีต้อนรับคุณ ${name} (${email})`);
+      showToast(`เข้าสู่ระบบในชื่อ ${name} เรียบร้อยแล้ว`, 'success', '✨ เข้าสู่ระบบสำเร็จ');
     });
   }
 
@@ -924,7 +1038,7 @@ window.handleGoogleCredentialResponse = function(response) {
     }
     const data = decodeJwtResponse(response.credential);
     if (!data) {
-      alert('ไม่สามารถอ่านข้อมูลบัญชี Google ได้ กรุณาลองใหม่อีกครั้ง');
+      showToast('ไม่สามารถอ่านข้อมูลบัญชี Google ได้ กรุณาลองใหม่อีกครั้ง', 'error');
       return;
     }
 
@@ -934,7 +1048,7 @@ window.handleGoogleCredentialResponse = function(response) {
 
     saveGoogleUserSession(name, email, avatar);
     closeGoogleModal();
-    alert(`🎉 เข้าสู่ระบบด้วยบัญชี Google สำเร็จ!\nยินดีต้อนรับคุณ ${name} (${email})`);
+    showToast(`ยินดีต้อนรับคุณ ${name} (${email}) เข้าสู่ระบบเรียบร้อย`, 'success', '🎉 เข้าสู่ระบบสำเร็จ');
   } catch (err) {
     console.error('Error in handleGoogleCredentialResponse:', err);
     closeGoogleModal();
@@ -986,14 +1100,14 @@ window.saveGoogleClientId = function() {
   const val = input.value.trim();
   if (!val) {
     localStorage.removeItem('google_oauth_client_id');
-    alert('ล้างการตั้งค่า Client ID เรียบร้อย');
+    showToast('ล้างการตั้งค่า Client ID เรียบร้อย', 'info');
     initGoogleGIS();
     return;
   }
 
   localStorage.setItem('google_oauth_client_id', val);
   initGoogleGIS();
-  alert('✅ เชื่อมต่อ Google สำเร็จแล้ว!\n👉 กรุณากดที่ปุ่ม "ดำเนินการต่อในชื่อ..." (ปุ่ม Google ด้านบน) เพื่อเข้าสู่ระบบและปิดหน้าต่างนี้ทันที');
+  showToast('เชื่อมต่อ Google สำเร็จ! แตะปุ่มด้านบนเพื่อเข้าสู่ระบบ', 'success', '🔑 เชื่อมต่อ Google API');
 };
 
 window.handleGoogleSignIn = function() {
@@ -1193,46 +1307,58 @@ window.switchAuthTab = function(tab) {
   const signinView = document.getElementById('view-signin');
   const signupView = document.getElementById('view-signup');
 
+  if (!signinTab || !signupTab || !signinView || !signupView) return;
+
   if (tab === 'signin') {
-    signinTab.classList.add('border-blue-600', 'text-blue-600');
-    signinTab.classList.remove('border-transparent', 'text-slate-500');
-    signupTab.classList.remove('border-blue-600', 'text-blue-600');
-    signupTab.classList.add('border-transparent', 'text-slate-500');
+    signinTab.className = 'flex-1 py-2 text-xs font-bold rounded-xl transition-all text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-700 shadow-sm';
+    signupTab.className = 'flex-1 py-2 text-xs font-semibold rounded-xl transition-all text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200';
     signinView.classList.remove('hidden');
     signupView.classList.add('hidden');
   } else {
-    signupTab.classList.add('border-blue-600', 'text-blue-600');
-    signupTab.classList.remove('border-transparent', 'text-slate-500');
-    signinTab.classList.remove('border-blue-600', 'text-blue-600');
-    signinTab.classList.add('border-transparent', 'text-slate-500');
+    signupTab.className = 'flex-1 py-2 text-xs font-bold rounded-xl transition-all text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-700 shadow-sm';
+    signinTab.className = 'flex-1 py-2 text-xs font-semibold rounded-xl transition-all text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200';
     signupView.classList.remove('hidden');
     signinView.classList.add('hidden');
   }
 };
 
 window.logoutUser = function() {
-  if (confirm('คุณต้องการออกจากระบบใช่หรือไม่?')) {
-    localStorage.removeItem('debt_user_session');
-    currentUser = null;
-    updateAuthUI();
-    alert('ออกจากระบบเรียบร้อยแล้ว');
-  }
+  showConfirmModal({
+    title: 'ออกจากระบบ',
+    message: 'คุณต้องการออกจากระบบ "ปลดหนี้ มีทางออก" ใช่หรือไม่?',
+    confirmText: 'ออกจากระบบ',
+    cancelText: 'ยกเลิก',
+    isDanger: true,
+    onConfirm: () => {
+      localStorage.removeItem('debt_user_session');
+      currentUser = null;
+      updateAuthUI();
+      showToast('ออกจากระบบเรียบร้อยแล้ว', 'info');
+    }
+  });
 };
 
 window.upgradeToPro = function() {
   if (!currentUser) {
-    alert('กรุณาสมัครสมาชิกหรือเข้าสู่ระบบก่อนอัปเกรดเป็นสมาชิก Pro');
+    showToast('กรุณาสมัครสมาชิกหรือเข้าสู่ระบบก่อนอัปเกรดเป็นสมาชิก Pro', 'warning');
     openAuthModal('signup');
     return;
   }
   
-  if (confirm('🎉 ยืนยันการสมัครสมาชิก Pro (ทดลองฟรีสำหรับช่วงเปิดตัว) เพื่อปลดล็อกรายงานวิเคราะห์เชิงลึกและเครื่องมือติดตามหนี้อัตโนมัติ?')) {
-    currentUser.tier = 'pro';
-    localStorage.setItem('debt_user_session', JSON.stringify(currentUser));
-    updateAuthUI();
-    triggerCelebration();
-    alert('ยินดีด้วยครับ! บัญชีของคุณได้รับการอัปเกรดเป็น PRO เรียบร้อยแล้ว');
-  }
+  showConfirmModal({
+    title: 'อัปเกรดเป็นสมาชิก PRO ฟรี',
+    message: 'ยินดีต้อนรับสู่ช่วงเปิดตัว! ปลดล็อกรายงานวิเคราะห์เชิงลึกและเครื่องมือติดตามหนี้อัตโนมัติฟรีทันที',
+    confirmText: 'รับสิทธิ์ PRO ฟรี',
+    cancelText: 'ไว้คราวหน้า',
+    icon: 'crown',
+    onConfirm: () => {
+      currentUser.tier = 'pro';
+      localStorage.setItem('debt_user_session', JSON.stringify(currentUser));
+      updateAuthUI();
+      triggerCelebration();
+      showToast('ยินดีด้วยครับ! บัญชีของคุณได้รับการอัปเกรดเป็น PRO เรียบร้อยแล้ว', 'success', '🎉 อัปเกรดสำเร็จ');
+    }
+  });
 };
 
 // ==========================================

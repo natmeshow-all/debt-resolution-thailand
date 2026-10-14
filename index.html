@@ -1681,42 +1681,60 @@
     </div>
   </footer>
 
+  <!-- ================= TOAST CONTAINER ================= -->
+  <div id="toast-container" aria-live="polite"></div>
+
+  <!-- ================= CUSTOM CONFIRM DIALOG MODAL ================= -->
+  <div id="confirm-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden p-4">
+    <div class="modal-content-card bg-white dark:bg-slate-900 rounded-[28px] border border-slate-200/80 dark:border-slate-800 w-full max-w-sm overflow-hidden relative p-6 text-center shadow-2xl">
+      <div id="confirm-icon-bg" class="w-14 h-14 mx-auto mb-4 rounded-2xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shadow-sm">
+        <i id="confirm-icon" data-lucide="help-circle" class="w-7 h-7"></i>
+      </div>
+      <h3 id="confirm-title" class="text-base font-extrabold text-slate-900 dark:text-white mb-2">ยืนยันการดำเนินการ</h3>
+      <p id="confirm-message" class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-6">คุณแน่ใจหรือไม่ว่าต้องการดำเนินการต่อ?</p>
+      <div class="grid grid-cols-2 gap-3">
+        <button id="confirm-cancel-btn" onclick="closeConfirmModal(false)" class="w-full py-2.5 px-4 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-750 rounded-xl transition-colors">
+          ยกเลิก
+        </button>
+        <button id="confirm-ok-btn" class="w-full py-2.5 px-4 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors shadow-md shadow-blue-500/20">
+          ยืนยัน
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- ================= AUTH MODAL (SIGN IN / SIGN UP) ================= -->
   <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden p-4">
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-md overflow-hidden relative animate-float">
+    <div class="modal-content-card bg-white dark:bg-slate-900 rounded-[28px] border border-slate-200/80 dark:border-slate-800 w-full max-w-md overflow-hidden relative shadow-2xl">
       
       <!-- Close Button -->
-      <button onclick="closeAuthModal()" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors">
-        <i data-lucide="x" class="w-5 h-5"></i>
+      <button onclick="closeAuthModal()" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors z-10" title="ปิด">
+        <i data-lucide="x" class="w-4 h-4"></i>
       </button>
 
       <!-- Modal Header -->
-      <div class="p-6 pb-0">
-        <div class="flex items-center gap-2 mb-2">
-          <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">
-            <i data-lucide="shield-check" class="w-4 h-4"></i>
-          </div>
-          <span class="font-bold text-slate-900 text-sm">ปลดหนี้ มีทางออก</span>
+      <div class="relative px-6 pt-6 pb-2 text-center">
+        <div class="w-12 h-12 mx-auto mb-3 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-blue-600/30">
+          <i data-lucide="shield-check" class="w-6 h-6"></i>
         </div>
-        <h3 class="text-xl font-extrabold text-slate-900">เข้าสู่ระบบ / สมัครสมาชิก</h3>
-        <p class="text-xs text-slate-500 mt-1">บันทึกแผนชำระหนี้ส่วนบุคคล และเข้าถึงคำแนะนำเฉพาะคุณ</p>
+        <h3 class="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">ปลดหนี้ มีทางออก</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">เข้าสู่ระบบเพื่อบันทึกและติดตามความคืบหน้าการปลดหนี้</p>
 
-        <!-- Tabs -->
-        <div class="flex border-b border-slate-200 mt-6">
-          <button id="tab-btn-signin" onclick="switchAuthTab('signin')" class="flex-1 pb-3 text-xs font-bold text-blue-600 border-b-2 border-blue-600 transition-colors">
+        <!-- Modern Segmented Pill Switch -->
+        <div class="mt-5 p-1 bg-slate-100 dark:bg-slate-800/80 rounded-2xl flex items-center gap-1">
+          <button id="tab-btn-signin" onclick="switchAuthTab('signin')" class="flex-1 py-2 text-xs font-bold rounded-xl transition-all text-blue-600 dark:text-blue-400 bg-white dark:bg-slate-700 shadow-sm">
             เข้าสู่ระบบ
           </button>
-          <button id="tab-btn-signup" onclick="switchAuthTab('signup')" class="flex-1 pb-3 text-xs font-bold text-slate-500 border-b-2 border-transparent transition-colors">
+          <button id="tab-btn-signup" onclick="switchAuthTab('signup')" class="flex-1 py-2 text-xs font-semibold rounded-xl transition-all text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200">
             สมัครสมาชิกใหม่
           </button>
         </div>
       </div>
 
       <!-- Tab View: Sign In -->
-      <div id="view-signin" class="p-6">
-        
-        <!-- Google Sign-In One Click Button -->
-        <button type="button" onclick="handleGoogleSignIn()" class="w-full py-2.5 px-4 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-650 text-slate-700 dark:text-slate-100 font-semibold text-xs rounded-xl border border-slate-300 dark:border-slate-600 shadow-sm transition-all flex items-center justify-center gap-2.5 group hover:border-slate-400">
+      <div id="view-signin" class="p-6 pt-3 space-y-4">
+        <!-- 1-Click Google Sign In -->
+        <button type="button" onclick="handleGoogleSignIn()" class="w-full py-2.5 px-4 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 font-semibold text-xs rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm transition-all flex items-center justify-center gap-2.5 group">
           <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -1726,68 +1744,77 @@
           <span>เข้าสู่ระบบด้วย Google (1 คลิก)</span>
         </button>
 
-        <div class="relative my-4">
-          <div class="absolute inset-0 flex items-center">
-            <div class="w-full border-t border-slate-200 dark:border-slate-700"></div>
-          </div>
-          <div class="relative flex justify-center text-[10px] uppercase">
-            <span class="bg-white dark:bg-slate-800 px-2.5 text-slate-400 dark:text-slate-500 font-semibold">หรือใช้อีเมล</span>
-          </div>
+        <div class="relative flex items-center justify-center my-3">
+          <div class="w-full border-t border-slate-200 dark:border-slate-800"></div>
+          <span class="absolute bg-white dark:bg-slate-900 px-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">หรือใช้อีเมล</span>
         </div>
 
-        <form id="signin-form" class="space-y-4">
+        <form id="signin-form" class="space-y-3">
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">อีเมล</label>
-            <input type="email" id="signin-email" placeholder="example@email.com" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs md:text-sm focus:ring-2 focus:ring-blue-500">
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">อีเมล</label>
+            <div class="relative">
+              <i data-lucide="mail" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
+              <input type="email" id="signin-email" placeholder="example@email.com" required class="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 dark:bg-slate-800/90 text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 transition-all">
+            </div>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">รหัสผ่าน</label>
-            <input type="password" id="signin-password" placeholder="••••••••" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs md:text-sm focus:ring-2 focus:ring-blue-500">
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">รหัสผ่าน</label>
+            </div>
+            <div class="relative">
+              <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
+              <input type="password" id="signin-password" placeholder="••••••••" required class="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 dark:bg-slate-800/90 text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 transition-all">
+            </div>
           </div>
-          <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow transition-colors flex items-center justify-center gap-2">
+          <button type="submit" class="w-full py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs rounded-xl shadow-md shadow-blue-500/25 transition-all flex items-center justify-center gap-2">
             <span>เข้าสู่ระบบ</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
           </button>
         </form>
       </div>
 
       <!-- Tab View: Sign Up -->
-      <div id="view-signup" class="p-6 hidden">
-        
-        <!-- Google Sign-Up One Click Button -->
-        <button type="button" onclick="handleGoogleSignIn()" class="w-full py-2.5 px-4 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-650 text-slate-700 dark:text-slate-100 font-semibold text-xs rounded-xl border border-slate-300 dark:border-slate-600 shadow-sm transition-all flex items-center justify-center gap-2.5 group hover:border-slate-400">
+      <div id="view-signup" class="p-6 pt-3 space-y-4 hidden">
+        <button type="button" onclick="handleGoogleSignIn()" class="w-full py-2.5 px-4 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 font-semibold text-xs rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm transition-all flex items-center justify-center gap-2.5 group">
           <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
             <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
             <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
           </svg>
-          <span>สมัครสมาชิกด้วย Google (1 คลิก)</span>
+          <span>สมัครสมาชิกฟรีด้วย Google</span>
         </button>
 
-        <div class="relative my-4">
-          <div class="absolute inset-0 flex items-center">
-            <div class="w-full border-t border-slate-200 dark:border-slate-700"></div>
-          </div>
-          <div class="relative flex justify-center text-[10px] uppercase">
-            <span class="bg-white dark:bg-slate-800 px-2.5 text-slate-400 dark:text-slate-500 font-semibold">หรือใช้อีเมล</span>
-          </div>
+        <div class="relative flex items-center justify-center my-3">
+          <div class="w-full border-t border-slate-200 dark:border-slate-800"></div>
+          <span class="absolute bg-white dark:bg-slate-900 px-3 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">หรือกรอกข้อมูล</span>
         </div>
 
-        <form id="signup-form" class="space-y-4">
+        <form id="signup-form" class="space-y-3">
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">ชื่อ - นามสกุล หรือชื่อเรียก</label>
-            <input type="text" id="signup-name" placeholder="เช่น คุณสมชาย" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs md:text-sm focus:ring-2 focus:ring-blue-500">
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">ชื่อ - นามสกุล หรือชื่อเรียก</label>
+            <div class="relative">
+              <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
+              <input type="text" id="signup-name" placeholder="เช่น คุณสมชาย" required class="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 dark:bg-slate-800/90 text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 transition-all">
+            </div>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">อีเมล</label>
-            <input type="email" id="signup-email" placeholder="example@email.com" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs md:text-sm focus:ring-2 focus:ring-blue-500">
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">อีเมล</label>
+            <div class="relative">
+              <i data-lucide="mail" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
+              <input type="email" id="signup-email" placeholder="example@email.com" required class="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 dark:bg-slate-800/90 text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 transition-all">
+            </div>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">เบอร์โทรศัพท์ (ไม่บังคับ - สำหรับรับคำปรึกษา)</label>
-            <input type="tel" id="signup-phone" placeholder="08x-xxx-xxxx" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs md:text-sm focus:ring-2 focus:ring-blue-500">
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">เบอร์โทรศัพท์ (ไม่บังคับ)</label>
+            <div class="relative">
+              <i data-lucide="phone" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
+              <input type="tel" id="signup-phone" placeholder="08x-xxx-xxxx" class="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 dark:bg-slate-800/90 text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 transition-all">
+            </div>
           </div>
-          <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow transition-colors flex items-center justify-center gap-2">
+          <button type="submit" class="w-full py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs rounded-xl shadow-md shadow-blue-500/25 transition-all flex items-center justify-center gap-2">
             <span>สร้างบัญชีสมาชิกฟรี</span>
+            <i data-lucide="check" class="w-3.5 h-3.5"></i>
           </button>
         </form>
       </div>
@@ -1797,103 +1824,78 @@
 
   <!-- ================= GOOGLE ONE-CLICK ACCOUNT PICKER MODAL ================= -->
   <div id="google-picker-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden p-4">
-    <div class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-2xl w-full max-w-sm overflow-hidden relative animate-float">
+    <div class="modal-content-card bg-white dark:bg-slate-900 rounded-[28px] border border-slate-200/80 dark:border-slate-800 shadow-2xl w-full max-w-sm overflow-hidden relative">
       
       <!-- Close Button -->
-      <button onclick="closeGoogleModal()" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors">
+      <button onclick="closeGoogleModal()" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors z-10" title="ปิด">
         <i data-lucide="x" class="w-4 h-4"></i>
       </button>
 
-      <div class="p-6 text-center border-b border-slate-100 dark:border-slate-700/60 pb-5">
-        <div class="w-10 h-10 mx-auto mb-3 flex items-center justify-center">
-          <svg class="w-8 h-8" viewBox="0 0 24 24">
+      <!-- Ambient Glow Behind Logo -->
+      <div class="p-6 pb-4 text-center border-b border-slate-100 dark:border-slate-800/80 relative">
+        <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center shadow-md">
+          <svg class="w-7 h-7" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
             <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
             <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
           </svg>
         </div>
-        <h3 class="text-base font-bold text-slate-900 dark:text-white">ลงชื่อเข้าใช้ด้วย Google</h3>
+        <h3 class="text-lg font-extrabold text-slate-900 dark:text-white">ลงชื่อเข้าใช้ด้วย Google</h3>
         <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">เพื่อเข้าสู่ระบบ "ปลดหนี้ มีทางออก"</p>
       </div>
 
-      <div class="p-5 space-y-4 max-h-[75vh] overflow-y-auto">
+      <div class="p-5 space-y-4">
         
-        <!-- Official Google GIS Button Container (Appears when Client ID is configured) -->
-        <div id="google-official-btn-section" class="hidden text-center bg-blue-50/60 dark:bg-slate-700/50 p-3.5 rounded-2xl border border-blue-100 dark:border-slate-650">
-          <div class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mb-1.5 flex items-center justify-center gap-1">
-            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
-            <span>Google Identity Services เชื่อมต่อแล้ว</span>
-          </div>
-          <div class="text-xs font-bold text-slate-800 dark:text-slate-100 mb-2.5">
-            👇 แตะปุ่มด้านล่างเพื่อเข้าสู่ระบบทันที
+        <!-- Official Google GIS Button Container -->
+        <div id="google-official-btn-section" class="text-center bg-blue-50/70 dark:bg-blue-950/30 p-4 rounded-2xl border border-blue-200/60 dark:border-blue-900/40">
+          <div class="text-[11px] font-bold text-blue-700 dark:text-blue-300 mb-2 flex items-center justify-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+            <span>แตะปุ่มด้านล่างเพื่อเข้าสู่ระบบ</span>
           </div>
           <div id="google-official-btn-wrapper" class="flex justify-center min-h-[44px]"></div>
-          <div class="my-3 flex items-center gap-2">
-            <hr class="flex-1 border-slate-200 dark:border-slate-700">
-            <span class="text-[10px] text-slate-400">หรือระบุข้อมูลเอง</span>
-            <hr class="flex-1 border-slate-200 dark:border-slate-700">
+          <div class="text-[10px] text-slate-400 dark:text-slate-500 mt-2">
+            🔒 รับรองความปลอดภัยโดย Google Identity Services
           </div>
         </div>
 
-        <!-- Direct Personal Account Input Form (Real User Data) -->
-        <div class="space-y-3">
-          <div class="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-            <i data-lucide="user-check" class="w-4 h-4 text-blue-600"></i>
-            <span>ระบุข้อมูลบัญชี Google ของคุณ</span>
+        <!-- Direct Personal Account Input Form (Alternative) -->
+        <div id="google-direct-section" class="space-y-3 pt-1">
+          <div class="relative flex items-center justify-center my-1">
+            <div class="w-full border-t border-slate-200 dark:border-slate-800"></div>
+            <span class="absolute bg-white dark:bg-slate-900 px-2.5 text-[10px] font-semibold text-slate-400">หรือใช้อีเมล Google</span>
           </div>
+          
           <form id="google-direct-form" class="space-y-2.5">
             <div>
-              <label class="block text-[11px] text-slate-500 dark:text-slate-400 mb-1">ชื่อหรือชื่อเรียกของคุณ</label>
-              <input type="text" id="google-direct-name" placeholder="เช่น คุณสมชาย หรือชื่อเล่น" required class="w-full px-3.5 py-2 text-xs rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-750 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500">
+              <input type="text" id="google-direct-name" placeholder="ชื่อหรือชื่อเรียกของคุณ" required class="w-full px-3.5 py-2 text-xs rounded-xl border border-slate-300 dark:border-slate-700 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500">
             </div>
             <div>
-              <label class="block text-[11px] text-slate-500 dark:text-slate-400 mb-1">อีเมล Google (@gmail.com)</label>
-              <input type="email" id="google-direct-email" placeholder="example@gmail.com" required class="w-full px-3.5 py-2 text-xs rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-750 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500">
+              <input type="email" id="google-direct-email" placeholder="ชื่อบัญชี@gmail.com" required class="w-full px-3.5 py-2 text-xs rounded-xl border border-slate-300 dark:border-slate-700 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500">
             </div>
-            <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-2">
-              <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24">
-                <path fill="#fff" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                <path fill="#fff" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                <path fill="#fff" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                <path fill="#fff" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-              </svg>
-              <span>เข้าสู่ระบบด้วย Google ทันที</span>
+            <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow transition-all flex items-center justify-center gap-2">
+              <span>เข้าใช้งานทันที</span>
             </button>
           </form>
         </div>
 
-        <!-- Google OAuth Client ID Configuration (Accordion) -->
-        <details id="google-config-details" class="rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden text-left bg-slate-50/70 dark:bg-slate-750">
-          <summary class="p-3 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100/70 dark:hover:bg-slate-700/50 cursor-pointer list-none flex items-center justify-between">
-            <span class="flex items-center gap-1.5">
-              <i data-lucide="key-round" class="w-3.5 h-3.5 text-amber-500"></i>
-              <span>เชื่อมต่อ Google OAuth จริง (สำหรับเจ้าของเว็บ)</span>
-            </span>
-            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
-          </summary>
-          <div class="p-3.5 pt-1 space-y-2.5 text-[11px] text-slate-600 dark:text-slate-300 border-t border-slate-200/60 dark:border-slate-700/60">
-            <p>
-              Google กำหนดให้เว็บต้องมี <strong>Client ID</strong> จาก Google Cloud เพื่อยืนยันโดเมนและเปิดหน้าต่างเลือกบัญชี Google จริงจาก accounts.google.com
-            </p>
-            <div>
-              <label class="block font-semibold text-slate-700 dark:text-slate-200 mb-1">Google Client ID</label>
-              <input type="text" id="google-client-id-input" placeholder="xxxx.apps.googleusercontent.com" class="w-full px-2.5 py-1.5 text-[11px] rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-800 text-slate-800 dark:text-white">
+        <!-- Google OAuth Client ID Configuration (Subtle Drawer / Toggle) -->
+        <div class="pt-2 text-center border-t border-slate-100 dark:border-slate-800">
+          <details id="google-config-details" class="text-left text-xs text-slate-500">
+            <summary class="cursor-pointer text-[11px] text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 text-center list-none flex items-center justify-center gap-1">
+              <i data-lucide="settings" class="w-3 h-3"></i>
+              <span>ตั้งค่า Google Client ID สำหรับโดเมนนี้</span>
+            </summary>
+            <div class="mt-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 space-y-2 text-[11px]">
+              <label class="block font-semibold text-slate-700 dark:text-slate-300">Client ID จาก Google Cloud</label>
+              <input type="text" id="google-client-id-input" placeholder="xxxx.apps.googleusercontent.com" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 text-slate-900 dark:text-white">
+              <button onclick="saveGoogleClientId()" class="w-full py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs rounded-lg transition-colors">
+                บันทึกการตั้งค่า
+              </button>
             </div>
-            <button onclick="saveGoogleClientId()" class="w-full py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg transition-colors text-xs flex items-center justify-center gap-1.5">
-              <i data-lucide="save" class="w-3 h-3"></i>
-              <span>บันทึก Client ID & เปิดใช้งาน Google จริง</span>
-            </button>
-            <div class="text-[10px] text-slate-400 pt-1">
-              สร้างฟรีได้ที่: <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener" class="text-blue-500 underline">Google Cloud Console</a> &gt; Create Credentials &gt; OAuth client ID
-            </div>
-          </div>
-        </details>
+          </details>
+        </div>
 
-      </div>
-
-      <div class="p-3 bg-slate-50 dark:bg-slate-850 border-t border-slate-100 dark:border-slate-700/50 text-center text-[10px] text-slate-400">
-        🔒 ปลอดภัย ข้อมูลเข้ารหัสและจัดเก็บบนอุปกรณ์ของคุณ
       </div>
 
     </div>
