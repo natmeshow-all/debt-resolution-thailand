@@ -3,6 +3,17 @@
  * เครื่องมือวางแผนและจัดการหนี้สินอย่างเป็นระบบ
  */
 
+// --- Security Utility ---
+function escapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 // --- Default Sample Debts ---
 const SAMPLE_DEBTS = [
   { id: '1', name: 'บัตรเครดิต A (ช้อปปิ้ง)', balance: 45000, rate: 16, minPay: 2500 },
@@ -906,16 +917,28 @@ function decodeJwtResponse(token) {
 }
 
 window.handleGoogleCredentialResponse = function(response) {
-  if (!response || !response.credential) return;
-  const data = decodeJwtResponse(response.credential);
-  if (!data) return;
+  try {
+    if (!response || !response.credential) {
+      console.warn('No credential received in Google response');
+      return;
+    }
+    const data = decodeJwtResponse(response.credential);
+    if (!data) {
+      alert('ไม่สามารถอ่านข้อมูลบัญชี Google ได้ กรุณาลองใหม่อีกครั้ง');
+      return;
+    }
 
-  const name = data.name || data.given_name || data.email.split('@')[0];
-  const email = data.email;
-  const avatar = data.picture || name.charAt(0).toUpperCase();
+    const name = data.name || data.given_name || data.email.split('@')[0];
+    const email = data.email;
+    const avatar = data.picture || name.charAt(0).toUpperCase();
 
-  saveGoogleUserSession(name, email, avatar);
-  alert(`🎉 ล็อกอินด้วยบัญชี Google จริงสำเร็จ!\nยินดีต้อนรับคุณ ${name} (${email})`);
+    saveGoogleUserSession(name, email, avatar);
+    closeGoogleModal();
+    alert(`🎉 เข้าสู่ระบบด้วยบัญชี Google สำเร็จ!\nยินดีต้อนรับคุณ ${name} (${email})`);
+  } catch (err) {
+    console.error('Error in handleGoogleCredentialResponse:', err);
+    closeGoogleModal();
+  }
 };
 
 function initGoogleGIS() {
@@ -948,7 +971,7 @@ function initGoogleGIS() {
         size: 'large',
         text: 'continue_with',
         shape: 'pill',
-        width: 260
+        width: 280
       });
       if (section) section.classList.remove('hidden');
     }
@@ -969,8 +992,8 @@ window.saveGoogleClientId = function() {
   }
 
   localStorage.setItem('google_oauth_client_id', val);
-  alert('✅ บันทึก Google OAuth Client ID สำเร็จ! กำลังเชื่อมต่อระบบ Google Identity Services...');
   initGoogleGIS();
+  alert('✅ เชื่อมต่อ Google สำเร็จแล้ว!\n👉 กรุณากดที่ปุ่ม "ดำเนินการต่อในชื่อ..." (ปุ่ม Google ด้านบน) เพื่อเข้าสู่ระบบและปิดหน้าต่างนี้ทันที');
 };
 
 window.handleGoogleSignIn = function() {
@@ -988,29 +1011,41 @@ window.closeGoogleModal = function() {
   if (googleModal) {
     googleModal.classList.add('hidden');
   }
+  const authModal = document.getElementById('auth-modal');
+  if (authModal) {
+    authModal.classList.add('hidden');
+  }
 };
 
 function saveGoogleUserSession(name, email, avatar) {
-  const activeTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-  
-  currentUser = {
-    name: name,
-    email: email,
-    avatar: avatar || name.charAt(0).toUpperCase(),
-    provider: 'google',
-    tier: 'free',
-    theme: activeTheme,
-    joinedAt: new Date().toLocaleDateString('th-TH')
-  };
+  try {
+    const activeTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+    
+    currentUser = {
+      name: name,
+      email: email,
+      avatar: avatar || name.charAt(0).toUpperCase(),
+      provider: 'google',
+      tier: 'free',
+      theme: activeTheme,
+      joinedAt: new Date().toLocaleDateString('th-TH')
+    };
 
-  localStorage.setItem('debt_user_session', JSON.stringify(currentUser));
-  updateAuthUI();
-  closeGoogleModal();
-  triggerCelebration();
+    localStorage.setItem('debt_user_session', JSON.stringify(currentUser));
+    updateAuthUI();
+  } catch (err) {
+    console.error('Error saving user session:', err);
+  } finally {
+    closeGoogleModal();
+  }
+  try {
+    triggerCelebration();
+  } catch (e) {}
 }
 
 window.selectGoogleAccount = function(name, email, initial) {
   saveGoogleUserSession(name, email, initial);
+  closeGoogleModal();
   alert(`✨ เข้าสู่ระบบด้วย Google สำเร็จ!\nยินดีต้อนรับคุณ ${name} (${email})`);
 };
 

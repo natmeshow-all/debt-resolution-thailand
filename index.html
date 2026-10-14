@@ -1820,15 +1820,18 @@
       <div class="p-5 space-y-4 max-h-[75vh] overflow-y-auto">
         
         <!-- Official Google GIS Button Container (Appears when Client ID is configured) -->
-        <div id="google-official-btn-section" class="hidden text-center">
-          <div class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mb-2 flex items-center justify-center gap-1">
+        <div id="google-official-btn-section" class="hidden text-center bg-blue-50/60 dark:bg-slate-700/50 p-3.5 rounded-2xl border border-blue-100 dark:border-slate-650">
+          <div class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mb-1.5 flex items-center justify-center gap-1">
             <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
             <span>Google Identity Services เชื่อมต่อแล้ว</span>
           </div>
-          <div id="google-official-btn-wrapper" class="flex justify-center"></div>
+          <div class="text-xs font-bold text-slate-800 dark:text-slate-100 mb-2.5">
+            👇 แตะปุ่มด้านล่างเพื่อเข้าสู่ระบบทันที
+          </div>
+          <div id="google-official-btn-wrapper" class="flex justify-center min-h-[44px]"></div>
           <div class="my-3 flex items-center gap-2">
             <hr class="flex-1 border-slate-200 dark:border-slate-700">
-            <span class="text-[10px] text-slate-400">หรือ</span>
+            <span class="text-[10px] text-slate-400">หรือระบุข้อมูลเอง</span>
             <hr class="flex-1 border-slate-200 dark:border-slate-700">
           </div>
         </div>
