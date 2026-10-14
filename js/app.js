@@ -119,9 +119,9 @@ window.closeConfirmModal = function() {
 
 // --- Default Sample Debts ---
 const SAMPLE_DEBTS = [
-  { id: '1', name: 'บัตรเครดิต A (ช้อปปิ้ง)', balance: 45000, rate: 16, minPay: 2500 },
-  { id: '2', name: 'บัตรกดเงินสด B (หมุนเงิน)', balance: 68000, rate: 25, minPay: 3500 },
-  { id: '3', name: 'สินเชื่อส่วนบุคคล C', balance: 120000, rate: 18, minPay: 4800 }
+  { id: '1', name: 'บัตรเครดิต KBank', type: 'credit_card', balance: 45000, rate: 16, minPay: 2500, strategy: 'snowball' },
+  { id: '2', name: 'บัตรกดเงินสด Speedy Cash', type: 'cash_card', balance: 68000, rate: 25, minPay: 3500, strategy: 'avalanche' },
+  { id: '3', name: 'สินเชื่อส่วนบุคคล UOB i-Cash', type: 'personal_loan', balance: 120000, rate: 20, minPay: 4800, strategy: 'consolidation' }
 ];
 
 // --- Application State ---
@@ -298,6 +298,146 @@ function saveDebtsToStorage() {
   localStorage.setItem('user_debts_v1', JSON.stringify(debts));
 }
 
+// --- Debt Type and Strategy Presets ---
+window.applyDebtPreset = function(type) {
+  const typeSelect = document.getElementById('new-debt-type');
+  const nameInput = document.getElementById('new-debt-name');
+  const rateInput = document.getElementById('new-debt-rate');
+  const stratSelect = document.getElementById('new-debt-strategy');
+
+  if (typeSelect) typeSelect.value = type;
+
+  if (type === 'credit_card') {
+    if (nameInput && !nameInput.value) nameInput.placeholder = 'เช่น บัตรเครดิต KBank / KTC / Central';
+    if (rateInput) rateInput.value = '16';
+    if (stratSelect) stratSelect.value = 'avalanche';
+  } else if (type === 'cash_card') {
+    if (nameInput && !nameInput.value) nameInput.placeholder = 'เช่น บัตรกดเงินสด Flash / Speedy Cash / Umay+';
+    if (rateInput) rateInput.value = '25';
+    if (stratSelect) stratSelect.value = 'avalanche';
+  } else if (type === 'personal_loan') {
+    if (nameInput && !nameInput.value) nameInput.placeholder = 'เช่น สินเชื่อบุคคล SCB Speedy / K-Personal';
+    if (rateInput) rateInput.value = '20';
+    if (stratSelect) stratSelect.value = 'consolidation';
+  } else if (type === 'auto_loan') {
+    if (nameInput && !nameInput.value) nameInput.placeholder = 'เช่น สินเชื่อรถยนต์ กรุงศรีออโต้ / ทิสโก้';
+    if (rateInput) rateInput.value = '6';
+    if (stratSelect) stratSelect.value = 'tdr';
+  } else if (type === 'home_loan') {
+    if (nameInput && !nameInput.value) nameInput.placeholder = 'เช่น สินเชื่อบ้าน ธอส. / ออมสิน';
+    if (rateInput) rateInput.value = '4.5';
+    if (stratSelect) stratSelect.value = 'snowball';
+  } else if (type === 'informal_loan') {
+    if (nameInput && !nameInput.value) nameInput.placeholder = 'เช่น กู้ยืมคนรู้จัก / หนี้นอกระบบ';
+    if (rateInput) rateInput.value = '120';
+    if (stratSelect) stratSelect.value = 'snowball';
+  }
+  updateDebtLivePreview();
+  if (nameInput) nameInput.focus();
+};
+
+window.onDebtTypeSelectChange = function(type) {
+  window.applyDebtPreset(type);
+};
+
+window.updateDebtLivePreview = function() {
+  const balance = parseFloat(document.getElementById('new-debt-balance')?.value) || 0;
+  const rate = parseFloat(document.getElementById('new-debt-rate')?.value) || 0;
+  const minPay = parseFloat(document.getElementById('new-debt-minpay')?.value) || 0;
+  const previewEl = document.getElementById('debt-live-preview');
+
+  if (!previewEl) return;
+
+  if (balance <= 0 || rate <= 0) {
+    previewEl.classList.add('hidden');
+    return;
+  }
+
+  previewEl.classList.remove('hidden');
+  const annualInterest = Math.round(balance * (rate / 100));
+  const monthlyInterest = Math.round(annualInterest / 12);
+  const principalPaid = Math.max(0, minPay - monthlyInterest);
+
+  let note = '';
+  if (minPay > 0) {
+    if (minPay <= monthlyInterest) {
+      note = `<div class="mt-1 text-rose-600 dark:text-rose-400 font-bold">⚠️ เตือน: ยอดที่จ่าย (${minPay.toLocaleString('th-TH')} บ.) ไม่พอดอกเบี้ยรายเดือน (${monthlyInterest.toLocaleString('th-TH')} บ.) เงินต้นจะไม่ลดลงเลย!</div>`;
+    } else {
+      note = `<div class="mt-1 text-slate-600 dark:text-slate-300">จ่าย ${minPay.toLocaleString('th-TH')} บ./เดือน ➔ ตัดดอกเบี้ย <strong class="text-rose-600 dark:text-rose-400 font-bold">${monthlyInterest.toLocaleString('th-TH')} บ.</strong> และตัดเงินต้นจริง <strong class="text-emerald-600 dark:text-emerald-400 font-bold">${principalPaid.toLocaleString('th-TH')} บ.</strong></div>`;
+    }
+  }
+
+  previewEl.innerHTML = `
+    <div class="flex items-center justify-between font-semibold">
+      <span class="text-slate-700 dark:text-slate-300">ดอกเบี้ยต่อปีโดยประมาณ:</span>
+      <span class="text-rose-600 dark:text-rose-400 font-extrabold text-xs sm:text-sm">~${annualInterest.toLocaleString('th-TH')} บาท/ปี (~${monthlyInterest.toLocaleString('th-TH')} บ./เดือน)</span>
+    </div>
+    ${note}
+  `;
+};
+
+function getDebtTypeInfo(type) {
+  switch (type) {
+    case 'credit_card':
+      return { label: 'บัตรเครดิต', icon: 'credit-card', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/60 dark:text-blue-300 border-blue-200 dark:border-blue-800' };
+    case 'cash_card':
+      return { label: 'บัตรกดเงินสด', icon: 'zap', color: 'bg-rose-100 text-rose-700 dark:bg-rose-900/60 dark:text-rose-300 border-rose-200 dark:border-rose-800' };
+    case 'personal_loan':
+      return { label: 'สินเชื่อส่วนบุคคล', icon: 'user', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/60 dark:text-purple-300 border-purple-200 dark:border-purple-800' };
+    case 'auto_loan':
+      return { label: 'สินเชื่อรถยนต์', icon: 'car', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/60 dark:text-amber-300 border-amber-200 dark:border-amber-800' };
+    case 'home_loan':
+      return { label: 'สินเชื่อบ้าน', icon: 'home', color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/60 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800' };
+    case 'informal_loan':
+      return { label: 'หนี้นอกระบบ', icon: 'alert-triangle', color: 'bg-red-100 text-red-700 dark:bg-red-900/60 dark:text-red-300 border-red-200 dark:border-red-800' };
+    default:
+      return { label: 'หนี้ทั่วไป', icon: 'file-text', color: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700' };
+  }
+}
+
+function getStrategyInfo(strategy, debt) {
+  const annualInterest = Math.round(debt.balance * (debt.rate / 100));
+
+  switch (strategy) {
+    case 'snowball':
+      return {
+        badge: '❄️ สูตร Snowball (เน้นปิดเร็ว)',
+        badgeColor: 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200 dark:border-blue-800',
+        advice: `ยอดหนี้ <strong>${debt.balance.toLocaleString('th-TH')} บาท</strong> หากเป็นก้อนเล็กสุด ควรทุ่มเงินพิเศษโปะปิดให้จบเป็นอันดับ 1 เพื่อสร้างกำลังใจและปลดภาระทางใจเร็วที่สุด`
+      };
+    case 'avalanche':
+      return {
+        badge: '⚡ สูตร Avalanche (หยุดดอกแพง)',
+        badgeColor: 'bg-amber-50 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200 dark:border-amber-800',
+        advice: `ดอกเบี้ยสูง <strong>${debt.rate}% ต่อปี</strong> (จ่ายทิ้ง ~${annualInterest.toLocaleString('th-TH')} บ./ปี) แนะนำเร่งโปะปิดเป็นก้อนแรก หรือรีไฟแนนซ์เพื่อหยุดดอกเบี้ยไม่ให้บานปลาย`
+      };
+    case 'consolidation':
+      return {
+        badge: '🔄 รวมหนี้ก้อนเดียว (Consolidation)',
+        badgeColor: 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800',
+        advice: `เหมาะสำหรับนำยอดหนี้ไปรวมกับสินเชื่อบ้านหรือสินเชื่อรวมหนี้ก้อนเดียว ดอกเบี้ยจะลดลงเหลือ 6-8% และช่วยลดค่างวดต่อเดือนลงได้ถึง 40-60% โดยไม่เสียประวัติบูโร`
+      };
+    case 'tdr':
+      return {
+        badge: '🤝 ปรับโครงสร้างหนี้ (TDR)',
+        badgeColor: 'bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 border-purple-200 dark:border-purple-800',
+        advice: `ติดต่อธนาคารเจ้าหนี้ขอยืดระยะเวลาผ่อนชำระ (เช่น จาก 2 ปีเป็น 5 ปี) หรือขอเปลี่ยนยอดบัตรหมุนเวียนเป็นเงินกู้ผ่อนงวด ค่างวดต่อเดือนจะลดลงทันที`
+      };
+    case 'haircut':
+      return {
+        badge: '✂️ ขอส่วนลดปิดจบ (Hair-cut)',
+        badgeColor: 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border-rose-200 dark:border-rose-800',
+        advice: `สำหรับหนี้ที่ค้างชำระเกิน 90 วันหรือ NPL สามารถเก็บเงินก้อนแล้วเจรจาขอปิดจบงวดเดียว โดยขอลดเงินต้นและยกเว้นดอกเบี้ยค้างได้ 30-50%`
+      };
+    default:
+      return {
+        badge: '💡 ผ่อนชำระตามแผน',
+        badgeColor: 'bg-slate-50 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700',
+        advice: `จ่ายค่างวดสม่ำเสมอ ${debt.minPay.toLocaleString('th-TH')} บ./เดือน พร้อมทยอยโปะเพิ่มเมื่อมีรายได้เสริม`
+      };
+  }
+}
+
 function initDebtPlanner() {
   renderDebtList();
   calculateRepaymentPlan();
@@ -307,38 +447,39 @@ function initDebtPlanner() {
   if (addForm) {
     addForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      const name = document.getElementById('new-debt-name').value.trim();
-      const balance = parseFloat(document.getElementById('new-debt-balance').value) || 0;
-      const rate = parseFloat(document.getElementById('new-debt-rate').value) || 0;
-      const minPay = parseFloat(document.getElementById('new-debt-minpay').value) || 0;
+      const type = document.getElementById('new-debt-type')?.value || 'credit_card';
+      const name = document.getElementById('new-debt-name')?.value.trim();
+      const balance = parseFloat(document.getElementById('new-debt-balance')?.value) || 0;
+      const rate = parseFloat(document.getElementById('new-debt-rate')?.value) || 0;
+      const minPay = parseFloat(document.getElementById('new-debt-minpay')?.value) || 0;
+      const strategy = document.getElementById('new-debt-strategy')?.value || 'snowball';
 
       if (!name || balance <= 0 || minPay <= 0) {
-        showToast('กรุณากรอกข้อมูลหนี้ให้ครบถ้วนและถูกต้อง', 'warning');
+        showToast('กรุณากรอกชื่อหนี้ ยอดเงินคงเหลือ และยอดจ่ายเดือนล่าสุดให้ครบถ้วน', 'warning');
         return;
       }
 
       debts.push({
         id: Date.now().toString(),
+        type,
         name,
         balance,
         rate,
-        minPay
+        minPay,
+        strategy
       });
 
       saveDebtsToStorage();
       renderDebtList();
       calculateRepaymentPlan();
-      showToast(`เพิ่มหนี้ "${name}" ในแผนการผ่อนแล้ว`, 'success');
+      showToast(`บันทึกหนี้ "${name}" ในแผนการผ่อนแล้ว`, 'success', '➕ เพิ่มหนี้สำเร็จ');
 
       // Reset fields
       document.getElementById('new-debt-name').value = '';
       document.getElementById('new-debt-balance').value = '';
-      document.getElementById('new-debt-rate').value = '';
+      document.getElementById('new-debt-rate').value = '16';
       document.getElementById('new-debt-minpay').value = '';
-      
-      // Close modal/form collapse if applicable
-      const details = document.getElementById('add-debt-details');
-      if (details) details.open = false;
+      updateDebtLivePreview();
     });
   }
 
@@ -421,64 +562,104 @@ function renderDebtList() {
   const totalCountEl = document.getElementById('debt-total-count');
   const totalBalanceEl = document.getElementById('debt-total-balance');
   const totalMinPayEl = document.getElementById('debt-total-minpay');
+  const totalInterestEl = document.getElementById('debt-total-interest-year');
 
   if (!container) return;
 
   if (debts.length === 0) {
     container.innerHTML = `
-      <div class="text-center py-10 text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200">
-        <i data-lucide="inbox" class="w-12 h-12 mx-auto mb-2 text-slate-300"></i>
-        <p class="font-medium text-slate-600">ยังไม่มีรายการหนี้ในระบบ</p>
-        <p class="text-xs text-slate-400 mt-1">กดปุ่ม "เพิ่มหนี้" ด้านบน หรือกด "โหลดข้อมูลตัวอย่าง" เพื่อเริ่มต้นวางแผน</p>
+      <div class="text-center py-10 text-slate-400 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700">
+        <i data-lucide="inbox" class="w-12 h-12 mx-auto mb-2 text-slate-300 dark:text-slate-600"></i>
+        <p class="font-medium text-slate-700 dark:text-slate-200">ยังไม่มีรายการหนี้ในระบบ</p>
+        <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">ใช้แบบฟอร์มด้านบนเพื่อเพิ่มหนี้ หรือกด "โหลดข้อมูลตัวอย่าง" เพื่อเริ่มต้นวางแผน</p>
       </div>
     `;
-    if (totalCountEl) totalCountEl.textContent = '0 รายการ';
+    if (totalCountEl) totalCountEl.textContent = '0 สัญญา';
     if (totalBalanceEl) totalBalanceEl.textContent = '0 บาท';
     if (totalMinPayEl) totalMinPayEl.textContent = '0 บาท/เดือน';
+    if (totalInterestEl) totalInterestEl.textContent = '0 บาท/ปี';
     lucide.createIcons();
     return;
   }
 
   let totalBal = 0;
   let totalMin = 0;
+  let totalAnnualInterest = 0;
 
   let html = '';
   debts.forEach((debt, index) => {
     totalBal += debt.balance;
     totalMin += debt.minPay;
+    const debtAnnualInterest = Math.round(debt.balance * (debt.rate / 100));
+    const debtMonthlyInterest = Math.round(debtAnnualInterest / 12);
+    totalAnnualInterest += debtAnnualInterest;
+
+    const typeInfo = getDebtTypeInfo(debt.type);
+    const stratInfo = getStrategyInfo(debt.strategy || 'snowball', debt);
 
     html += `
-      <div class="flex items-center justify-between p-3.5 bg-white rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-sm transition-all group">
-        <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm">
-            ${index + 1}
-          </div>
-          <div>
-            <div class="font-semibold text-slate-800 text-sm md:text-base">${escapeHtml(debt.name)}</div>
-            <div class="flex items-center gap-3 text-xs text-slate-500 mt-0.5">
-              <span>ดอกเบี้ย: <strong class="text-slate-700">${debt.rate}%</strong> ต่อปี</span>
-              <span>•</span>
-              <span>ขั้นต่ำ: <strong class="text-slate-700">${debt.minPay.toLocaleString('th-TH')}</strong> บ./เดือน</span>
+      <div class="p-4 bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-600 shadow-sm transition-all group">
+        
+        <!-- Header Row -->
+        <div class="flex items-start justify-between gap-3 mb-2.5">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-bold text-xs flex items-center justify-center shrink-0">
+              #${index + 1}
+            </div>
+            <div class="min-w-0">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="font-bold text-slate-900 dark:text-white text-sm md:text-base truncate">${escapeHtml(debt.name)}</span>
+                <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border ${typeInfo.color}">
+                  <i data-lucide="${typeInfo.icon}" class="w-3 h-3"></i>
+                  <span>${typeInfo.label}</span>
+                </span>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="flex items-center gap-3">
-          <div class="text-right">
-            <div class="text-sm md:text-base font-bold text-slate-900">${debt.balance.toLocaleString('th-TH')} บ.</div>
+          
+          <div class="flex items-center gap-2 shrink-0">
+            <div class="text-right">
+              <div class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">${debt.balance.toLocaleString('th-TH')} บ.</div>
+              <div class="text-[10px] text-slate-400">ยอดหนี้คงเหลือ</div>
+            </div>
+            <button onclick="removeDebt('${debt.id}')" title="ลบรายการนี้" class="p-1.5 text-slate-400 hover:text-red-500 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors ml-1">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
           </div>
-          <button onclick="removeDebt('${debt.id}')" title="ลบรายการนี้" class="p-1.5 text-slate-300 hover:text-red-500 rounded-lg hover:bg-red-50 transition-colors">
-            <i data-lucide="trash-2" class="w-4 h-4"></i>
-          </button>
         </div>
+
+        <!-- Details Row (Monthly Pay & Annual Interest) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-700/60 text-xs mb-3">
+          <div class="flex items-center justify-between sm:justify-start sm:gap-2">
+            <span class="text-slate-500 dark:text-slate-400">ยอดจ่ายเดือนล่าสุด:</span>
+            <strong class="text-slate-800 dark:text-slate-200">${debt.minPay.toLocaleString('th-TH')} บาท/เดือน</strong>
+          </div>
+          <div class="flex items-center justify-between sm:justify-start sm:gap-2">
+            <span class="text-slate-500 dark:text-slate-400">ดอกเบี้ย (${debt.rate}%/ปี):</span>
+            <strong class="text-rose-600 dark:text-rose-400">~${debtAnnualInterest.toLocaleString('th-TH')} บ./ปี (~${debtMonthlyInterest.toLocaleString('th-TH')} บ./ด.)</strong>
+          </div>
+        </div>
+
+        <!-- Strategy & How to payoff Box -->
+        <div class="p-2.5 rounded-xl border ${stratInfo.badgeColor} text-xs">
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-bold flex items-center gap-1">${stratInfo.badge}</span>
+            <span class="text-[10px] opacity-75">แนวทางปิดหนี้</span>
+          </div>
+          <div class="leading-relaxed opacity-90">${stratInfo.advice}</div>
+        </div>
+
       </div>
     `;
   });
 
   container.innerHTML = html;
 
-  if (totalCountEl) totalCountEl.textContent = `${debts.length} รายการ`;
+  const totalMonthlyInterest = Math.round(totalAnnualInterest / 12);
+  if (totalCountEl) totalCountEl.textContent = `${debts.length} สัญญาหนี้`;
   if (totalBalanceEl) totalBalanceEl.textContent = `${totalBal.toLocaleString('th-TH')} บาท`;
   if (totalMinPayEl) totalMinPayEl.textContent = `${totalMin.toLocaleString('th-TH')} บาท/เดือน`;
+  if (totalInterestEl) totalInterestEl.textContent = `~${totalAnnualInterest.toLocaleString('th-TH')} บาท/ปี (~${totalMonthlyInterest.toLocaleString('th-TH')} บ./เดือน)`;
 
   lucide.createIcons();
 }

@@ -90,7 +90,7 @@
           <a href="#stage-diagnostic-section" class="px-2.5 py-1.5 rounded-lg hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 transition-colors font-semibold text-blue-700 dark:text-blue-400">🧭 วินิจฉัยขั้นของหนี้</a>
           <a href="#emergency-section" class="px-2.5 py-1.5 rounded-lg hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 transition-colors">ปฐมพยาบาลด่วน</a>
           <a href="#health-check-section" class="px-2.5 py-1.5 rounded-lg hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 transition-colors">ตรวจ DTI</a>
-          <a href="#planner-section" class="px-2.5 py-1.5 rounded-lg hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 transition-colors">จำลองปลดหนี้</a>
+          <a href="#planner-section" class="px-2.5 py-1.5 rounded-lg hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 transition-colors font-medium">➕ เพิ่มหนี้ & ดอกเบี้ย</a>
           <a href="#solutions-section" class="px-2.5 py-1.5 rounded-lg hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 transition-colors">เข็มทิศทางออก</a>
           <a href="#scripts-section" class="px-2.5 py-1.5 rounded-lg hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 transition-colors">บทพูดเจรจา</a>
           <a href="#membership-section" class="px-2.5 py-1.5 rounded-lg hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-1 text-amber-700 dark:text-amber-400 font-semibold">
@@ -257,17 +257,17 @@
               </div>
             </a>
 
-            <!-- Card 3: วางแผนปลดหนี้ -->
+            <!-- Card 3: บันทึกหนี้ & คำนวณดอกเบี้ย -->
             <a href="#planner-section" onclick="closeMobileMenu()" class="bento-nav-card p-3 rounded-2xl bg-slate-50/80 dark:bg-slate-800/80 border border-slate-200/90 dark:border-slate-700/80 shadow-sm flex flex-col justify-between group active:scale-[0.97]">
               <div class="flex items-center justify-between mb-2">
                 <div class="w-8 h-8 rounded-xl bg-purple-100 dark:bg-purple-900/60 text-purple-600 dark:text-purple-400 flex items-center justify-center">
                   <i data-lucide="calculator" class="w-4 h-4"></i>
                 </div>
-                <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-purple-100 dark:bg-purple-900/60 text-purple-700 dark:text-purple-300">สูตรประหยัด</span>
+                <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-purple-100 dark:bg-purple-900/60 text-purple-700 dark:text-purple-300">ใส่ยอด & ดอกเบี้ย</span>
               </div>
               <div>
-                <div class="font-bold text-slate-900 dark:text-white text-xs leading-tight mb-0.5 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">วางแผนปลดหนี้</div>
-                <div class="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">Snowball & Avalanche</div>
+                <div class="font-bold text-slate-900 dark:text-white text-xs leading-tight mb-0.5 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">เพิ่มหนี้ & ดอกเบี้ย</div>
+                <div class="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">บัตร / สินเชื่อ / วางแผนปิดหนี้</div>
               </div>
             </a>
 
@@ -904,22 +904,22 @@
       
       <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
         <div>
-          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-semibold mb-2">
-            <i data-lucide="trending-down" class="w-3.5 h-3.5"></i>
-            <span>เครื่องมือวางแผนชำระหนี้เชิงรุก</span>
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 text-xs font-semibold mb-2">
+            <i data-lucide="calculator" class="w-3.5 h-3.5"></i>
+            <span>ระบบบันทึกหนี้ & วางแผนปิดหนี้</span>
           </div>
-          <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900">จำลองการปลดหนี้: Snowball vs Avalanche</h2>
-          <p class="text-sm md:text-base text-slate-600 mt-1">
-            ใส่รายการหนี้ของคุณ หรือทดลองด้วยข้อมูลตัวอย่าง เพื่อดูว่าคุณจะหมดหนี้ได้เร็วขึ้นกี่ปีและประหยัดดอกเบี้ยไปเท่าไหร่
+          <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white">เพิ่มยอดหนี้ & คำนวณดอกเบี้ยที่ต้องจ่ายต่อปี</h2>
+          <p class="text-sm md:text-base text-slate-600 dark:text-slate-300 mt-1">
+            ใส่รายการหนี้ เช่น หนี้บัตรเครดิต, สินเชื่อส่วนบุคคล, บัตรกดเงินสด หรือหนี้อื่นๆ คำนวณดอกเบี้ยต่อปี และเลือกว่าจะปิดหนี้ในรูปแบบไหนได้บ้าง
           </p>
         </div>
 
         <div class="flex items-center gap-2">
-          <button id="load-sample-debts-btn" class="px-3.5 py-2 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl transition-colors flex items-center gap-1.5">
+          <button id="load-sample-debts-btn" class="px-3.5 py-2 text-xs font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-100 dark:hover:bg-blue-900 border border-blue-200 dark:border-blue-800 rounded-xl transition-colors flex items-center gap-1.5 shadow-sm active:scale-95">
             <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
             <span>โหลดข้อมูลตัวอย่าง</span>
           </button>
-          <button id="clear-debts-btn" class="px-3.5 py-2 text-xs font-semibold text-slate-600 hover:text-red-600 bg-slate-100 hover:bg-red-50 border border-slate-200 rounded-xl transition-colors">
+          <button id="clear-debts-btn" class="px-3.5 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-red-600 dark:hover:text-red-400 bg-slate-100 dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-950/40 border border-slate-200 dark:border-slate-700 rounded-xl transition-colors active:scale-95">
             ล้างทั้งหมด
           </button>
         </div>
@@ -928,86 +928,190 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
         <!-- Left Column: Debts Input & Management -->
-        <div class="lg:col-span-5 space-y-6">
+        <div class="lg:col-span-6 space-y-6">
           
           <!-- Summary Header of current Debts -->
-          <div class="p-5 rounded-2xl bg-slate-900 text-white shadow-lg flex items-center justify-between">
-            <div>
-              <span class="text-xs text-slate-400 block">ยอดหนี้รวมทั้งหมด</span>
-              <span id="debt-total-balance" class="text-2xl font-bold tracking-tight text-white">233,000 บาท</span>
+          <div class="p-5 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 text-white shadow-xl border border-slate-700/60">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+              <div>
+                <span class="text-xs text-slate-400 block font-medium">ยอดหนี้คงเหลือรวมทั้งหมด</span>
+                <span id="debt-total-balance" class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">233,000 บาท</span>
+              </div>
+              <div class="text-right">
+                <span class="text-xs text-slate-400 block font-medium">ยอดจ่ายเดือนล่าสุดรวม</span>
+                <span id="debt-total-minpay" class="text-base sm:text-lg font-bold text-blue-400">10,800 บาท/เดือน</span>
+                <span id="debt-total-count" class="text-[11px] text-slate-400 block">3 สัญญาหนี้</span>
+              </div>
             </div>
-            <div class="text-right">
-              <span class="text-xs text-slate-400 block">ขั้นต่ำรวมต่อเดือน</span>
-              <span id="debt-total-minpay" class="text-base font-semibold text-blue-400">10,800 บาท/เดือน</span>
-              <span id="debt-total-count" class="text-[11px] text-slate-400 block">3 รายการ</span>
+
+            <!-- Annual Interest Loss Alert in Summary -->
+            <div class="pt-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+              <div class="flex items-center gap-1.5 text-xs text-slate-300">
+                <i data-lucide="flame" class="w-4 h-4 text-rose-400 shrink-0"></i>
+                <span>ดอกเบี้ยที่ต้องจ่ายต่อปีโดยประมาณ:</span>
+              </div>
+              <span id="debt-total-interest-year" class="text-xs sm:text-sm font-extrabold text-rose-400">
+                ~41,700 บาท/ปี (~3,475 บ./เดือน)
+              </span>
             </div>
           </div>
 
-          <!-- Add Debt Accordion/Card -->
-          <details id="add-debt-details" class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden group">
-            <summary class="p-4 flex items-center justify-between cursor-pointer list-none hover:bg-slate-50 transition-colors">
-              <span class="font-bold text-sm text-slate-800 flex items-center gap-2">
-                <i data-lucide="plus-circle" class="w-4 h-4 text-blue-600"></i>
-                <span>เพิ่มรายการหนี้ใหม่</span>
+          <!-- Add Debt Builder Card (Prominent & Always Open) -->
+          <div id="add-debt-card" class="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-5 md:p-6 card-lighting">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-2">
+                <div class="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-900/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shadow-sm">
+                  <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <h3 class="font-bold text-slate-900 dark:text-white text-base">เพิ่มรายการหนี้ & ดอกเบี้ยที่จ่าย</h3>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">ใส่ยอดหนี้ ดอกเบี้ยต่อปี และยอดจ่ายเดือนล่าสุด</p>
+                </div>
+              </div>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800">
+                ฟรี & คำนวณทันที
               </span>
-              <i data-lucide="chevron-down" class="accordion-chevron w-4 h-4 text-slate-400 transition-transform"></i>
-            </summary>
-            
-            <div class="p-4 pt-0 border-t border-slate-100">
-              <form id="add-debt-form" class="space-y-3 pt-3">
-                <div>
-                  <label class="block text-xs font-medium text-slate-600 mb-1">ชื่อรายการหนี้</label>
-                  <input type="text" id="new-debt-name" placeholder="เช่น บัตรเครดิต กสิกรไทย" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                  <div>
-                    <label class="block text-xs font-medium text-slate-600 mb-1">ยอดหนี้คงเหลือ (บ.)</label>
-                    <input type="number" id="new-debt-balance" placeholder="เช่น 50000" min="1" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500">
-                  </div>
-                  <div>
-                    <label class="block text-xs font-medium text-slate-600 mb-1">ดอกเบี้ย (% ต่อปี)</label>
-                    <input type="number" id="new-debt-rate" placeholder="เช่น 16" min="0" step="0.1" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500">
-                  </div>
-                </div>
-                <div>
-                  <label class="block text-xs font-medium text-slate-600 mb-1">ยอดจ่ายขั้นต่ำต่อเดือน (บ.)</label>
-                  <input type="number" id="new-debt-minpay" placeholder="เช่น 2500" min="1" class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500">
-                </div>
-                <button type="submit" class="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs rounded-lg transition-colors flex items-center justify-center gap-1.5">
-                  <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-                  <span>บันทึกรายการหนี้</span>
-                </button>
-              </form>
             </div>
-          </details>
+
+            <!-- Quick Preset Buttons (1-Tap Selection) -->
+            <div class="mb-4">
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                ⚡ แตะเลือกประเภทหนี้เพื่อใส่ดอกเบี้ยมาตรฐานอัตโนมัติ:
+              </label>
+              <div class="flex flex-wrap gap-1.5">
+                <button type="button" onclick="applyDebtPreset('credit_card')" class="px-2.5 py-1 text-xs font-medium rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800 transition-colors flex items-center gap-1 active:scale-95">
+                  <i data-lucide="credit-card" class="w-3 h-3"></i>
+                  <span>บัตรเครดิต (16%)</span>
+                </button>
+                <button type="button" onclick="applyDebtPreset('cash_card')" class="px-2.5 py-1 text-xs font-medium rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-200 dark:border-rose-800 transition-colors flex items-center gap-1 active:scale-95">
+                  <i data-lucide="zap" class="w-3 h-3"></i>
+                  <span>บัตรกดเงินสด (25%)</span>
+                </button>
+                <button type="button" onclick="applyDebtPreset('personal_loan')" class="px-2.5 py-1 text-xs font-medium rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 border border-purple-200 dark:border-purple-800 transition-colors flex items-center gap-1 active:scale-95">
+                  <i data-lucide="user" class="w-3 h-3"></i>
+                  <span>สินเชื่อบุคคล (18-25%)</span>
+                </button>
+                <button type="button" onclick="applyDebtPreset('auto_loan')" class="px-2.5 py-1 text-xs font-medium rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800 transition-colors flex items-center gap-1 active:scale-95">
+                  <i data-lucide="car" class="w-3 h-3"></i>
+                  <span>หนี้รถยนต์ (6%)</span>
+                </button>
+                <button type="button" onclick="applyDebtPreset('home_loan')" class="px-2.5 py-1 text-xs font-medium rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 transition-colors flex items-center gap-1 active:scale-95">
+                  <i data-lucide="home" class="w-3 h-3"></i>
+                  <span>หนี้บ้าน (4.5%)</span>
+                </button>
+                <button type="button" onclick="applyDebtPreset('informal_loan')" class="px-2.5 py-1 text-xs font-medium rounded-lg bg-red-50 hover:bg-red-100 text-red-700 dark:bg-red-950/60 dark:text-red-300 border border-red-200 dark:border-red-800 transition-colors flex items-center gap-1 active:scale-95">
+                  <i data-lucide="alert-triangle" class="w-3 h-3"></i>
+                  <span>หนี้นอกระบบ</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Form -->
+            <form id="add-debt-form" class="space-y-3.5">
+              
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label for="new-debt-type" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                    ประเภทหนี้
+                  </label>
+                  <select id="new-debt-type" onchange="onDebtTypeSelectChange(this.value)" class="w-full px-3 py-2 text-xs md:text-sm rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 font-medium text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-blue-500">
+                    <option value="credit_card">💳 หนี้บัตรเครดิต (ดอกเบี้ย 16% ต่อปี)</option>
+                    <option value="cash_card">⚡ บัตรกดเงินสด / สินเชื่อหมุนเวียน (ดอกเบี้ย 25% ต่อปี)</option>
+                    <option value="personal_loan">👤 สินเชื่อส่วนบุคคล / เงินกู้ (ดอกเบี้ย 18-25% ต่อปี)</option>
+                    <option value="auto_loan">🚗 สินเชื่อเช่าซื้อรถยนต์ / มอเตอร์ไซค์</option>
+                    <option value="home_loan">🏠 สินเชื่อบ้าน / ที่อยู่อาศัย (ดอกเบี้ย 3-6% ต่อปี)</option>
+                    <option value="informal_loan">👥 หนี้นอกระบบ / กู้ยืมบุคคล</option>
+                    <option value="other">📋 หนี้อื่นๆ / สินค้าเงินผ่อน</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label for="new-debt-name" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                    ชื่อรายการหนี้ / ธนาคาร
+                  </label>
+                  <input type="text" id="new-debt-name" placeholder="เช่น บัตรเครดิต KBank / สินเชื่อ SCB" class="w-full px-3 py-2 text-xs md:text-sm rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 font-medium">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label for="new-debt-balance" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                    ยอดหนี้คงเหลือ (บาท)
+                  </label>
+                  <input type="number" id="new-debt-balance" oninput="updateDebtLivePreview()" placeholder="เช่น 50000" min="1" step="100" class="w-full px-3 py-2 text-xs md:text-sm rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 font-semibold">
+                </div>
+                <div>
+                  <label for="new-debt-rate" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                    ดอกเบี้ย (% ต่อปี)
+                  </label>
+                  <input type="number" id="new-debt-rate" oninput="updateDebtLivePreview()" placeholder="เช่น 16" min="0" max="300" step="0.1" value="16" class="w-full px-3 py-2 text-xs md:text-sm rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 font-semibold">
+                </div>
+                <div>
+                  <label for="new-debt-minpay" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                    ยอดจ่ายเดือนล่าสุด (บ./ด.)
+                  </label>
+                  <input type="number" id="new-debt-minpay" oninput="updateDebtLivePreview()" placeholder="เช่น 2500" min="1" step="50" class="w-full px-3 py-2 text-xs md:text-sm rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 font-semibold">
+                </div>
+              </div>
+
+              <!-- Live Interest Preview Calculation (Calculates automatically) -->
+              <div id="debt-live-preview" class="p-3 rounded-xl bg-rose-50/80 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 text-xs hidden">
+                <!-- Dynamically populated via updateDebtLivePreview() -->
+              </div>
+
+              <div>
+                <label for="new-debt-strategy" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  จะปิดหนี้หรือจ่ายในรูปแบบไหนสำหรับก้อนนี้? (เลือกแนวทางที่ต้องการ)
+                </label>
+                <select id="new-debt-strategy" class="w-full px-3 py-2 text-xs md:text-sm rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 font-medium text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-blue-500">
+                  <option value="snowball">❄️ สูตร Snowball (ลูกหิมะ) - ทุ่มโปะปิดก้อนนี้ก่อนเพื่อปลดภาระใจ</option>
+                  <option value="avalanche">⚡ สูตร Avalanche (หิมะถล่ม) - ทุ่มโปะก้อนนี้ก่อนเพราะดอกเบี้ยแพงสุด</option>
+                  <option value="consolidation">🔄 รวมหนี้ก้อนเดียว (Debt Consolidation) - ย้ายไปสินเชื่อดอกเบี้ยต่ำ 6-8%</option>
+                  <option value="tdr">🤝 เจรจาปรับโครงสร้างหนี้ (TDR) - ขอยืดเวลาผ่อน 3-5 ปี ลดยอดผ่อน</option>
+                  <option value="haircut">✂️ ขอส่วนลดปิดจบงวดเดียว (Hair-cut) - ต่อรองลดเงินต้น 30-50% (หนี้เสีย/NPL)</option>
+                </select>
+              </div>
+
+              <button type="submit" class="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs md:text-sm rounded-xl shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-2 active:scale-[0.98]">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                <span>บันทึกรายการหนี้ & คำนวณแผน</span>
+              </button>
+            </form>
+          </div>
 
           <!-- List of entered debts -->
           <div class="space-y-3">
-            <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider">รายการหนี้ของคุณ</h4>
-            <div id="debt-items-list" class="space-y-2">
+            <div class="flex items-center justify-between">
+              <h4 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                <i data-lucide="layers" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
+                <span>รายการหนี้ของคุณ & วิธีการปิดหนี้แต่ละก้อน</span>
+              </h4>
+              <span class="text-[11px] text-slate-400 dark:text-slate-500">แตะถังขยะเพื่อลบ</span>
+            </div>
+            <div id="debt-items-list" class="space-y-3">
               <!-- Rendered via JS -->
             </div>
           </div>
 
           <!-- Extra Payment Slider -->
-          <div class="p-5 bg-gradient-to-br from-blue-50/80 to-indigo-50/80 rounded-2xl border border-blue-200">
+          <div class="p-5 bg-gradient-to-br from-blue-50/80 to-indigo-50/80 dark:from-slate-800 dark:to-slate-800/60 rounded-2xl border border-blue-200 dark:border-slate-700">
             <div class="flex items-center justify-between mb-2">
-              <label class="font-bold text-sm text-slate-900 flex items-center gap-1.5">
-                <i data-lucide="coins" class="w-4 h-4 text-blue-600"></i>
+              <label class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-1.5">
+                <i data-lucide="coins" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
                 <span>เงินพิเศษที่จะโปะเพิ่มต่อเดือน</span>
               </label>
               <div class="flex items-center gap-1">
-                <input type="number" id="extra-payment-input" value="2000" min="0" step="500" class="w-24 text-right px-2 py-1 font-bold text-sm text-blue-700 bg-white rounded-lg border border-blue-300">
-                <span class="text-xs font-medium text-slate-600">บ.</span>
+                <input type="number" id="extra-payment-input" value="2000" min="0" step="500" class="w-24 text-right px-2 py-1 font-bold text-sm text-blue-700 dark:text-blue-400 bg-white dark:bg-slate-700 rounded-lg border border-blue-300 dark:border-slate-600">
+                <span class="text-xs font-medium text-slate-600 dark:text-slate-300">บ.</span>
               </div>
             </div>
             <input type="range" id="extra-payment-slider" min="0" max="20000" step="500" value="2000" class="w-full accent-blue-600 cursor-pointer">
-            <div class="flex justify-between text-[11px] text-slate-500 mt-1">
+            <div class="flex justify-between text-[11px] text-slate-500 dark:text-slate-400 mt-1">
               <span>+0 บาท</span>
               <span>+10,000 บาท</span>
               <span>+20,000 บาท</span>
             </div>
-            <p class="text-xs text-slate-600 mt-3 leading-relaxed">
+            <p class="text-xs text-slate-600 dark:text-slate-300 mt-3 leading-relaxed">
               💡 เงินโปะนี้จะถูกนำไปโปะหนี้เป้าหมายแรกจนหมด แล้วนำยอดผ่อนเดิมไปทบต่อกับหนี้ก้อนถัดไปอย่างต่อเนื่อง
             </p>
           </div>
@@ -1015,7 +1119,7 @@
         </div>
 
         <!-- Right Column: Results, Strategies & Chart -->
-        <div class="lg:col-span-7 space-y-6">
+        <div class="lg:col-span-6 space-y-6">
           
           <!-- Strategy Switcher Tabs -->
           <div class="bg-slate-100 p-1.5 rounded-2xl flex items-center gap-1 text-sm font-semibold">
@@ -1098,6 +1202,47 @@
             </div>
           </div>
 
+          <!-- Debt Payoff & Settlement Methods Guide Card -->
+          <div class="bg-gradient-to-br from-blue-50/70 via-slate-50 to-indigo-50/60 dark:from-slate-800 dark:via-slate-800/80 dark:to-slate-800/60 p-5 rounded-2xl border border-blue-200/80 dark:border-slate-700 shadow-sm">
+            <h4 class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2 mb-3">
+              <i data-lucide="help-circle" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
+              <span>รูปแบบการปิดหนี้ & วิธีจ่ายที่ทำได้จริงในไทย</span>
+            </h4>
+            
+            <div class="space-y-2.5 text-xs">
+              <div class="p-3 bg-white dark:bg-slate-900/80 rounded-xl border border-slate-200 dark:border-slate-700/80 flex items-start gap-2.5">
+                <span class="w-6 h-6 rounded-lg bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 flex items-center justify-center shrink-0 font-bold">1</span>
+                <div>
+                  <strong class="text-slate-900 dark:text-white block font-semibold">สูตร Snowball (บอลหิมะ) — เหมาะกับคนต้องการกำลังใจ:</strong>
+                  <span class="text-slate-600 dark:text-slate-300">จ่ายขั้นต่ำทุกก้อน แล้วทุ่มเงินโปะก้อนที่ยอดเงินคงเหลือน้อยสุดก่อน เมื่อปิดจบได้ 1 สัญญา จะเกิดกำลังใจสูงมาก และเอายอดผ่อนเดิมไปทบก้อนต่อไป</span>
+                </div>
+              </div>
+
+              <div class="p-3 bg-white dark:bg-slate-900/80 rounded-xl border border-slate-200 dark:border-slate-700/80 flex items-start gap-2.5">
+                <span class="w-6 h-6 rounded-lg bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300 flex items-center justify-center shrink-0 font-bold">2</span>
+                <div>
+                  <strong class="text-slate-900 dark:text-white block font-semibold">สูตร Avalanche (หิมะถล่ม) — เหมาะกับคนต้องการประหยัดเงินสูงสุด:</strong>
+                  <span class="text-slate-600 dark:text-slate-300">จ่ายขั้นต่ำทุกก้อน แล้วทุ่มเงินโปะก้อนที่มีอัตราดอกเบี้ยแพงสุดก่อน (เช่น บัตรกดเงินสด 25%) จะช่วยหยุดเลือดไหลและประหยัดดอกเบี้ยรวมได้มากที่สุดในทางคณิตศาสตร์</span>
+                </div>
+              </div>
+
+              <div class="p-3 bg-white dark:bg-slate-900/80 rounded-xl border border-slate-200 dark:border-slate-700/80 flex items-start gap-2.5">
+                <span class="w-6 h-6 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center shrink-0 font-bold">3</span>
+                <div>
+                  <strong class="text-slate-900 dark:text-white block font-semibold">การรวมหนี้ (Debt Consolidation) — เหมาะกับคนผ่อนหลายทางแต่ยังไม่เสียเครดิต:</strong>
+                  <span class="text-slate-600 dark:text-slate-300">นำหนี้บัตรเครดิต/สินเชื่อบุคคลรวมเข้ากับสินเชื่อบ้าน หรือขอสินเชื่อรวมหนี้ก้อนเดียว ดอกเบี้ยจะลดลงเหลือ 6-8% ต่อปี และค่างวดลดลงเกินครึ่งทันที</span>
+                </div>
+              </div>
+
+              <div class="p-3 bg-white dark:bg-slate-900/80 rounded-xl border border-slate-200 dark:border-slate-700/80 flex items-start gap-2.5">
+                <span class="w-6 h-6 rounded-lg bg-purple-100 dark:bg-purple-900/60 text-purple-700 dark:text-purple-300 flex items-center justify-center shrink-0 font-bold">4</span>
+                <div>
+                  <strong class="text-slate-900 dark:text-white block font-semibold">ปรับโครงสร้างหนี้ (TDR) / คลินิกแก้หนี้ / Hair-cut:</strong>
+                  <span class="text-slate-600 dark:text-slate-300">หากผ่อนไม่ไหวหรือค้างชำระเกิน 90 วันแล้ว สามารถสมัคร <strong>คลินิกแก้หนี้ (โทร 1443)</strong> ดอกเบี้ย 3-5% ผ่อนนาน 10 ปี หรือเตรียมเงินก้อนเจรจาขอปิดจบงวดเดียว (Hair-cut) ลดเงินต้น 30-50% ได้</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
       </div>
