@@ -165,112 +165,210 @@
     </div>
   </header>
 
-  <!-- ================= MOBILE NAVIGATION DRAWER ================= -->
-  <div id="mobile-drawer" class="fixed inset-0 z-50 mobile-drawer-backdrop hidden xl:hidden transition-all duration-300">
-    <div class="fixed inset-y-0 right-0 w-full max-w-xs bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col justify-between overflow-y-auto p-5 animate-float" style="animation-duration: 0s;">
+  <!-- ================= MOBILE NAVIGATION HUB (CHIC APP-STYLE BOTTOM SHEET) ================= -->
+  <div id="mobile-drawer" class="fixed inset-0 z-50 mobile-hub-backdrop hidden xl:hidden flex flex-col justify-end sm:justify-center items-center p-0 sm:p-4" onclick="if(event.target === this) closeMobileMenu();">
+    <div class="w-full sm:max-w-lg bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-t-[32px] sm:rounded-3xl shadow-2xl border-t sm:border border-slate-200/90 dark:border-slate-800/90 flex flex-col max-h-[88vh] sm:max-h-[85vh] overflow-hidden mobile-hub-card">
       
-      <div>
-        <!-- Drawer Header -->
-        <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 mb-4">
-          <div class="flex items-center gap-2">
-            <div class="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-sm">
-              <i data-lucide="shield-check" class="w-4 h-4"></i>
-            </div>
-            <span class="font-bold text-slate-900 dark:text-white text-base">เมนูหลัก</span>
-          </div>
-          <button onclick="closeMobileMenu()" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-            <i data-lucide="x" class="w-5 h-5"></i>
-          </button>
-        </div>
+      <!-- Sheet Handle / Drag Indicator for Mobile -->
+      <div class="pt-3 pb-1 flex justify-center sm:hidden cursor-pointer" onclick="closeMobileMenu()">
+        <div class="w-12 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700"></div>
+      </div>
 
-        <!-- User Quick Status / Action in Drawer -->
-        <div id="drawer-auth-box" class="p-4 rounded-2xl bg-blue-50/70 dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 mb-5">
-          <div class="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-2.5 flex items-center justify-between">
-            <span>บัญชีสมาชิก</span>
-            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300">100% ฟรี</span>
+      <!-- Hub Header -->
+      <div class="px-5 py-3 flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-sm shadow-blue-500/20">
+            <i data-lucide="shield-check" class="w-4 h-4"></i>
           </div>
-          <button onclick="handleGoogleSignIn(); closeMobileMenu();" class="w-full py-2 px-3 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-650 text-slate-700 dark:text-slate-100 font-semibold text-xs rounded-xl border border-slate-200 dark:border-slate-600 shadow-sm transition-all flex items-center justify-center gap-2 mb-2">
-            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24">
+          <div>
+            <span class="font-bold text-slate-900 dark:text-white text-base leading-tight block">ศูนย์บริการแก้หนี้</span>
+            <span class="text-[11px] text-slate-500 dark:text-slate-400">เครื่องมือวิเคราะห์และทางออกเฉพาะบุคคล</span>
+          </div>
+        </div>
+        <button onclick="closeMobileMenu()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white flex items-center justify-center transition-colors" title="ปิดเมนู">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Hub Body (Scrollable) -->
+      <div class="flex-1 overflow-y-auto px-5 py-3.5 space-y-4 overscroll-contain">
+        
+        <!-- User Account Card (Dynamically updated via updateAuthUI) -->
+        <div id="drawer-auth-box" class="p-3.5 rounded-2xl bg-gradient-to-br from-blue-50/80 to-slate-50 dark:from-slate-800/90 dark:to-slate-800/50 border border-blue-100/80 dark:border-slate-700 shadow-sm">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+              <i data-lucide="user-circle" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
+              เข้าสู่ระบบเพื่อบันทึกข้อมูลหนี้
+            </span>
+            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300">ฟรี 100%</span>
+          </div>
+          <button onclick="handleGoogleSignIn(); closeMobileMenu();" class="w-full py-2.5 px-3 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-650 text-slate-700 dark:text-slate-100 font-semibold text-xs rounded-xl border border-slate-200 dark:border-slate-600 shadow-sm transition-all flex items-center justify-center gap-2 mb-2 active:scale-[0.98]">
+            <svg class="w-4 h-4" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
               <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
               <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
               <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
             </svg>
-            <span>เข้าสู่ระบบด้วย Google</span>
+            <span>เข้าสู่ระบบด้วย Google 1-คลิก</span>
           </button>
           <div class="grid grid-cols-2 gap-2">
-            <button onclick="openAuthModal('signin'); closeMobileMenu();" class="py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 text-center">
+            <button onclick="openAuthModal('signin'); closeMobileMenu();" class="py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 text-center hover:bg-slate-50 transition-colors">
               เข้าสู่ระบบ
             </button>
-            <button onclick="openAuthModal('signup'); closeMobileMenu();" class="py-2 text-xs font-semibold text-white bg-blue-600 rounded-xl shadow-sm text-center">
+            <button onclick="openAuthModal('signup'); closeMobileMenu();" class="py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm text-center transition-colors">
               สมัครสมาชิก
             </button>
           </div>
         </div>
 
-        <!-- Navigation Links List -->
-        <nav class="space-y-1 text-sm font-medium">
-          <a href="#stage-diagnostic-section" onclick="closeMobileMenu()" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 transition-colors">
-            <span class="w-7 h-7 rounded-lg bg-blue-100 dark:bg-blue-900/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
-              <i data-lucide="gauge" class="w-4 h-4"></i>
-            </span>
-            <span>วินิจฉัยขั้นของหนี้</span>
-          </a>
+        <!-- Section 1: Bento Grid (2x2) Core Tools -->
+        <div>
+          <div class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 flex items-center justify-between">
+            <span>เครื่องมือหลัก</span>
+            <span class="text-blue-600 dark:text-blue-400 font-semibold text-[10px]">แตะเพื่อไปที่ส่วนนั้น</span>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-2.5">
+            <!-- Card 1: วินิจฉัยขั้นหนี้ -->
+            <a href="#stage-diagnostic-section" onclick="closeMobileMenu()" class="bento-nav-card p-3 rounded-2xl bg-slate-50/80 dark:bg-slate-800/80 border border-slate-200/90 dark:border-slate-700/80 shadow-sm flex flex-col justify-between group active:scale-[0.97]">
+              <div class="flex items-center justify-between mb-2">
+                <div class="w-8 h-8 rounded-xl bg-blue-100 dark:bg-blue-900/60 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                  <i data-lucide="gauge" class="w-4 h-4"></i>
+                </div>
+                <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300">เริ่มที่นี่</span>
+              </div>
+              <div>
+                <div class="font-bold text-slate-900 dark:text-white text-xs leading-tight mb-0.5 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">วินิจฉัยหนี้</div>
+                <div class="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">เช็กสถานะบูโร & ขั้นหนี้</div>
+              </div>
+            </a>
 
-          <a href="#emergency-section" onclick="closeMobileMenu()" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 transition-colors">
-            <span class="w-7 h-7 rounded-lg bg-red-100 dark:bg-red-900/60 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0">
-              <i data-lucide="life-buoy" class="w-4 h-4"></i>
-            </span>
-            <span>ปฐมพยาบาลหนี้ด่วน</span>
-          </a>
+            <!-- Card 2: ตรวจ DTI -->
+            <a href="#health-check-section" onclick="closeMobileMenu()" class="bento-nav-card p-3 rounded-2xl bg-slate-50/80 dark:bg-slate-800/80 border border-slate-200/90 dark:border-slate-700/80 shadow-sm flex flex-col justify-between group active:scale-[0.97]">
+              <div class="flex items-center justify-between mb-2">
+                <div class="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-900/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                  <i data-lucide="activity" class="w-4 h-4"></i>
+                </div>
+                <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300">DTI Ratio</span>
+              </div>
+              <div>
+                <div class="font-bold text-slate-900 dark:text-white text-xs leading-tight mb-0.5 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">ตรวจสุขภาพหนี้</div>
+                <div class="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">วัดสัดส่วนภาระต่อรายได้</div>
+              </div>
+            </a>
 
-          <a href="#health-check-section" onclick="closeMobileMenu()" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 transition-colors">
-            <span class="w-7 h-7 rounded-lg bg-blue-100 dark:bg-blue-900/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
-              <i data-lucide="activity" class="w-4 h-4"></i>
-            </span>
-            <span>ตรวจสุขภาพหนี้ (DTI)</span>
-          </a>
+            <!-- Card 3: วางแผนปลดหนี้ -->
+            <a href="#planner-section" onclick="closeMobileMenu()" class="bento-nav-card p-3 rounded-2xl bg-slate-50/80 dark:bg-slate-800/80 border border-slate-200/90 dark:border-slate-700/80 shadow-sm flex flex-col justify-between group active:scale-[0.97]">
+              <div class="flex items-center justify-between mb-2">
+                <div class="w-8 h-8 rounded-xl bg-purple-100 dark:bg-purple-900/60 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+                  <i data-lucide="calculator" class="w-4 h-4"></i>
+                </div>
+                <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-purple-100 dark:bg-purple-900/60 text-purple-700 dark:text-purple-300">สูตรประหยัด</span>
+              </div>
+              <div>
+                <div class="font-bold text-slate-900 dark:text-white text-xs leading-tight mb-0.5 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">วางแผนปลดหนี้</div>
+                <div class="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">Snowball & Avalanche</div>
+              </div>
+            </a>
 
-          <a href="#planner-section" onclick="closeMobileMenu()" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 transition-colors">
-            <span class="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
-              <i data-lucide="calculator" class="w-4 h-4"></i>
-            </span>
-            <span>เครื่องมือวางแผนปลดหนี้</span>
-          </a>
+            <!-- Card 4: เข็มทิศทางออก -->
+            <a href="#solutions-section" onclick="closeMobileMenu()" class="bento-nav-card p-3 rounded-2xl bg-slate-50/80 dark:bg-slate-800/80 border border-slate-200/90 dark:border-slate-700/80 shadow-sm flex flex-col justify-between group active:scale-[0.97]">
+              <div class="flex items-center justify-between mb-2">
+                <div class="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-900/60 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                  <i data-lucide="compass" class="w-4 h-4"></i>
+                </div>
+                <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300">4 ทางออก</span>
+              </div>
+              <div>
+                <div class="font-bold text-slate-900 dark:text-white text-xs leading-tight mb-0.5 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">เข็มทิศทางออก</div>
+                <div class="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">รวมหนี้ / คลินิกแก้หนี้</div>
+              </div>
+            </a>
+          </div>
+        </div>
 
-          <a href="#solutions-section" onclick="closeMobileMenu()" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 transition-colors">
-            <span class="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-900/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
-              <i data-lucide="compass" class="w-4 h-4"></i>
-            </span>
-            <span>เข็มทิศทางออกแก้หนี้</span>
-          </a>
+        <!-- Section 2: Quick Action & Resource Tiles -->
+        <div>
+          <div class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">
+            ตัวช่วย & บริการด่วน
+          </div>
+          <div class="space-y-1.5">
+            <!-- Emergency 5-Step -->
+            <a href="#emergency-section" onclick="closeMobileMenu()" class="flex items-center justify-between p-2.5 rounded-xl bg-rose-50/70 dark:bg-rose-950/30 border border-rose-100 dark:border-rose-900/40 text-rose-800 dark:text-rose-200 transition-colors active:scale-[0.99]">
+              <div class="flex items-center gap-2.5">
+                <div class="w-7 h-7 rounded-lg bg-rose-500 text-white flex items-center justify-center shrink-0 shadow-sm">
+                  <i data-lucide="life-buoy" class="w-3.5 h-3.5"></i>
+                </div>
+                <div>
+                  <div class="font-bold text-xs leading-tight text-rose-900 dark:text-rose-200">ปฐมพยาบาลหนี้ด่วน 5 สเต็ป</div>
+                  <div class="text-[10px] text-rose-600 dark:text-rose-400 leading-tight">วิธีตั้งหลักเมื่อเงินขาดมือกะทันหัน</div>
+                </div>
+              </div>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-rose-400 shrink-0"></i>
+            </a>
 
-          <a href="#scripts-section" onclick="closeMobileMenu()" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 transition-colors">
-            <span class="w-7 h-7 rounded-lg bg-indigo-100 dark:bg-indigo-900/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
-              <i data-lucide="message-square" class="w-4 h-4"></i>
-            </span>
-            <span>บทพูดเจรจาเจ้าหนี้</span>
-          </a>
+            <!-- Scripts -->
+            <a href="#scripts-section" onclick="closeMobileMenu()" class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50/80 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors active:scale-[0.99]">
+              <div class="flex items-center gap-2.5">
+                <div class="w-7 h-7 rounded-lg bg-indigo-500 text-white flex items-center justify-center shrink-0 shadow-sm">
+                  <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+                </div>
+                <div>
+                  <div class="font-bold text-xs leading-tight text-slate-900 dark:text-white">บทพูดเจรจาเจ้าหนี้</div>
+                  <div class="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">สคริปต์โทรคุยธนาคารและไฟแนนซ์</div>
+                </div>
+              </div>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 shrink-0"></i>
+            </a>
 
-          <a href="#hotlines-section" onclick="closeMobileMenu()" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 transition-colors">
-            <span class="w-7 h-7 rounded-lg bg-rose-100 dark:bg-rose-900/60 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
-              <i data-lucide="phone-call" class="w-4 h-4"></i>
-            </span>
-            <span>สายด่วนช่วยเหลือ</span>
-          </a>
+            <!-- Hotlines -->
+            <a href="#hotlines-section" onclick="closeMobileMenu()" class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50/80 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors active:scale-[0.99]">
+              <div class="flex items-center gap-2.5">
+                <div class="w-7 h-7 rounded-lg bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-sm">
+                  <i data-lucide="phone-call" class="w-3.5 h-3.5"></i>
+                </div>
+                <div>
+                  <div class="font-bold text-xs leading-tight text-slate-900 dark:text-white">สายด่วนช่วยเหลือ (ฟรี)</div>
+                  <div class="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">ธปท. 1213 / SAM 1443 / สภาทนายความ</div>
+                </div>
+              </div>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 shrink-0"></i>
+            </a>
 
-          <a href="#membership-section" onclick="closeMobileMenu()" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-amber-700 dark:text-amber-400 font-semibold transition-colors">
-            <span class="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-900/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
-              <i data-lucide="crown" class="w-4 h-4"></i>
-            </span>
-            <span>แผนสมาชิก Pro & บริการพิเศษ</span>
-          </a>
-        </nav>
+            <!-- Pro Membership -->
+            <a href="#membership-section" onclick="closeMobileMenu()" class="flex items-center justify-between p-2.5 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/20 border border-amber-200/80 dark:border-amber-800/40 transition-colors active:scale-[0.99]">
+              <div class="flex items-center gap-2.5">
+                <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-amber-500 to-amber-600 text-white flex items-center justify-center shrink-0 shadow-sm">
+                  <i data-lucide="crown" class="w-3.5 h-3.5"></i>
+                </div>
+                <div>
+                  <div class="font-bold text-xs leading-tight text-amber-900 dark:text-amber-200 flex items-center gap-1.5">
+                    <span>แผนสมาชิก Pro & บริการพิเศษ</span>
+                    <span class="text-[9px] font-bold px-1 py-0.2 bg-amber-500 text-white rounded">VIP</span>
+                  </div>
+                  <div class="text-[10px] text-amber-700 dark:text-amber-400 leading-tight">รายงานวิเคราะห์หนี้เชิงลึก & ที่ปรึกษา</div>
+                </div>
+              </div>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-amber-500 shrink-0"></i>
+            </a>
+          </div>
+        </div>
+
       </div>
 
-      <!-- Drawer Footer -->
-      <div class="pt-4 border-t border-slate-100 dark:border-slate-800 text-center text-xs text-slate-400">
-        <p>🔒 คำนวณในอุปกรณ์ของคุณ ข้อมูลปลอดภัย</p>
+      <!-- Hub Footer Utilities -->
+      <div class="px-5 py-3 border-t border-slate-100 dark:border-slate-800/80 bg-slate-50/70 dark:bg-slate-900/60 flex items-center justify-between">
+        <!-- Theme Switcher Pill Directly in Menu -->
+        <button onclick="toggleTheme()" class="flex items-center gap-2 py-1.5 px-3 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 shadow-sm active:scale-95 transition-all">
+          <i data-lucide="moon" class="w-3.5 h-3.5 hidden dark:block text-amber-400"></i>
+          <i data-lucide="sun" class="w-3.5 h-3.5 block dark:hidden text-amber-500"></i>
+          <span class="text-[11px]"><span class="dark:hidden">สลับโหมดมืด</span><span class="hidden dark:inline">สลับโหมดสว่าง</span></span>
+        </button>
+
+        <div class="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-1">
+          <i data-lucide="lock" class="w-3 h-3 text-emerald-500"></i>
+          <span>คำนวณในเครื่อง ปลอดภัย 100%</span>
+        </div>
       </div>
 
     </div>

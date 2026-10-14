@@ -1208,28 +1208,37 @@ function updateAuthUI() {
     // Drawer Auth Box - Logged In View
     if (drawerAuthBox) {
       const avatarHtml = (currentUser.avatar && currentUser.avatar.startsWith('http'))
-        ? `<img src="${escapeHtml(currentUser.avatar)}" alt="${escapeHtml(currentUser.name)}" class="w-10 h-10 rounded-full object-cover shrink-0 shadow-sm border border-slate-200 dark:border-slate-700">`
-        : `<div class="w-10 h-10 rounded-full ${currentUser.provider === 'google' ? 'bg-gradient-to-tr from-blue-600 to-indigo-600' : 'bg-blue-600'} text-white font-bold text-base flex items-center justify-center shrink-0 shadow-sm">
+        ? `<img src="${escapeHtml(currentUser.avatar)}" alt="${escapeHtml(currentUser.name)}" class="w-11 h-11 rounded-full object-cover shrink-0 shadow-md border-2 border-white dark:border-slate-700">`
+        : `<div class="w-11 h-11 rounded-full ${currentUser.provider === 'google' ? 'bg-gradient-to-tr from-blue-600 to-indigo-600' : 'bg-blue-600'} text-white font-bold text-lg flex items-center justify-center shrink-0 shadow-md">
             ${escapeHtml(currentUser.avatar || currentUser.name.charAt(0).toUpperCase())}
           </div>`;
 
       drawerAuthBox.innerHTML = `
-        <div class="flex items-center gap-3">
-          ${avatarHtml}
-          <div class="min-w-0 flex-1">
-            <div class="font-bold text-slate-900 dark:text-white text-sm truncate">${escapeHtml(currentUser.name)}</div>
-            <div class="text-[11px] text-slate-500 dark:text-slate-400 truncate">${escapeHtml(currentUser.email || 'สมาชิกในระบบ')}</div>
-            <div class="mt-1">
-              <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ${currentUser.tier === 'pro' ? 'badge-pro text-white' : 'bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300'}">
-                ${currentUser.tier === 'pro' ? 'PRO MEMBER' : (currentUser.provider === 'google' ? 'GOOGLE FREE' : 'FREE TIER')}
-              </span>
+        <div class="flex items-center justify-between gap-3 mb-2.5">
+          <div class="flex items-center gap-2.5 min-w-0">
+            ${avatarHtml}
+            <div class="min-w-0">
+              <div class="font-bold text-slate-900 dark:text-white text-sm truncate">${escapeHtml(currentUser.name)}</div>
+              <div class="text-[11px] text-slate-500 dark:text-slate-400 truncate">${escapeHtml(currentUser.email || 'สมาชิกในระบบ')}</div>
             </div>
           </div>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${currentUser.tier === 'pro' ? 'badge-pro text-white shadow-sm' : 'bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300'}">
+            ${currentUser.tier === 'pro' ? 'PRO VIP' : (currentUser.provider === 'google' ? 'GOOGLE FREE' : 'FREE TIER')}
+          </span>
         </div>
-        <button onclick="logoutUser(); closeMobileMenu();" class="mt-3 w-full py-2 px-3 text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 rounded-xl border border-rose-200 dark:border-rose-900/40 flex items-center justify-center gap-2 transition-colors">
-          <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
-          <span>ออกจากระบบ</span>
-        </button>
+        
+        <div class="grid ${currentUser.tier === 'pro' ? 'grid-cols-1' : 'grid-cols-2'} gap-2 pt-1">
+          ${currentUser.tier !== 'pro' ? `
+            <button onclick="upgradeToPro(); closeMobileMenu();" class="py-2 px-3 text-xs font-bold text-amber-900 dark:text-amber-200 bg-gradient-to-r from-amber-100 to-amber-200 dark:from-amber-950/60 dark:to-amber-900/40 hover:from-amber-200 hover:to-amber-300 rounded-xl border border-amber-300 dark:border-amber-700 flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-sm">
+              <i data-lucide="crown" class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400"></i>
+              <span>รับ PRO ฟรี</span>
+            </button>
+          ` : ''}
+          <button onclick="logoutUser(); closeMobileMenu();" class="py-2 px-3 text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 rounded-xl border border-rose-200 dark:border-rose-900/40 flex items-center justify-center gap-1.5 transition-colors active:scale-95">
+            <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+            <span>ออกจากระบบ</span>
+          </button>
+        </div>
       `;
     }
 
@@ -1243,24 +1252,27 @@ function updateAuthUI() {
     // Drawer Auth Box - Logged Out View
     if (drawerAuthBox) {
       drawerAuthBox.innerHTML = `
-        <div class="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-2.5 flex items-center justify-between">
-          <span>บัญชีสมาชิก</span>
-          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300">100% ฟรี</span>
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+            <i data-lucide="user-circle" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
+            เข้าสู่ระบบเพื่อบันทึกข้อมูลหนี้
+          </span>
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300">ฟรี 100%</span>
         </div>
-        <button onclick="handleGoogleSignIn(); closeMobileMenu();" class="w-full py-2 px-3 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-650 text-slate-700 dark:text-slate-100 font-semibold text-xs rounded-xl border border-slate-200 dark:border-slate-600 shadow-sm transition-all flex items-center justify-center gap-2 mb-2">
-          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24">
+        <button onclick="handleGoogleSignIn(); closeMobileMenu();" class="w-full py-2.5 px-3 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-650 text-slate-700 dark:text-slate-100 font-semibold text-xs rounded-xl border border-slate-200 dark:border-slate-600 shadow-sm transition-all flex items-center justify-center gap-2 mb-2 active:scale-[0.98]">
+          <svg class="w-4 h-4" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
             <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
             <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
           </svg>
-          <span>เข้าสู่ระบบด้วย Google</span>
+          <span>เข้าสู่ระบบด้วย Google 1-คลิก</span>
         </button>
         <div class="grid grid-cols-2 gap-2">
-          <button onclick="openAuthModal('signin'); closeMobileMenu();" class="py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 text-center">
+          <button onclick="openAuthModal('signin'); closeMobileMenu();" class="py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 text-center hover:bg-slate-50 transition-colors">
             เข้าสู่ระบบ
           </button>
-          <button onclick="openAuthModal('signup'); closeMobileMenu();" class="py-2 text-xs font-semibold text-white bg-blue-600 rounded-xl shadow-sm text-center">
+          <button onclick="openAuthModal('signup'); closeMobileMenu();" class="py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm text-center transition-colors">
             สมัครสมาชิก
           </button>
         </div>
