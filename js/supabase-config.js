@@ -9,10 +9,10 @@
 
 const SUPABASE_CONFIG = {
   // ใส่ Project URL ของคุณที่นี่ (เช่น 'https://xyzcompany.supabase.co')
-  url: '',
+  url: 'https://tdstzrmxcocqiluynmqi.supabase.co',
 
   // ใส่ anon public key ของคุณที่นี่ (เช่น 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...')
-  anonKey: ''
+  anonKey: 'sb_publishable_DLGN4Ouo75g2k-yEjkG-Zw_ze1moXYv'
 };
 
 // อ่านค่า config จาก localStorage หากผู้ใช้เคยบันทึกไว้ในเบราว์เซอร์
