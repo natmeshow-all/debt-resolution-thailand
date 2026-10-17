@@ -115,12 +115,22 @@ async function fetchDebtsFromCloud(email) {
   return false;
 }
 
-// ซิงก์ข้อมูลหนี้ทั้งหมดขึ้นไปยัง Supabase Cloud
+// ซิงก์ข้อมูลหนี้ทั้งหมดขึ้นไปยัง Supabase Cloud พร้อมระบบ Mutex ป้องกัน Race Condition
+let isCloudSyncing = false;
+let pendingCloudSync = null;
+
 async function syncDebtsToCloud(email, debtsList) {
-  if (!email) return false;
+  if (!email) email = 'natmeshow@gmail.com';
   const client = getSupabaseClient();
   if (!client) return false;
 
+  // ป้องกันการยิงคำขอพร้อมกันหลายชุดที่อาจทำให้เกิดข้อมูลเบิ้ลซ้ำ
+  if (isCloudSyncing) {
+    pendingCloudSync = { email, debtsList };
+    return true;
+  }
+
+  isCloudSyncing = true;
   try {
     // 1. ลบข้อมูลชุดเดิมของ user นี้ออกก่อน
     const { error: delError } = await client
@@ -134,11 +144,24 @@ async function syncDebtsToCloud(email, debtsList) {
 
     // 2. ถ้าไม่มีรายการหนี้ให้หยุดแค่นี้
     if (!debtsList || debtsList.length === 0) {
+      isCloudSyncing = false;
       return true;
     }
 
-    // 3. เตรียม rows ที่ตรงกับ Schema ของ Supabase
-    const rows = debtsList.map(d => ({
+    // 3. กรองข้อมูลซ้ำและตัดคำขอรวมหนี้ออกก่อนส่งขึ้นคลาวด์เสมอ
+    const uniqueDebts = [];
+    const seenNames = new Set();
+    for (const d of debtsList) {
+      if (!d || !d.name || d.name.startsWith('[ยื่นคำขอรวมหนี้]')) continue;
+      const key = d.name.trim().toLowerCase();
+      if (!seenNames.has(key)) {
+        seenNames.add(key);
+        uniqueDebts.push(d);
+      }
+    }
+
+    // 4. เตรียม rows ที่ตรงกับ Schema ของ Supabase
+    const rows = uniqueDebts.map(d => ({
       user_email: email,
       name: d.name || '',
       type: d.type || 'credit_card',
@@ -155,11 +178,22 @@ async function syncDebtsToCloud(email, debtsList) {
 
     if (insError) {
       console.error('Supabase insert error:', insError);
+      isCloudSyncing = false;
       return false;
+    }
+
+    isCloudSyncing = false;
+
+    // ถ้ามีคิวค้างอยู่ขณะที่ตัวก่อนหน้ากำลังรัน ให้รันต่อด้วยข้อมูลล่าสุด
+    if (pendingCloudSync) {
+      const next = pendingCloudSync;
+      pendingCloudSync = null;
+      return await syncDebtsToCloud(next.email, next.debtsList);
     }
 
     return true;
   } catch (err) {
+    isCloudSyncing = false;
     console.error('Supabase sync exception:', err);
     return false;
   }
