@@ -142,6 +142,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (typeof updateSupabaseStatusUI === 'function') {
     updateSupabaseStatusUI();
   }
+  // Initialize Cloud Auto-Sync (Realtime + Auto-fetch on startup & focus)
+  initCloudAutoSync();
+
   lucide.createIcons();
 });
 
@@ -345,36 +348,100 @@ function loadDebtsFromStorage() {
   fetchAndApplyDebtsFromCloud();
 }
 
+// Cloud Autosync Indicator Feedback
+let cloudSyncTimer = null;
+function showCloudSyncBadge(status) {
+  const targets = [
+    document.getElementById('cloud-autosync-indicator'),
+    document.getElementById('cloud-autosync-indicator-main')
+  ];
+
+  targets.forEach(el => {
+    if (!el) return;
+    if (status === 'syncing') {
+      el.classList.remove('hidden');
+      el.innerHTML = `
+        <span class="inline-flex items-center gap-1.5 text-[11px] font-bold text-sky-700 dark:text-sky-300 bg-sky-100/90 dark:bg-sky-950/80 px-2.5 py-1 rounded-full border border-sky-300 dark:border-sky-800 shadow-sm animate-pulse">
+          <i data-lucide="refresh-cw" class="w-3 h-3 animate-spin"></i>
+          <span>กำลังซิงก์คลาวด์...</span>
+        </span>
+      `;
+    } else if (status === 'synced') {
+      el.classList.remove('hidden');
+      el.innerHTML = `
+        <span class="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100/90 dark:bg-emerald-950/80 px-2.5 py-1 rounded-full border border-emerald-300 dark:border-emerald-800 shadow-sm">
+          <i data-lucide="check" class="w-3 h-3"></i>
+          <span>บันทึกคลาวด์อัตโนมัติแล้ว</span>
+        </span>
+      `;
+      setTimeout(() => {
+        if (el) el.classList.add('hidden');
+      }, 3500);
+    } else if (status === 'error') {
+      el.classList.remove('hidden');
+      el.innerHTML = `
+        <span class="inline-flex items-center gap-1.5 text-[11px] font-bold text-amber-700 dark:text-amber-300 bg-amber-100/90 dark:bg-amber-950/80 px-2.5 py-1 rounded-full border border-amber-300 dark:border-amber-800 shadow-sm">
+          <i data-lucide="hard-drive" class="w-3 h-3"></i>
+          <span>บันทึกในเครื่องแล้ว</span>
+        </span>
+      `;
+    }
+  });
+
+  if (typeof lucide !== 'undefined' && lucide.createIcons) {
+    lucide.createIcons();
+  }
+}
+
 // Background sync from local to cloud
 function triggerBackgroundCloudSync() {
-  const email = (currentUser && currentUser.email) ? currentUser.email : 'natmeshow@gmail.com';
+  const email = (currentUser && currentUser.email) ? currentUser.email : (localStorage.getItem('supabase_user_email') || 'natmeshow@gmail.com');
   if (email && typeof syncDebtsToCloud === 'function' && typeof isSupabaseConfigured === 'function') {
     if (isSupabaseConfigured()) {
-      syncDebtsToCloud(email, debts).catch(err => console.warn('Background sync warning:', err));
+      showCloudSyncBadge('syncing');
+      syncDebtsToCloud(email, debts)
+        .then(ok => showCloudSyncBadge(ok ? 'synced' : 'error'))
+        .catch(err => {
+          console.warn('Background sync warning:', err);
+          showCloudSyncBadge('error');
+        });
     }
   }
 }
 
-// Fetch from cloud and update UI
-async function fetchAndApplyDebtsFromCloud() {
-  const email = (currentUser && currentUser.email) ? currentUser.email : 'natmeshow@gmail.com';
+// Fetch from cloud and update UI (Supports silent mode for background polling/realtime)
+async function fetchAndApplyDebtsFromCloud(silent = false) {
+  const email = (currentUser && currentUser.email) ? currentUser.email : (localStorage.getItem('supabase_user_email') || 'natmeshow@gmail.com');
   if (typeof fetchDebtsFromCloud !== 'function' || typeof isSupabaseConfigured !== 'function' || !isSupabaseConfigured()) return;
 
   try {
     const cloudDebts = await fetchDebtsFromCloud(email);
     if (cloudDebts && Array.isArray(cloudDebts) && cloudDebts.length > 0) {
-      debts = sanitizeDebtsList(cloudDebts);
-      const key = getDebtStorageKey();
-      localStorage.setItem(key, JSON.stringify(debts));
-      renderDebtList();
-      calculateRepaymentPlan();
-      showToast(`ซิงก์ข้อมูล ${debts.length} สัญญาหนี้จาก Cloud สำเร็จ`, 'success', '☁️ คลาวด์ซิงก์');
+      const sanitized = sanitizeDebtsList(cloudDebts);
+
+      // ตรวจสอบว่าข้อมูลจากคลาวด์แตกต่างจากข้อมูลในเครื่องหรือไม่
+      const currentSignature = debts.map(d => `${d.name}_${d.balance}_${d.minPay}_${d.rate}`).sort().join('|');
+      const cloudSignature = sanitized.map(d => `${d.name}_${d.balance}_${d.minPay}_${d.rate}`).sort().join('|');
+
+      if (currentSignature !== cloudSignature || debts.length === 0) {
+        debts = sanitized;
+        const key = getDebtStorageKey();
+        localStorage.setItem(key, JSON.stringify(debts));
+        renderDebtList();
+        calculateRepaymentPlan();
+        if (!silent) {
+          showToast(`ซิงก์ข้อมูล ${debts.length} สัญญาหนี้จาก Cloud สำเร็จ`, 'success', '☁️ คลาวด์ซิงก์');
+        } else {
+          showCloudSyncBadge('synced');
+        }
+      }
     }
   } catch (err) {
     console.warn('Auto fetch from cloud error:', err);
   }
 }
 
+// บันทึกข้อมูลและซิงก์ขึ้น Supabase Cloud อัตโนมัติทุกครั้งที่มีการเพิ่ม/ลบ/แก้ไขข้อมูล
 function saveDebtsToStorage() {
   const key = getDebtStorageKey();
   localStorage.setItem(key, JSON.stringify(debts));
@@ -382,14 +449,54 @@ function saveDebtsToStorage() {
     localStorage.setItem('user_debts_v1', JSON.stringify(debts));
   }
 
-  // Auto-sync to Supabase Cloud if configured and user is logged in
-  if (currentUser && currentUser.email && typeof syncDebtsToCloud === 'function' && typeof isSupabaseConfigured === 'function') {
-    if (isSupabaseConfigured()) {
-      syncDebtsToCloud(currentUser.email, debts).catch(err => {
-        console.warn('Background Supabase sync error:', err);
-      });
-    }
+  // อัปเดตขึ้นคลาวด์อัตโนมัติทันที
+  const email = (currentUser && currentUser.email) ? currentUser.email : (localStorage.getItem('supabase_user_email') || 'natmeshow@gmail.com');
+  if (typeof syncDebtsToCloud === 'function' && typeof isSupabaseConfigured === 'function' && isSupabaseConfigured()) {
+    showCloudSyncBadge('syncing');
+    clearTimeout(cloudSyncTimer);
+    cloudSyncTimer = setTimeout(async () => {
+      try {
+        const ok = await syncDebtsToCloud(email, debts);
+        if (ok) {
+          showCloudSyncBadge('synced');
+        } else {
+          showCloudSyncBadge('error');
+        }
+      } catch (err) {
+        console.warn('Auto sync debts error:', err);
+        showCloudSyncBadge('error');
+      }
+    }, 400); // ดีเลย์ 400ms ป้องกันการส่งซ้ำซ้อน
   }
+}
+
+// ระบบ Auto-Sync ทำงานอัตโนมัติเมื่อเปิดแอป, สลับแอป, หรือได้รับข้อความ Realtime จากคลาวด์
+function initCloudAutoSync() {
+  const email = (currentUser && currentUser.email) ? currentUser.email : (localStorage.getItem('supabase_user_email') || 'natmeshow@gmail.com');
+
+  // 1. ดึงข้อมูลล่าสุดทันทีหลังโหลดหน้าเว็บ (Silent sync)
+  setTimeout(() => {
+    fetchAndApplyDebtsFromCloud(true);
+  }, 400);
+
+  // 2. รับการแจ้งเตือน Realtime จาก Supabase เมื่อเครื่องอื่นอัปเดตข้อมูล
+  if (typeof subscribeToCloudDebtChanges === 'function') {
+    subscribeToCloudDebtChanges(email, () => {
+      console.log('Realtime update detected from cloud!');
+      fetchAndApplyDebtsFromCloud(true);
+    });
+  }
+
+  // 3. เมื่อสลับหน้าต่างกลับมา หรือปลดล็อคหน้าจอมือถือ (Focus / VisibilityChange)
+  window.addEventListener('focus', () => {
+    fetchAndApplyDebtsFromCloud(true);
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      fetchAndApplyDebtsFromCloud(true);
+    }
+  });
 }
 
 // ==========================================
@@ -981,7 +1088,10 @@ function renderDebtList() {
               <div class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">${debt.balance.toLocaleString('th-TH')} บ.</div>
               <div class="text-[10px] text-slate-400">ยอดหนี้คงเหลือ</div>
             </div>
-            <button onclick="removeDebt('${debt.id}')" title="ลบรายการนี้" class="p-1.5 text-slate-400 hover:text-red-500 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors ml-1">
+            <button onclick="openEditDebtModal('${debt.id}')" title="แก้ไขรายการนี้" class="p-1.5 text-slate-400 hover:text-blue-500 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-colors ml-1">
+              <i data-lucide="pencil" class="w-4 h-4"></i>
+            </button>
+            <button onclick="removeDebt('${debt.id}')" title="ลบรายการนี้" class="p-1.5 text-slate-400 hover:text-red-500 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors">
               <i data-lucide="trash-2" class="w-4 h-4"></i>
             </button>
           </div>
@@ -1165,11 +1275,81 @@ function renderDebtActionSummary(totalBal, totalMin, totalAnnualInterest) {
   lucide.createIcons();
 }
 
+window.openEditDebtModal = function(id) {
+  const debt = debts.find(d => String(d.id) === String(id));
+  if (!debt) return;
+
+  const modal = document.getElementById('edit-debt-modal');
+  if (!modal) return;
+
+  document.getElementById('edit-debt-id').value = debt.id;
+  document.getElementById('edit-debt-name').value = debt.name || '';
+  document.getElementById('edit-debt-balance').value = debt.balance || 0;
+  document.getElementById('edit-debt-minpay').value = debt.minPay || 0;
+  document.getElementById('edit-debt-rate').value = debt.rate || 16;
+  document.getElementById('edit-debt-type').value = debt.type || 'credit_card';
+
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+};
+
+window.closeEditDebtModal = function() {
+  const modal = document.getElementById('edit-debt-modal');
+  if (modal) modal.style.display = 'none';
+  document.body.style.overflow = '';
+};
+
+window.handleSaveEditDebt = function(e) {
+  if (e) e.preventDefault();
+  const id = document.getElementById('edit-debt-id')?.value;
+  const name = document.getElementById('edit-debt-name')?.value.trim();
+  const balance = parseFloat(document.getElementById('edit-debt-balance')?.value) || 0;
+  const minPay = parseFloat(document.getElementById('edit-debt-minpay')?.value) || 0;
+  const rate = parseFloat(document.getElementById('edit-debt-rate')?.value) || 0;
+  const type = document.getElementById('edit-debt-type')?.value || 'credit_card';
+
+  if (!id || !name || balance <= 0 || minPay <= 0) {
+    showToast('กรุณากรอกข้อมูลให้ครบถ้วนถูกต้อง', 'warning');
+    return;
+  }
+
+  const idx = debts.findIndex(d => String(d.id) === String(id));
+  if (idx !== -1) {
+    debts[idx] = {
+      ...debts[idx],
+      name,
+      balance,
+      minPay,
+      rate,
+      type
+    };
+
+    saveDebtsToStorage(); // Auto-saves to storage AND pushes to Cloud automatically!
+    renderDebtList();
+    calculateRepaymentPlan();
+    closeEditDebtModal();
+    showToast(`อัปเดตข้อมูล "${name}" เรียบร้อยและซิงก์ขึ้นคลาวด์แล้ว`, 'success', '✏️ อัปเดตสำเร็จ');
+  }
+};
+
 window.removeDebt = function(id) {
-  debts = debts.filter(d => d.id !== id);
-  saveDebtsToStorage();
-  renderDebtList();
-  calculateRepaymentPlan();
+  const debt = debts.find(d => String(d.id) === String(id));
+  const name = debt ? debt.name : 'รายการหนี้';
+  showConfirmModal({
+    title: 'ยืนยันการลบหนี้',
+    message: `คุณต้องการลบ "${name}" ออกจากระบบและคลาวด์ใช่หรือไม่?`,
+    confirmText: 'ลบรายการ',
+    cancelText: 'ยกเลิก',
+    isDanger: true,
+    onConfirm: () => {
+      debts = debts.filter(d => String(d.id) !== String(id));
+      saveDebtsToStorage(); // Auto-syncs deletion to Cloud!
+      renderDebtList();
+      calculateRepaymentPlan();
+      showToast(`ลบ "${name}" ออกจากระบบเรียบร้อยแล้ว`, 'info');
+    }
+  });
 };
 
 function calculateRepaymentPlan() {

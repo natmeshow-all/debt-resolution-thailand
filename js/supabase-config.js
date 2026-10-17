@@ -165,9 +165,47 @@ async function syncDebtsToCloud(email, debtsList) {
   }
 }
 
+// ระบบ Realtime Subscription แจ้งเตือนเมื่อข้อมูลในคลาวด์มีการเปลี่ยนแปลง
+let realtimeChannel = null;
+function subscribeToCloudDebtChanges(email, onUpdateCallback) {
+  if (!email) return null;
+  const client = getSupabaseClient();
+  if (!client || typeof client.channel !== 'function') return null;
+
+  try {
+    if (realtimeChannel) {
+      try { client.removeChannel(realtimeChannel); } catch (e) {}
+      realtimeChannel = null;
+    }
+
+    realtimeChannel = client
+      .channel('public:user_debts_realtime')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'user_debts'
+        },
+        payload => {
+          if (typeof onUpdateCallback === 'function') {
+            onUpdateCallback(payload);
+          }
+        }
+      )
+      .subscribe();
+
+    return realtimeChannel;
+  } catch (err) {
+    console.warn('Realtime subscription error:', err);
+    return null;
+  }
+}
+
 // Export ตัวแปรและฟังก์ชันให้เรียกใช้ได้ทั่วทั้งเว็บ
 window.SUPABASE_CONFIG = SUPABASE_CONFIG;
 window.getSupabaseClient = getSupabaseClient;
 window.isSupabaseConfigured = isSupabaseConfigured;
 window.fetchDebtsFromCloud = fetchDebtsFromCloud;
 window.syncDebtsToCloud = syncDebtsToCloud;
+window.subscribeToCloudDebtChanges = subscribeToCloudDebtChanges;
