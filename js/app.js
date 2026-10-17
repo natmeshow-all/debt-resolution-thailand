@@ -132,11 +132,13 @@ let debtChart = null;
 // Initialize on Load
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
+  initAuthSystem(); // Load user first so currentUser.email is available
   loadDebtsFromStorage();
   initDtiCalculator();
   initDebtPlanner();
   initFilters();
   initEmergencyChecklist();
+  initStageDiagnostic();
   if (typeof updateSupabaseStatusUI === 'function') {
     updateSupabaseStatusUI();
   }
@@ -297,8 +299,10 @@ function loadDebtsFromStorage() {
   if (saved) {
     try {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed)) {
+      if (Array.isArray(parsed) && parsed.length > 0) {
         debts = parsed;
+        // If local debts exist and user is logged in, sync to cloud in case cloud doesn't have it yet!
+        triggerBackgroundCloudSync();
         return;
       }
     } catch (e) {}
@@ -319,8 +323,38 @@ function loadDebtsFromStorage() {
     } catch (e) {}
   }
 
-  // Default is clean & empty for every member!
+  // If local is empty, try to fetch from Supabase Cloud if user is logged in
   debts = [];
+  fetchAndApplyDebtsFromCloud();
+}
+
+// Background sync from local to cloud
+function triggerBackgroundCloudSync() {
+  if (currentUser && currentUser.email && typeof syncDebtsToCloud === 'function' && typeof isSupabaseConfigured === 'function') {
+    if (isSupabaseConfigured()) {
+      syncDebtsToCloud(currentUser.email, debts).catch(err => console.warn('Background sync warning:', err));
+    }
+  }
+}
+
+// Fetch from cloud and update UI if local is empty
+async function fetchAndApplyDebtsFromCloud() {
+  if (!currentUser || !currentUser.email) return;
+  if (typeof fetchDebtsFromCloud !== 'function' || typeof isSupabaseConfigured !== 'function' || !isSupabaseConfigured()) return;
+
+  try {
+    const cloudDebts = await fetchDebtsFromCloud(currentUser.email);
+    if (cloudDebts && Array.isArray(cloudDebts) && cloudDebts.length > 0) {
+      debts = cloudDebts;
+      const key = getDebtStorageKey();
+      localStorage.setItem(key, JSON.stringify(debts));
+      renderDebtList();
+      calculateRepaymentPlan();
+      showToast(`ซิงก์ข้อมูล ${debts.length} สัญญาหนี้จาก Cloud สำเร็จ`, 'success', '☁️ คลาวด์ซิงก์');
+    }
+  } catch (err) {
+    console.warn('Auto fetch from cloud error:', err);
+  }
 }
 
 function saveDebtsToStorage() {
@@ -2209,8 +2243,4 @@ function renderStageResult(data) {
   lucide.createIcons();
 }
 
-// Update DOMContentLoaded to register new subsystems
-document.addEventListener('DOMContentLoaded', () => {
-  initAuthSystem();
-  initStageDiagnostic();
-});
+
