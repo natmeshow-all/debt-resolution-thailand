@@ -81,8 +81,11 @@ async function fetchDebtsFromCloud(email) {
     }
 
     if (data && Array.isArray(data)) {
-      // แปลงรูปแบบจาก DB กลับมาเป็นรูปแบบ debts ของแอป
-      const mapped = data.map(row => ({
+      // 1. กรองคำขอรวมหนี้ออก (ไม่นับเป็นรายการหนี้)
+      const validRows = data.filter(row => !row.name || !row.name.startsWith('[ยื่นคำขอรวมหนี้]'));
+
+      // 2. แปลงรูปแบบจาก DB กลับมาเป็นรูปแบบ debts ของแอป
+      const mapped = validRows.map(row => ({
         id: row.id ? String(row.id) : ('c_' + Date.now() + Math.random().toString(36).substr(2, 4)),
         name: row.name || 'ไม่ระบุชื่อ',
         type: row.type || 'credit_card',
@@ -93,7 +96,18 @@ async function fetchDebtsFromCloud(email) {
         notes: row.notes || ''
       }));
 
-      return mapped;
+      // 3. ป้องกันข้อมูลสัญญาหนี้ซ้ำซ้อน (Deduplicate by name)
+      const uniqueDebts = [];
+      const seenNames = new Set();
+      for (const d of mapped) {
+        const key = d.name.trim().toLowerCase();
+        if (!seenNames.has(key)) {
+          seenNames.add(key);
+          uniqueDebts.push(d);
+        }
+      }
+
+      return uniqueDebts;
     }
   } catch (err) {
     console.error('Supabase fetch exception:', err);

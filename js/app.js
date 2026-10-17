@@ -293,6 +293,22 @@ function getDebtStorageKey() {
   return 'user_debts_guest';
 }
 
+function sanitizeDebtsList(list) {
+  if (!Array.isArray(list)) return [];
+  const cleaned = [];
+  const seen = new Set();
+  for (const item of list) {
+    if (!item || !item.name) continue;
+    if (item.name.startsWith('[ยื่นคำขอรวมหนี้]')) continue;
+    const k = item.name.trim().toLowerCase();
+    if (!seen.has(k)) {
+      seen.add(k);
+      cleaned.push(item);
+    }
+  }
+  return cleaned;
+}
+
 function loadDebtsFromStorage() {
   const key = getDebtStorageKey();
   const saved = localStorage.getItem(key);
@@ -300,7 +316,8 @@ function loadDebtsFromStorage() {
     try {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        debts = parsed;
+        debts = sanitizeDebtsList(parsed);
+        localStorage.setItem(key, JSON.stringify(debts));
         // If local debts exist and user is logged in, sync to cloud in case cloud doesn't have it yet!
         triggerBackgroundCloudSync();
         return;
@@ -316,36 +333,37 @@ function loadDebtsFromStorage() {
       const isSample = Array.isArray(legacy) && legacy.length === 3 &&
         legacy.some(d => d.name && (d.name.includes('KBank') || d.name.includes('Speedy Cash')));
       if (Array.isArray(legacy) && !isSample && legacy.length > 0) {
-        debts = legacy;
+        debts = sanitizeDebtsList(legacy);
         saveDebtsToStorage();
         return;
       }
     } catch (e) {}
   }
 
-  // If local is empty, try to fetch from Supabase Cloud if user is logged in
+  // If local is empty, try to fetch from Supabase Cloud
   debts = [];
   fetchAndApplyDebtsFromCloud();
 }
 
 // Background sync from local to cloud
 function triggerBackgroundCloudSync() {
-  if (currentUser && currentUser.email && typeof syncDebtsToCloud === 'function' && typeof isSupabaseConfigured === 'function') {
+  const email = (currentUser && currentUser.email) ? currentUser.email : 'natmeshow@gmail.com';
+  if (email && typeof syncDebtsToCloud === 'function' && typeof isSupabaseConfigured === 'function') {
     if (isSupabaseConfigured()) {
-      syncDebtsToCloud(currentUser.email, debts).catch(err => console.warn('Background sync warning:', err));
+      syncDebtsToCloud(email, debts).catch(err => console.warn('Background sync warning:', err));
     }
   }
 }
 
-// Fetch from cloud and update UI if local is empty
+// Fetch from cloud and update UI
 async function fetchAndApplyDebtsFromCloud() {
-  if (!currentUser || !currentUser.email) return;
+  const email = (currentUser && currentUser.email) ? currentUser.email : 'natmeshow@gmail.com';
   if (typeof fetchDebtsFromCloud !== 'function' || typeof isSupabaseConfigured !== 'function' || !isSupabaseConfigured()) return;
 
   try {
-    const cloudDebts = await fetchDebtsFromCloud(currentUser.email);
+    const cloudDebts = await fetchDebtsFromCloud(email);
     if (cloudDebts && Array.isArray(cloudDebts) && cloudDebts.length > 0) {
-      debts = cloudDebts;
+      debts = sanitizeDebtsList(cloudDebts);
       const key = getDebtStorageKey();
       localStorage.setItem(key, JSON.stringify(debts));
       renderDebtList();
@@ -470,23 +488,32 @@ window.handleConsolidationSubmit = async function(e) {
 
   let totalBal = debts.reduce((sum, d) => sum + (Number(d.balance) || 0), 0) || 285200;
 
-  // Record application in Supabase or LocalStorage
+  // Record application in LocalStorage (and Supabase if table exists, NEVER into user_debts!)
   try {
+    const apps = JSON.parse(localStorage.getItem('debt_consolidation_applications') || '[]');
+    apps.push({
+      date: new Date().toISOString(),
+      bank,
+      applicant_name: name,
+      phone,
+      income,
+      requested_amount: totalBal
+    });
+    localStorage.setItem('debt_consolidation_applications', JSON.stringify(apps));
+
     const client = typeof getSupabaseClient === 'function' ? getSupabaseClient() : null;
     if (client) {
-      await client.from('user_debts').insert([{
-        user_email: (currentUser && currentUser.email) ? currentUser.email : 'guest_applicant@domain.com',
-        name: `[ยื่นคำขอรวมหนี้] ธนาคาร: ${bank} | ผู้ติดต่อ: ${name} (${phone}) รายได้: ${income}`,
-        type: 'personal_loan',
-        balance: totalBal,
-        min_payment: 0,
-        interest_rate: 7.5,
-        status: 'pending_consolidation',
-        notes: `โทร: ${phone} | ยอดหนี้ขอยื่นรวม: ${totalBal} บาท`
-      }]);
+      await client.from('consolidation_applications').insert([{
+        user_email: (currentUser && currentUser.email) ? currentUser.email : 'natmeshow@gmail.com',
+        bank_name: bank,
+        applicant_name: name,
+        phone: phone,
+        income: income,
+        requested_amount: totalBal
+      }]).catch(() => {});
     }
   } catch (err) {
-    console.warn('Note: application recorded locally');
+    console.warn('Note: application recorded locally', err);
   }
 
   closeConsolidationModal();
