@@ -394,13 +394,18 @@ window.openSupabaseModal = function() {
 
   updateSupabaseStatusUI();
 
+  // Explicitly remove hidden and force display flex
   modal.classList.remove('hidden');
+  modal.style.display = 'flex';
   lucide.createIcons();
 };
 
 window.closeSupabaseModal = function() {
   const modal = document.getElementById('supabase-modal');
-  if (modal) modal.classList.add('hidden');
+  if (modal) {
+    modal.classList.add('hidden');
+    modal.style.display = 'none';
+  }
 };
 
 function updateSupabaseStatusUI() {
