@@ -1180,11 +1180,14 @@ function initAuthSystem() {
   if (googleDirectForm) {
     googleDirectForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      const name = document.getElementById('google-direct-name').value.trim();
       const email = document.getElementById('google-direct-email').value.trim();
-      if (!name || !email) return;
+      let name = document.getElementById('google-direct-name').value.trim();
+      if (!email) return;
+      if (!name) {
+        name = email.split('@')[0];
+      }
       saveGoogleUserSession(name, email, name.charAt(0).toUpperCase());
-      showToast(`เข้าสู่ระบบในชื่อ ${name} เรียบร้อยแล้ว`, 'success', '✨ เข้าสู่ระบบสำเร็จ');
+      showToast(`ยินดีต้อนรับคุณ ${name} เข้าสู่ระบบด้วย Google เรียบร้อยแล้ว`, 'success', '✨ เข้าสู่ระบบสำเร็จ');
     });
   }
 
@@ -1291,10 +1294,72 @@ window.saveGoogleClientId = function() {
   showToast('เชื่อมต่อ Google สำเร็จ! แตะปุ่มด้านบนเพื่อเข้าสู่ระบบ', 'success', '🔑 เชื่อมต่อ Google API');
 };
 
+const DEFAULT_GOOGLE_ACCOUNTS = [
+  {
+    name: 'Natshow No Limit',
+    email: 'natmeshow@gmail.com',
+    avatar: 'N'
+  }
+];
+
+function getSavedGoogleAccounts() {
+  try {
+    const raw = localStorage.getItem('debt_saved_google_users');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (e) {}
+  return DEFAULT_GOOGLE_ACCOUNTS;
+}
+
+window.renderGoogleModalUI = function() {
+  const container = document.getElementById('google-saved-accounts-list');
+  if (!container) return;
+
+  const accounts = getSavedGoogleAccounts();
+  container.innerHTML = accounts.map(acc => {
+    const hasPhoto = acc.avatar && acc.avatar.startsWith('http');
+    const avatarContent = hasPhoto 
+      ? `<img src="${escapeHtml(acc.avatar)}" alt="${escapeHtml(acc.name)}" class="w-full h-full object-cover">`
+      : `<span class="text-sm font-bold">${escapeHtml(acc.avatar || acc.name.charAt(0).toUpperCase())}</span>`;
+    
+    return `
+      <button type="button" onclick="selectGoogleAccount('${escapeHtml(acc.name)}', '${escapeHtml(acc.email)}', '${escapeHtml(acc.avatar || 'G')}')" class="w-full flex items-center justify-between p-3 rounded-2xl border border-slate-200 dark:border-slate-700/80 hover:border-blue-500/80 dark:hover:border-blue-400 bg-slate-50/80 dark:bg-slate-800/80 hover:bg-blue-50/50 dark:hover:bg-slate-750 transition-all text-left group shadow-sm active:scale-[0.99]">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-10 h-10 rounded-full ${hasPhoto ? '' : 'bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 text-white'} flex items-center justify-center shrink-0 shadow-sm overflow-hidden">
+            ${avatarContent}
+          </div>
+          <div class="min-w-0">
+            <div class="text-xs font-bold text-slate-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">${escapeHtml(acc.name)}</div>
+            <div class="text-[11px] text-slate-500 dark:text-slate-400 truncate">${escapeHtml(acc.email)}</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-1.5 text-blue-600 dark:text-blue-400 shrink-0">
+          <span class="text-[11px] font-semibold hidden xs:inline">1 คลิก</span>
+          <i data-lucide="chevron-right" class="w-4 h-4 group-hover:translate-x-0.5 transition-transform"></i>
+        </div>
+      </button>
+    `;
+  }).join('');
+};
+
+window.toggleGoogleAnotherAccount = function() {
+  const box = document.getElementById('google-another-account-box');
+  if (box) {
+    box.classList.toggle('hidden');
+    if (!box.classList.contains('hidden')) {
+      const emailInput = document.getElementById('google-direct-email');
+      if (emailInput) emailInput.focus();
+    }
+  }
+};
+
 window.handleGoogleSignIn = function() {
   closeAuthModal();
   const googleModal = document.getElementById('google-picker-modal');
   if (googleModal) {
+    renderGoogleModalUI();
     googleModal.classList.remove('hidden');
     initGoogleGIS();
     lucide.createIcons();
@@ -1327,11 +1392,23 @@ function saveGoogleUserSession(name, email, avatar) {
     };
 
     localStorage.setItem('debt_user_session', JSON.stringify(currentUser));
+
+    // Save into recent Google accounts list
+    let savedList = getSavedGoogleAccounts();
+    const existingIdx = savedList.findIndex(acc => acc.email.toLowerCase() === email.toLowerCase());
+    if (existingIdx >= 0) {
+      savedList[existingIdx] = { name, email, avatar: currentUser.avatar };
+    } else {
+      savedList.unshift({ name, email, avatar: currentUser.avatar });
+    }
+    localStorage.setItem('debt_saved_google_users', JSON.stringify(savedList.slice(0, 5)));
+
     updateAuthUI();
   } catch (err) {
     console.error('Error saving user session:', err);
   } finally {
     closeGoogleModal();
+    closeMobileMenu();
   }
   try {
     triggerCelebration();
@@ -1340,8 +1417,7 @@ function saveGoogleUserSession(name, email, avatar) {
 
 window.selectGoogleAccount = function(name, email, initial) {
   saveGoogleUserSession(name, email, initial);
-  closeGoogleModal();
-  alert(`✨ เข้าสู่ระบบด้วย Google สำเร็จ!\nยินดีต้อนรับคุณ ${name} (${email})`);
+  showToast(`ยินดีต้อนรับคุณ ${name} (${email}) เข้าสู่ระบบด้วย Google สำเร็จ!`, 'success', '✨ เข้าสู่ระบบสำเร็จ');
 };
 
 function updateAuthUI() {
@@ -1356,10 +1432,9 @@ function updateAuthUI() {
   if (!authBtnGroup || !userProfileBadge) return;
 
   if (currentUser) {
-    authBtnGroup.classList.add('hidden');
-    if (mobileQuickAuth) mobileQuickAuth.classList.add('hidden');
-    userProfileBadge.classList.remove('hidden');
-    userProfileBadge.classList.add('flex');
+    authBtnGroup.className = 'hidden';
+    if (mobileQuickAuth) mobileQuickAuth.className = 'hidden';
+    userProfileBadge.className = 'flex items-center gap-1.5 sm:gap-2 bg-slate-100/90 dark:bg-slate-800/90 pl-1.5 pr-2 sm:pl-2 sm:pr-3 py-1 rounded-xl border border-slate-200 dark:border-slate-700 shrink-0';
     if (userNameEl) userNameEl.textContent = currentUser.name;
     
     // Avatar display (supports real Google profile picture URL)
@@ -1425,9 +1500,9 @@ function updateAuthUI() {
 
     lucide.createIcons();
   } else {
-    authBtnGroup.classList.remove('hidden');
-    if (mobileQuickAuth) mobileQuickAuth.classList.remove('hidden');
-    userProfileBadge.classList.add('hidden');
+    authBtnGroup.className = 'hidden md:flex items-center gap-1.5 shrink-0';
+    if (mobileQuickAuth) mobileQuickAuth.className = 'flex md:hidden items-center gap-1.5 shrink-0';
+    userProfileBadge.className = 'hidden';
     userProfileBadge.classList.remove('flex');
 
     // Drawer Auth Box - Logged Out View
