@@ -20,6 +20,9 @@
   <!-- Canvas Confetti CDN -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
+  <!-- Supabase JS Client CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <!-- Custom CSS -->
   <link rel="stylesheet" href="css/style.css">
 
@@ -101,6 +104,12 @@
         <!-- Right Side: Theme + Auth Controls + Mobile Hamburger -->
         <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
           
+          <!-- Supabase Cloud Sync Button -->
+          <button onclick="openSupabaseModal()" id="supabase-nav-btn" class="p-2 rounded-xl text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-slate-800 transition-colors border border-emerald-200 dark:border-emerald-800/60 bg-white/60 dark:bg-slate-800/80 shadow-sm shrink-0 flex items-center gap-1.5" title="ตั้งค่าเชื่อมต่อ Supabase Cloud">
+            <i data-lucide="cloud" class="w-4 h-4"></i>
+            <span class="text-[11px] font-bold hidden sm:inline">Cloud Sync</span>
+          </button>
+
           <!-- Theme Toggle Button -->
           <button onclick="toggleTheme()" id="theme-toggle-btn" class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-slate-200 dark:border-slate-700 bg-white/60 dark:bg-slate-800/80 shadow-sm shrink-0" title="สลับธีมมืด/สว่าง">
             <i id="theme-icon" data-lucide="moon" class="w-4 h-4"></i>
@@ -349,6 +358,23 @@
               </div>
               <i data-lucide="chevron-right" class="w-4 h-4 text-amber-500 shrink-0"></i>
             </a>
+
+            <!-- Supabase Cloud Sync in Mobile Drawer -->
+            <button type="button" onclick="openSupabaseModal(); closeMobileMenu();" class="w-full flex items-center justify-between p-2.5 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/80 dark:border-emerald-800/40 transition-colors active:scale-[0.99] text-left">
+              <div class="flex items-center gap-2.5">
+                <div class="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-sm">
+                  <i data-lucide="cloud" class="w-3.5 h-3.5"></i>
+                </div>
+                <div>
+                  <div class="font-bold text-xs leading-tight text-emerald-900 dark:text-emerald-200 flex items-center gap-1.5">
+                    <span>ตั้งค่าซิงก์คลาวด์ (Supabase)</span>
+                    <span class="text-[9px] font-bold px-1 py-0.2 bg-emerald-500 text-white rounded">Cloud</span>
+                  </div>
+                  <div class="text-[10px] text-emerald-700 dark:text-emerald-400 leading-tight">เชื่อมต่อฐานข้อมูลข้ามอุปกรณ์ มือถือ ↔ คอม</div>
+                </div>
+              </div>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-emerald-500 shrink-0"></i>
+            </button>
           </div>
         </div>
 
@@ -912,7 +938,11 @@
           </p>
         </div>
 
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 flex-wrap">
+          <button onclick="openSupabaseModal()" class="px-3.5 py-2 text-xs font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900 border border-emerald-200 dark:border-emerald-800 rounded-xl transition-colors flex items-center gap-1.5 shadow-sm active:scale-95">
+            <i data-lucide="cloud" class="w-3.5 h-3.5"></i>
+            <span>คลาวด์ซิงก์ (Supabase)</span>
+          </button>
           <button id="load-sample-debts-btn" class="px-3.5 py-2 text-xs font-semibold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-100 dark:hover:bg-blue-900 border border-blue-200 dark:border-blue-800 rounded-xl transition-colors flex items-center gap-1.5 shadow-sm active:scale-95">
             <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
             <span>โหลดข้อมูลตัวอย่าง</span>
@@ -2183,7 +2213,105 @@
     </div>
   </aside>
 
-  <!-- App Script -->
+  <!-- ================= SUPABASE CLOUD SYNC CONFIG MODAL ================= -->
+  <div id="supabase-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden p-4">
+    <div class="modal-content-card bg-white dark:bg-slate-900 rounded-[28px] border border-slate-200/90 dark:border-slate-800 shadow-2xl w-full max-w-md overflow-hidden relative">
+      
+      <!-- Close Button -->
+      <button onclick="closeSupabaseModal()" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors z-10" title="ปิด">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+
+      <!-- Supabase Brand Header -->
+      <div class="p-6 pb-4 border-b border-slate-100 dark:border-slate-800/80">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 flex items-center justify-center shrink-0 shadow-sm">
+            <svg class="w-6 h-6" viewBox="0 0 109 113" fill="none">
+              <path d="M63.7076 110.284C60.848 113.885 55.0502 111.912 54.9913 107.314L53.9738 27.9964L99.234 27.9964C104.919 27.9964 108.066 34.5518 104.472 38.9665L63.7076 110.284Z" fill="currentColor"/>
+              <path d="M45.317 2.07288C48.1766 -1.52844 53.9744 0.444985 54.0333 5.04276L54.3478 84.3605H9.79061C4.10526 84.3605 0.958747 77.8051 4.55294 73.3904L45.317 2.07288Z" fill="currentColor" fill-opacity="0.6"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+              <span>เชื่อมต่อฐานข้อมูลคลาวด์</span>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">Supabase</span>
+            </h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">ซิงก์ยอดหนี้แบบเรียลไทม์ เปิดดูได้ทั้งบนมือถือและคอมพิวเตอร์</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Config Form Body -->
+      <form id="supabase-config-form" class="p-6 space-y-4" onsubmit="handleSaveSupabaseConfig(event)">
+        
+        <!-- Status Indicator -->
+        <div id="supabase-status-pill" class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs">
+          <div class="flex items-center gap-2">
+            <span id="supabase-status-dot" class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+            <span id="supabase-status-text" class="font-medium text-slate-600 dark:text-slate-300">ยังไม่ได้เชื่อมต่อ</span>
+          </div>
+          <span id="supabase-status-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300">Local-Only</span>
+        </div>
+
+        <!-- Input 1: Project URL -->
+        <div>
+          <label for="supabase-modal-url" class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5 flex items-center justify-between">
+            <span>Project URL</span>
+            <span class="text-[11px] text-slate-400 font-normal">เช่น https://xyzcompany.supabase.co</span>
+          </label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+              <i data-lucide="globe" class="w-4 h-4"></i>
+            </div>
+            <input type="url" id="supabase-modal-url" placeholder="https://xxxxxxxxxxxx.supabase.co" class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-mono focus:ring-2 focus:ring-emerald-500 outline-none transition-all" required>
+          </div>
+        </div>
+
+        <!-- Input 2: Project API Key (anon public) -->
+        <div>
+          <label for="supabase-modal-key" class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5 flex items-center justify-between">
+            <span>Project API Key (anon public)</span>
+            <span class="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">คีย์สาธารณะ</span>
+          </label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+              <i data-lucide="key" class="w-4 h-4"></i>
+            </div>
+            <textarea id="supabase-modal-key" rows="3" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-mono focus:ring-2 focus:ring-emerald-500 outline-none transition-all resize-none" required></textarea>
+          </div>
+          <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-1">
+            นำมาจากหน้า Supabase: <strong>Project Settings ➔ API ➔ Project API Keys (anon public)</strong>
+          </p>
+        </div>
+
+        <!-- Buttons -->
+        <div class="pt-2 flex items-center gap-2">
+          <button type="submit" class="flex-1 py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md shadow-emerald-600/20 transition-all flex items-center justify-center gap-2 active:scale-95">
+            <i data-lucide="save" class="w-4 h-4"></i>
+            <span>บันทึก & เชื่อมต่อทันที</span>
+          </button>
+          <button type="button" onclick="handleClearSupabaseConfig()" class="py-2.5 px-3 bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/40 text-slate-600 dark:text-slate-300 font-semibold text-xs rounded-xl border border-slate-200 dark:border-slate-700 transition-colors" title="ล้างการตั้งค่า">
+            ล้างค่า
+          </button>
+        </div>
+
+        <!-- Direct Cloud Sync Action -->
+        <div id="supabase-manual-sync-box" class="pt-2 border-t border-slate-100 dark:border-slate-800 hidden">
+          <div class="flex items-center justify-between">
+            <span class="text-xs text-slate-500 dark:text-slate-400">ซิงก์ข้อมูลหนี้ปัจจุบัน:</span>
+            <button type="button" onclick="handleManualCloudSync()" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 rounded-xl border border-emerald-200 dark:border-emerald-800 transition-colors">
+              <i data-lucide="cloud-upload" class="w-3.5 h-3.5"></i>
+              <span>ซิงก์ขึ้น Cloud เดี๋ยวนี้</span>
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/supabase-config.js"></script>
   <script src="js/app.js"></script>
 
 </body>

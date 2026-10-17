@@ -137,6 +137,9 @@ document.addEventListener('DOMContentLoaded', () => {
   initDebtPlanner();
   initFilters();
   initEmergencyChecklist();
+  if (typeof updateSupabaseStatusUI === 'function') {
+    updateSupabaseStatusUI();
+  }
   lucide.createIcons();
 });
 
@@ -326,7 +329,170 @@ function saveDebtsToStorage() {
   if (!currentUser) {
     localStorage.setItem('user_debts_v1', JSON.stringify(debts));
   }
+
+  // Auto-sync to Supabase Cloud if configured and user is logged in
+  if (currentUser && currentUser.email && typeof syncDebtsToCloud === 'function' && typeof isSupabaseConfigured === 'function') {
+    if (isSupabaseConfigured()) {
+      syncDebtsToCloud(currentUser.email, debts).catch(err => {
+        console.warn('Background Supabase sync error:', err);
+      });
+    }
+  }
 }
+
+// ==========================================
+// SUPABASE MODAL & CLOUD SYNC HANDLERS
+// ==========================================
+window.openSupabaseModal = function() {
+  const modal = document.getElementById('supabase-modal');
+  if (!modal) return;
+
+  const urlInput = document.getElementById('supabase-modal-url');
+  const keyInput = document.getElementById('supabase-modal-key');
+  const manualBox = document.getElementById('supabase-manual-sync-box');
+
+  const currentUrl = (window.SUPABASE_CONFIG && window.SUPABASE_CONFIG.url) || localStorage.getItem('supabase_project_url') || '';
+  const currentKey = (window.SUPABASE_CONFIG && window.SUPABASE_CONFIG.anonKey) || localStorage.getItem('supabase_anon_key') || '';
+
+  if (urlInput) urlInput.value = currentUrl;
+  if (keyInput) keyInput.value = currentKey;
+
+  updateSupabaseStatusUI();
+
+  if (manualBox) {
+    if (currentUrl && currentKey) {
+      manualBox.classList.remove('hidden');
+    } else {
+      manualBox.classList.add('hidden');
+    }
+  }
+
+  modal.classList.remove('hidden');
+  lucide.createIcons();
+};
+
+window.closeSupabaseModal = function() {
+  const modal = document.getElementById('supabase-modal');
+  if (modal) modal.classList.add('hidden');
+};
+
+function updateSupabaseStatusUI() {
+  const isConfigured = typeof isSupabaseConfigured === 'function' && isSupabaseConfigured();
+  const dot = document.getElementById('supabase-status-dot');
+  const text = document.getElementById('supabase-status-text');
+  const badge = document.getElementById('supabase-status-badge');
+  const navBtn = document.getElementById('supabase-nav-btn');
+
+  if (dot && text && badge) {
+    if (isConfigured) {
+      dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse';
+      text.textContent = 'เชื่อมต่อ Supabase Cloud สำเร็จ (Auto-Sync พร้อมใช้งาน)';
+      text.className = 'font-bold text-emerald-700 dark:text-emerald-400';
+      badge.textContent = 'Cloud Connected';
+      badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800';
+    } else {
+      dot.className = 'w-2.5 h-2.5 rounded-full bg-slate-400';
+      text.textContent = 'ยังไม่ได้เชื่อมต่อ (บันทึกลงเครื่อง LocalStorage เท่านั้น)';
+      text.className = 'font-medium text-slate-600 dark:text-slate-300';
+      badge.textContent = 'Local-Only';
+      badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300';
+    }
+  }
+
+  if (navBtn) {
+    if (isConfigured) {
+      navBtn.classList.add('border-emerald-500', 'text-emerald-600');
+    }
+  }
+}
+
+window.handleSaveSupabaseConfig = async function(e) {
+  if (e) e.preventDefault();
+  const urlInput = document.getElementById('supabase-modal-url');
+  const keyInput = document.getElementById('supabase-modal-key');
+
+  const url = urlInput ? urlInput.value.trim() : '';
+  const key = keyInput ? keyInput.value.trim() : '';
+
+  if (!url || !key) {
+    showToast('กรุณากรอกทั้ง Project URL และ anon public key', 'warning');
+    return;
+  }
+
+  localStorage.setItem('supabase_project_url', url);
+  localStorage.setItem('supabase_anon_key', key);
+
+  if (window.SUPABASE_CONFIG) {
+    window.SUPABASE_CONFIG.url = url;
+    window.SUPABASE_CONFIG.anonKey = key;
+  }
+  if (typeof supabaseClient !== 'undefined') {
+    supabaseClient = null; // force re-instantiation
+  }
+
+  updateSupabaseStatusUI();
+  showToast('บันทึกการตั้งค่า Supabase เรียบร้อยแล้ว!', 'success', '☁️ เชื่อมต่อคลาวด์');
+
+  // If user is logged in, offer to sync right away
+  if (currentUser && currentUser.email) {
+    showToast('กำลังตรวจสอบและซิงก์ข้อมูลกับ Supabase...', 'info');
+    await handleManualCloudSync();
+  }
+
+  closeSupabaseModal();
+};
+
+window.handleClearSupabaseConfig = function() {
+  localStorage.removeItem('supabase_project_url');
+  localStorage.removeItem('supabase_anon_key');
+  if (window.SUPABASE_CONFIG) {
+    window.SUPABASE_CONFIG.url = '';
+    window.SUPABASE_CONFIG.anonKey = '';
+  }
+  const urlInput = document.getElementById('supabase-modal-url');
+  const keyInput = document.getElementById('supabase-modal-key');
+  if (urlInput) urlInput.value = '';
+  if (keyInput) keyInput.value = '';
+  updateSupabaseStatusUI();
+  showToast('ล้างการตั้งค่า Supabase คลาวด์เรียบร้อยแล้ว', 'info');
+};
+
+window.handleManualCloudSync = async function() {
+  if (!currentUser || !currentUser.email) {
+    showToast('กรุณาเข้าสู่ระบบก่อนซิงก์ข้อมูลขึ้นคลาวด์', 'warning');
+    return;
+  }
+
+  if (typeof isSupabaseConfigured === 'function' && !isSupabaseConfigured()) {
+    showToast('กรุณาใส่ Project URL และ anon public key ให้เรียบร้อยก่อน', 'warning');
+    return;
+  }
+
+  try {
+    // 1. Try to fetch from cloud first to check if cloud already has debts
+    const cloudDebts = await fetchDebtsFromCloud(currentUser.email);
+    if (cloudDebts && cloudDebts.length > 0 && debts.length === 0) {
+      debts = cloudDebts;
+      const key = getDebtStorageKey();
+      localStorage.setItem(key, JSON.stringify(debts));
+      renderDebtList();
+      calculateRepaymentPlan();
+      showToast(`ดึงข้อมูล ${debts.length} สัญญาจาก Supabase Cloud ลงเครื่องเรียบร้อย!`, 'success', '☁️ Cloud Sync');
+      return;
+    }
+
+    // 2. Otherwise upload local debts to cloud
+    const ok = await syncDebtsToCloud(currentUser.email, debts);
+    if (ok) {
+      showToast(`ซิงก์ข้อมูลหนี้ ${debts.length} สัญญาขึ้น Supabase Cloud สำเร็จ!`, 'success', '☁️ ซิงก์เรียบร้อย');
+    } else {
+      showToast('ไม่สามารถซิงก์ข้อมูลขึ้น Supabase ได้ กรุณาตรวจสอบตาราง user_debts และสิทธิ์ RLS', 'error');
+    }
+  } catch (err) {
+    console.error('Manual sync error:', err);
+    showToast('เกิดข้อผิดพลาดในการเชื่อมต่อ Supabase', 'error');
+  }
+};
 
 // --- Debt Type and Strategy Presets ---
 window.applyDebtPreset = function(type) {
