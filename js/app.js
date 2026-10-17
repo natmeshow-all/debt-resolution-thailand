@@ -281,21 +281,51 @@ function calculateDti() {
 // ==========================================
 // 2. DEBT REPAYMENT PLANNER (SNOWBALL vs AVALANCHE)
 // ==========================================
+function getDebtStorageKey() {
+  if (currentUser && currentUser.email) {
+    return `user_debts_${currentUser.email.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+  }
+  return 'user_debts_guest';
+}
+
 function loadDebtsFromStorage() {
-  const saved = localStorage.getItem('user_debts_v1');
+  const key = getDebtStorageKey();
+  const saved = localStorage.getItem(key);
   if (saved) {
     try {
-      debts = JSON.parse(saved);
-    } catch (e) {
-      debts = [...SAMPLE_DEBTS];
-    }
-  } else {
-    debts = [...SAMPLE_DEBTS];
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) {
+        debts = parsed;
+        return;
+      }
+    } catch (e) {}
   }
+
+  // Check legacy key user_debts_v1: only migrate if user created actual custom debts (not the hardcoded sample debts)
+  const legacySaved = localStorage.getItem('user_debts_v1');
+  if (legacySaved) {
+    try {
+      const legacy = JSON.parse(legacySaved);
+      const isSample = Array.isArray(legacy) && legacy.length === 3 &&
+        legacy.some(d => d.name && (d.name.includes('KBank') || d.name.includes('Speedy Cash')));
+      if (Array.isArray(legacy) && !isSample && legacy.length > 0) {
+        debts = legacy;
+        saveDebtsToStorage();
+        return;
+      }
+    } catch (e) {}
+  }
+
+  // Default is clean & empty for every member!
+  debts = [];
 }
 
 function saveDebtsToStorage() {
-  localStorage.setItem('user_debts_v1', JSON.stringify(debts));
+  const key = getDebtStorageKey();
+  localStorage.setItem(key, JSON.stringify(debts));
+  if (!currentUser) {
+    localStorage.setItem('user_debts_v1', JSON.stringify(debts));
+  }
 }
 
 // --- Debt Type and Strategy Presets ---
@@ -487,13 +517,17 @@ function initDebtPlanner() {
   const loadSampleBtn = document.getElementById('load-sample-debts-btn');
   if (loadSampleBtn) {
     loadSampleBtn.addEventListener('click', () => {
-      debts = JSON.parse(JSON.stringify(SAMPLE_DEBTS));
-      saveDebtsToStorage();
-      renderDebtList();
-      calculateRepaymentPlan();
-      showToast('โหลดรายการหนี้ตัวอย่าง 3 รายการเรียบร้อยแล้ว', 'info');
+      window.loadSampleDebtsAction();
     });
   }
+
+window.loadSampleDebtsAction = function() {
+  debts = JSON.parse(JSON.stringify(SAMPLE_DEBTS));
+  saveDebtsToStorage();
+  renderDebtList();
+  calculateRepaymentPlan();
+  showToast('โหลดรายการหนี้ตัวอย่าง 3 สัญญาเรียบร้อยแล้ว', 'info');
+};
 
   // Clear debts button
   const clearDebtsBtn = document.getElementById('clear-debts-btn');
@@ -568,13 +602,28 @@ function renderDebtList() {
 
   if (debts.length === 0) {
     container.innerHTML = `
-      <div class="text-center py-10 text-slate-400 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700">
-        <i data-lucide="inbox" class="w-12 h-12 mx-auto mb-2 text-slate-300 dark:text-slate-600"></i>
-        <p class="font-medium text-slate-700 dark:text-slate-200">ยังไม่มีรายการหนี้ในระบบ</p>
-        <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">ใช้แบบฟอร์มด้านบนเพื่อเพิ่มหนี้ หรือกด "โหลดข้อมูลตัวอย่าง" เพื่อเริ่มต้นวางแผน</p>
+      <div class="text-center py-10 px-4 bg-gradient-to-b from-slate-50 to-slate-100/70 dark:from-slate-800/40 dark:to-slate-800/80 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 shadow-sm">
+        <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shadow-inner">
+          <i data-lucide="plus-circle" class="w-7 h-7"></i>
+        </div>
+        <h4 class="text-base font-bold text-slate-800 dark:text-white mb-1">
+          ยังไม่มีรายการหนี้ในระบบ (รอข้อมูลจริงของคุณ)
+        </h4>
+        <p class="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto leading-relaxed mb-4">
+          กรุณาเพิ่มรายการหนี้จริงของคุณผ่านแบบฟอร์มด้านบน (เช่น บัตรเครดิต สินเชื่อส่วนบุคคล บัตรกดเงินสด) เพื่อให้ระบบเริ่มประมวลผล วิเคราะห์ดอกเบี้ย และวางแผนปิดหนี้ที่คุ้มค่าที่สุดสำหรับคุณ
+        </p>
+        <div class="flex items-center justify-center gap-2 flex-wrap">
+          <button type="button" onclick="document.getElementById('new-debt-name')?.focus(); document.getElementById('add-debt-card')?.scrollIntoView({behavior: 'smooth', block: 'center'});" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md shadow-blue-500/20 active:scale-95 transition-all flex items-center gap-1.5">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            <span>เพิ่มรายการหนี้แรกของคุณ</span>
+          </button>
+          <button type="button" onclick="loadSampleDebtsAction()" class="px-3.5 py-2 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-650 text-slate-600 dark:text-slate-300 font-semibold text-xs rounded-xl border border-slate-200 dark:border-slate-600 transition-all">
+            ทดลองดูข้อมูลตัวอย่าง
+          </button>
+        </div>
       </div>
     `;
-    if (totalCountEl) totalCountEl.textContent = '0 สัญญา';
+    if (totalCountEl) totalCountEl.textContent = '0 สัญญาหนี้';
     if (totalBalanceEl) totalBalanceEl.textContent = '0 บาท';
     if (totalMinPayEl) totalMinPayEl.textContent = '0 บาท/เดือน';
     if (totalInterestEl) totalInterestEl.textContent = '0 บาท/ปี';
@@ -672,11 +721,14 @@ window.removeDebt = function(id) {
 };
 
 function calculateRepaymentPlan() {
+  const chartEmptyEl = document.getElementById('debt-chart-empty');
   if (debts.length === 0) {
+    if (chartEmptyEl) chartEmptyEl.classList.remove('hidden');
     updatePlanSummaryUI(0, 0, 0, 0, []);
     renderChart([], []);
     return;
   }
+  if (chartEmptyEl) chartEmptyEl.classList.add('hidden');
 
   const extraMonthly = parseFloat(document.getElementById('extra-payment-input')?.value) || 0;
 
@@ -804,7 +856,7 @@ function updatePlanSummaryUI(totalMonths, totalInterest, interestSaved, monthsSa
   }
 
   if (savedInterestEl) {
-    savedInterestEl.textContent = interestSaved > 0 ? `ประหยัดได้ ${interestSaved.toLocaleString('th-TH')} บาท` : 'จ่ายตามยอดปกติ';
+    savedInterestEl.textContent = interestSaved > 0 ? `ประหยัดได้ ${interestSaved.toLocaleString('th-TH')} บาท` : (totalMonths > 0 ? 'จ่ายตามยอดปกติ' : 'รอข้อมูลหนี้');
   }
 
   if (savedTimeEl) {
@@ -813,12 +865,17 @@ function updatePlanSummaryUI(totalMonths, totalInterest, interestSaved, monthsSa
     let sStr = '';
     if (sYears > 0) sStr += `${sYears} ปี `;
     if (sMonths > 0) sStr += `${sMonths} เดือน`;
-    savedTimeEl.textContent = monthsSaved > 0 ? `เร็วขึ้น ${sStr}` : 'ไม่มีเวลาลดลง';
+    savedTimeEl.textContent = monthsSaved > 0 ? `เร็วขึ้น ${sStr}` : (totalMonths > 0 ? 'ไม่มีเวลาลดลง' : 'รอข้อมูลหนี้');
   }
 
   if (orderList) {
     if (priorityOrder.length === 0) {
-      orderList.innerHTML = '<p class="text-sm text-slate-400">เพิ่มรายการหนี้เพื่อดูลำดับการปลดหนี้</p>';
+      orderList.innerHTML = `
+        <div class="p-4 text-center text-xs text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-850/60 rounded-xl border border-dashed border-slate-200 dark:border-slate-700">
+          <p class="font-semibold text-slate-600 dark:text-slate-300">ยังไม่มีรายการหนี้ในคิว</p>
+          <p class="text-[11px] mt-0.5">เมื่อคุณเพิ่มรายการหนี้จริง ระบบจะจัดอันดับก้อนที่ควรปิดก่อนให้คุณทันที</p>
+        </div>
+      `;
       return;
     }
 
@@ -1535,6 +1592,11 @@ function updateAuthUI() {
       `;
     }
   }
+
+  // Reload debt records for the active member or guest
+  loadDebtsFromStorage();
+  renderDebtList();
+  calculateRepaymentPlan();
 }
 
 // Mobile Drawer Controls
