@@ -383,23 +383,16 @@ window.openSupabaseModal = function() {
 
   const urlInput = document.getElementById('supabase-modal-url');
   const keyInput = document.getElementById('supabase-modal-key');
-  const manualBox = document.getElementById('supabase-manual-sync-box');
+  const counterEl = document.getElementById('supabase-debt-counter');
 
   const currentUrl = (window.SUPABASE_CONFIG && window.SUPABASE_CONFIG.url) || localStorage.getItem('supabase_project_url') || '';
   const currentKey = (window.SUPABASE_CONFIG && window.SUPABASE_CONFIG.anonKey) || localStorage.getItem('supabase_anon_key') || '';
 
   if (urlInput) urlInput.value = currentUrl;
   if (keyInput) keyInput.value = currentKey;
+  if (counterEl) counterEl.textContent = `ในเครื่องนี้: มีหนี้ ${debts.length} สัญญา`;
 
   updateSupabaseStatusUI();
-
-  if (manualBox) {
-    if (currentUrl && currentKey) {
-      manualBox.classList.remove('hidden');
-    } else {
-      manualBox.classList.add('hidden');
-    }
-  }
 
   modal.classList.remove('hidden');
   lucide.createIcons();
@@ -420,7 +413,7 @@ function updateSupabaseStatusUI() {
   if (dot && text && badge) {
     if (isConfigured) {
       dot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse';
-      text.textContent = 'เชื่อมต่อ Supabase Cloud สำเร็จ (Auto-Sync พร้อมใช้งาน)';
+      text.textContent = 'เชื่อมต่อ Supabase Cloud สำเร็จ (พร้อมซิงก์ข้อมูล)';
       text.className = 'font-bold text-emerald-700 dark:text-emerald-400';
       badge.textContent = 'Cloud Connected';
       badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800';
@@ -466,14 +459,6 @@ window.handleSaveSupabaseConfig = async function(e) {
 
   updateSupabaseStatusUI();
   showToast('บันทึกการตั้งค่า Supabase เรียบร้อยแล้ว!', 'success', '☁️ เชื่อมต่อคลาวด์');
-
-  // If user is logged in, offer to sync right away
-  if (currentUser && currentUser.email) {
-    showToast('กำลังตรวจสอบและซิงก์ข้อมูลกับ Supabase...', 'info');
-    await handleManualCloudSync();
-  }
-
-  closeSupabaseModal();
 };
 
 window.handleClearSupabaseConfig = function() {
@@ -491,40 +476,42 @@ window.handleClearSupabaseConfig = function() {
   showToast('ล้างการตั้งค่า Supabase คลาวด์เรียบร้อยแล้ว', 'info');
 };
 
-window.handleManualCloudSync = async function() {
-  if (!currentUser || !currentUser.email) {
-    showToast('กรุณาเข้าสู่ระบบก่อนซิงก์ข้อมูลขึ้นคลาวด์', 'warning');
+// 1. Explicit Upload to Cloud
+window.uploadDebtsToCloudAction = async function() {
+  const email = (currentUser && currentUser.email) ? currentUser.email : 'natmeshow@gmail.com';
+
+  if (!debts || debts.length === 0) {
+    showToast('ในเครื่องนี้ยังไม่พบรายการหนี้ กรุณาเพิ่มหนี้ก่อนส่งขึ้น Cloud', 'warning');
     return;
   }
 
-  if (typeof isSupabaseConfigured === 'function' && !isSupabaseConfigured()) {
-    showToast('กรุณาใส่ Project URL และ anon public key ให้เรียบร้อยก่อน', 'warning');
-    return;
+  showToast(`กำลังส่งข้อมูลหนี้ ${debts.length} สัญญาขึ้น Supabase Cloud...`, 'info');
+
+  const ok = await syncDebtsToCloud(email, debts);
+  if (ok) {
+    showToast(`ส่งข้อมูลหนี้ ${debts.length} สัญญาขึ้น Cloud สำเร็จแล้ว! สามารถเปิดดูในมือถือได้ทันที`, 'success', '☁️ ส่งขึ้น Cloud สำเร็จ');
+  } else {
+    showToast('เกิดข้อผิดพลาดในการส่งข้อมูลขึ้น Supabase', 'error');
   }
+};
 
-  try {
-    // 1. Try to fetch from cloud first to check if cloud already has debts
-    const cloudDebts = await fetchDebtsFromCloud(currentUser.email);
-    if (cloudDebts && cloudDebts.length > 0 && debts.length === 0) {
-      debts = cloudDebts;
-      const key = getDebtStorageKey();
-      localStorage.setItem(key, JSON.stringify(debts));
-      renderDebtList();
-      calculateRepaymentPlan();
-      showToast(`ดึงข้อมูล ${debts.length} สัญญาจาก Supabase Cloud ลงเครื่องเรียบร้อย!`, 'success', '☁️ Cloud Sync');
-      return;
-    }
+// 2. Explicit Download from Cloud
+window.downloadDebtsFromCloudAction = async function() {
+  const email = (currentUser && currentUser.email) ? currentUser.email : 'natmeshow@gmail.com';
 
-    // 2. Otherwise upload local debts to cloud
-    const ok = await syncDebtsToCloud(currentUser.email, debts);
-    if (ok) {
-      showToast(`ซิงก์ข้อมูลหนี้ ${debts.length} สัญญาขึ้น Supabase Cloud สำเร็จ!`, 'success', '☁️ ซิงก์เรียบร้อย');
-    } else {
-      showToast('ไม่สามารถซิงก์ข้อมูลขึ้น Supabase ได้ กรุณาตรวจสอบตาราง user_debts และสิทธิ์ RLS', 'error');
-    }
-  } catch (err) {
-    console.error('Manual sync error:', err);
-    showToast('เกิดข้อผิดพลาดในการเชื่อมต่อ Supabase', 'error');
+  showToast('กำลังดึงข้อมูลหนี้จาก Supabase Cloud...', 'info');
+
+  const cloudDebts = await fetchDebtsFromCloud(email);
+  if (cloudDebts && Array.isArray(cloudDebts) && cloudDebts.length > 0) {
+    debts = cloudDebts;
+    const key = getDebtStorageKey();
+    localStorage.setItem(key, JSON.stringify(debts));
+    renderDebtList();
+    calculateRepaymentPlan();
+    closeSupabaseModal();
+    showToast(`ดึงข้อมูล ${debts.length} สัญญาจาก Cloud สำเร็จเรียบร้อย!`, 'success', '🎉 ดึงข้อมูลสำเร็จ');
+  } else {
+    showToast('ยังไม่พบข้อมูลหนี้บน Cloud สำหรับอีเมลนี้ (กรุณากด "ส่งขึ้น Cloud" จากคอมพิวเตอร์ก่อน)', 'warning');
   }
 };
 
