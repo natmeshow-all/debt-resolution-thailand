@@ -627,6 +627,11 @@ function renderDebtList() {
     if (totalBalanceEl) totalBalanceEl.textContent = '0 บาท';
     if (totalMinPayEl) totalMinPayEl.textContent = '0 บาท/เดือน';
     if (totalInterestEl) totalInterestEl.textContent = '0 บาท/ปี';
+    const urgentBox = document.getElementById('debt-urgent-action-box');
+    if (urgentBox) {
+      urgentBox.classList.add('hidden');
+      urgentBox.innerHTML = '';
+    }
     lucide.createIcons();
     return;
   }
@@ -709,6 +714,148 @@ function renderDebtList() {
   if (totalBalanceEl) totalBalanceEl.textContent = `${totalBal.toLocaleString('th-TH')} บาท`;
   if (totalMinPayEl) totalMinPayEl.textContent = `${totalMin.toLocaleString('th-TH')} บาท/เดือน`;
   if (totalInterestEl) totalInterestEl.textContent = `~${totalAnnualInterest.toLocaleString('th-TH')} บาท/ปี (~${totalMonthlyInterest.toLocaleString('th-TH')} บ./เดือน)`;
+
+  renderDebtActionSummary(totalBal, totalMin, totalAnnualInterest);
+  lucide.createIcons();
+}
+
+function renderDebtActionSummary(totalBal, totalMin, totalAnnualInterest) {
+  const box = document.getElementById('debt-urgent-action-box');
+  if (!box) return;
+
+  if (debts.length === 0 || totalBal <= 0) {
+    box.classList.add('hidden');
+    box.innerHTML = '';
+    return;
+  }
+
+  box.classList.remove('hidden');
+
+  // 1. Consolidated Loan: 48 months at 7.5% per annum reducing balance
+  const r_cons = 0.075 / 12;
+  const n_cons = 48;
+  const pmt_cons = Math.round(totalBal * (r_cons * Math.pow(1 + r_cons, n_cons)) / (Math.pow(1 + r_cons, n_cons) - 1));
+  const savings_cons = Math.max(0, totalMin - pmt_cons);
+
+  // 2. SAM Debt Clinic: 120 months at 4.0% per annum
+  const r_sam = 0.04 / 12;
+  const n_sam = 120;
+  const pmt_sam = Math.round(totalBal * (r_sam * Math.pow(1 + r_sam, n_sam)) / (Math.pow(1 + r_sam, n_sam) - 1));
+  const savings_sam = Math.max(0, totalMin - pmt_sam);
+
+  // 3. Find highest rate debt and smallest balance debt
+  const sortedByRate = [...debts].sort((a, b) => b.rate - a.rate);
+  const highestRateDebt = sortedByRate[0];
+
+  const sortedByBal = [...debts].sort((a, b) => a.balance - b.balance);
+  const smallestDebt = sortedByBal[0];
+
+  const burdenRate = ((totalMin / totalBal) * 100).toFixed(1);
+  const isHighBurden = totalMin >= 20000 || parseFloat(burdenRate) >= 10;
+
+  box.innerHTML = `
+    <div class="bg-gradient-to-br from-amber-950/80 via-slate-900 to-slate-900 p-4 sm:p-5 rounded-2xl border border-amber-500/50 text-xs shadow-xl space-y-4">
+      
+      <!-- Urgency Banner -->
+      <div class="flex items-start justify-between gap-3">
+        <div class="flex items-start gap-2.5">
+          <span class="p-2 rounded-xl ${isHighBurden ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'} shrink-0 mt-0.5">
+            <i data-lucide="${isHighBurden ? 'alert-triangle' : 'help-circle'}" class="w-5 h-5"></i>
+          </span>
+          <div>
+            <div class="font-extrabold ${isHighBurden ? 'text-rose-300' : 'text-amber-300'} text-sm sm:text-base flex items-center gap-1.5 flex-wrap">
+              <span>ข้อสรุปภาระหนี้: ต้องจ่ายเดือนละ ${totalMin.toLocaleString('th-TH')} บาท</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full font-bold ${isHighBurden ? 'bg-rose-500 text-white' : 'bg-amber-500 text-slate-900'}">
+                ${isHighBurden ? 'ภาระตึงตัวสูงมาก ⚠️' : 'ต้องวางแผนด่วน'}
+              </span>
+            </div>
+            <p class="text-slate-300 text-[11px] sm:text-xs mt-1 leading-relaxed">
+              คุณมีหนี้รวม <strong>${debts.length} สัญญา (${totalBal.toLocaleString('th-TH')} บาท)</strong> ต้องจ่ายเดือนละ <strong class="text-white font-bold">${totalMin.toLocaleString('th-TH')} บ./เดือน</strong> โดยในยอดนี้มีดอกเบี้ยกินเปล่าถึง <strong class="text-rose-400 font-bold">~${totalAnnualInterest.toLocaleString('th-TH')} บาท/ปี</strong> (~${Math.round(totalAnnualInterest / 12).toLocaleString('th-TH')} บ./ด.)
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Plan Steps -->
+      <div class="space-y-2.5 pt-2 border-t border-slate-800">
+        <div class="font-extrabold text-amber-200 text-xs flex items-center gap-1.5">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
+          <span>ต้องรีบทำอย่างไรต่อดี? (3 ทางเลือกแก้ปัญหาที่ดีที่สุด):</span>
+        </div>
+
+        <!-- Option 1: Debt Consolidation -->
+        <div class="p-3.5 rounded-xl bg-slate-800/90 border border-blue-500/40 hover:border-blue-400 transition-all space-y-1.5">
+          <div class="flex items-center justify-between flex-wrap gap-1">
+            <span class="font-bold text-blue-300 text-xs flex items-center gap-1.5">
+              <span>ทางเลือกที่ 1: "รวมหนี้ก้อนเดียว" (Debt Consolidation)</span>
+            </span>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+              ลดยอดผ่อนได้ทันที
+            </span>
+          </div>
+          <p class="text-slate-300 text-[11px] leading-relaxed">
+            หากคุณยังมีประวัติชำระปกติ แนะนำให้<strong>รวมหนี้ ${debts.length} สัญญานี้เป็นก้อนเดียว</strong> ดอกเบี้ยจะลดลงเหลือ 6-8% และ<strong>ค่างวดจะลดจาก ${totalMin.toLocaleString('th-TH')} บ./ด. เหลือเพียงประมาณ ~${pmt_cons.toLocaleString('th-TH')} บ./เดือน</strong> (ช่วยปลดภาระได้ทันทีกว่า <span class="text-emerald-400 font-bold">${savings_cons.toLocaleString('th-TH')} บาท/เดือน</span> โดยไม่เสียเครดิตบูโร!)
+          </p>
+          <div class="pt-1 flex items-center gap-2">
+            <a href="#solutions-section" class="inline-flex items-center gap-1 px-3 py-1 text-[11px] font-bold text-white bg-blue-600 hover:bg-blue-500 rounded-lg transition-colors shadow-sm">
+              <span>ดูข้อมูลรวมหนี้ & สถาบันการเงินที่รับ</span>
+              <i data-lucide="arrow-right" class="w-3 h-3"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Option 2: SAM Debt Clinic / TDR -->
+        <div class="p-3.5 rounded-xl bg-slate-800/90 border border-emerald-500/40 hover:border-emerald-400 transition-all space-y-1.5">
+          <div class="flex items-center justify-between flex-wrap gap-1">
+            <span class="font-bold text-emerald-300 text-xs flex items-center gap-1.5">
+              <span>ทางเลือกที่ 2: ถ้าเริ่มจ่าย ${totalMin.toLocaleString('th-TH')} บ./ด. ไม่ไหวแล้ว ➔ "คลินิกแก้หนี้ SAM"</span>
+            </span>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+              ดอกเบี้ย 3-5% ผ่อน 10 ปี
+            </span>
+          </div>
+          <p class="text-slate-300 text-[11px] leading-relaxed">
+            หากเป็นหนี้บัตรเครดิต/สินเชื่อบุคคลและเริ่มผ่อนต่อไม่ไหว อย่าปล่อยให้ถูกฟ้องร้อง ให้เตรียมใช้สิทธิ์ <strong>คลินิกแก้หนี้ by SAM</strong> ซึ่งรวมหนี้เสียดอกเบี้ยต่ำเพียง 3-5% ผ่อนยาว 10 ปี <strong>ค่างวดจะลดเหลือเพียงประมาณ ~${pmt_sam.toLocaleString('th-TH')} บ./เดือน</strong> เท่านั้น
+          </p>
+          <div class="pt-1 flex items-center gap-2">
+            <a href="#solutions-section" class="inline-flex items-center gap-1 px-3 py-1 text-[11px] font-bold text-emerald-300 bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-700/80 rounded-lg transition-colors">
+              <span>ดูเงื่อนไขคลินิกแก้หนี้ SAM</span>
+              <i data-lucide="arrow-right" class="w-3 h-3"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Option 3: Payoff Sequence -->
+        <div class="p-3.5 rounded-xl bg-slate-800/90 border border-indigo-500/40 hover:border-indigo-400 transition-all space-y-1.5">
+          <div class="flex items-center justify-between flex-wrap gap-1">
+            <span class="font-bold text-indigo-300 text-xs flex items-center gap-1.5">
+              <span>ทางเลือกที่ 3: ถ้าจะทยอยปิดหนี้เอง ➔ ควรปิดก้อนไหนก่อน?</span>
+            </span>
+          </div>
+          <p class="text-slate-300 text-[11px] leading-relaxed">
+            ${highestRateDebt ? `• <strong>เพื่อหยุดดอกแพงสุด:</strong> ทุ่มโปะปิดก้อน "<strong>${escapeHtml(highestRateDebt.name)}</strong>" (ดอกเบี้ย ${highestRateDebt.rate}% สูงสุดในรายการหนี้ของคุณ)<br>` : ''}
+            ${smallestDebt ? `• <strong>เพื่อปลดภาระใจเร็วสุด:</strong> ทุ่มโปะปิดก้อน "<strong>${escapeHtml(smallestDebt.name)}</strong>" (ยอดคงเหลือ ${smallestDebt.balance.toLocaleString('th-TH')} บ. น้อยที่สุด)` : ''}
+          </p>
+          <div class="pt-1 flex items-center gap-2">
+            <button type="button" onclick="document.getElementById('plan-priority-order')?.scrollIntoView({behavior: 'smooth', block: 'center'});" class="inline-flex items-center gap-1 px-3 py-1 text-[11px] font-bold text-indigo-300 bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-700/80 rounded-lg transition-colors">
+              <span>ดูแผนจัดลำดับปิดหนี้ทีละก้อน (Snowball vs Avalanche)</span>
+              <i data-lucide="chevron-down" class="w-3 h-3"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Critical Warning -->
+        <div class="p-3 rounded-xl bg-rose-950/50 border border-rose-900/80 text-[11px] text-rose-200 flex items-start gap-2">
+          <i data-lucide="shield-alert" class="w-4 h-4 text-rose-400 shrink-0 mt-0.5"></i>
+          <div>
+            <strong class="font-bold text-rose-100">ข้อห้ามเด็ดขาดในสถานการณ์นี้:</strong> ห้ามกดเงินสดจากบัตรหนึ่งมาจ่ายอีกบัตรหนึ่ง และห้ามกู้นอกระบบมาโปะเด็ดขาด เพราะจะทำให้หนี้ ${totalBal.toLocaleString('th-TH')} บ. ลุกลามกลายเป็นหลักล้านอย่างรวดเร็ว
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  `;
 
   lucide.createIcons();
 }
